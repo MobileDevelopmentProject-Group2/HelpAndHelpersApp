@@ -6,15 +6,28 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.helpersapp.ui.theme.HelpersAppTheme
+import com.example.helpersapp.viewModel.UsersViewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.helpersapp.ui.screens.LandingScreen
+import com.example.helpersapp.ui.screens.LoginScreen
+import com.example.helpersapp.ui.screens.MainScreen
+import com.example.helpersapp.ui.screens.RegisterScreen
+import com.example.helpersapp.viewModel.HelpViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
+        val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
+
         setContent {
             HelpersAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -22,25 +35,45 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    AppLayout(
+                        usersViewModel,
+                        helpViewModel)
                 }
             }
         }
     }
 }
-
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HelpersAppTheme {
-        Greeting("Android")
+fun AppLayout(usersViewModel: ViewModel, helpViewModel: ViewModel) {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = "home"
+    ) {
+        composable("home") {
+            LandingScreen(
+                navController,
+                usersViewModel
+            )
+        }
+        composable("main") {
+            MainScreen(
+                navController,
+                usersViewModel,
+                helpViewModel
+            )
+        }
+        composable("login") {
+            LoginScreen(
+                navController,
+                usersViewModel
+            )
+        }
+        composable("register") {
+            RegisterScreen(
+                navController,
+                usersViewModel
+            )
+        }
     }
 }
