@@ -42,8 +42,8 @@ fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
     // below my code
     // Add this to handle keyboard actions like dismissing the keyboard
     val localFocusManager = LocalFocusManager.current
-    var username by remember{ mutableStateOf(" ")}
-    var fullname by remember{ mutableStateOf(" ")}
+    var firstname by remember{ mutableStateOf(" ")}
+    var lastname by remember{ mutableStateOf(" ")}
     var email by remember{ mutableStateOf("")}
     var password by remember{ mutableStateOf("")}
     var address by remember{ mutableStateOf("")}
@@ -73,18 +73,18 @@ fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
         //Spacer(modifier = Modifier.height(200.dp))
 
         OutlinedTextField(
-            value = username,
-            onValueChange = {username = it},
-            label = { Text(text = "Username") },
+            value = firstname,
+            onValueChange = {firstname = it},
+            label = { Text(text = "Firstname") },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
             //keyboardActions = KeyboardActions(onNext = { localFocusManager.moveFocus(FocusDirection.Down) })
         )
         OutlinedTextField(
-            value = fullname,
-            onValueChange = {fullname = it},
-            label = { Text(text = "First name & last name") },
+            value = lastname,
+            onValueChange = {lastname = it},
+            label = { Text(text = "Lastname") },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
