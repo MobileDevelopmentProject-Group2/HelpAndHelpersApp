@@ -110,7 +110,7 @@ fun SodaLogo() {
 
 //this iconbutton looks not right
         IconButton(onClick = { /* TODO: Add action for Facebook */ }) {
-            Image(painter = painterResource(id = R.mipmap.facebook), contentDescription = "Facebook")
+            Image(painter = painterResource(id = R.drawable.facebook), contentDescription = "Facebook")
         }
         IconButton(onClick = { /* TODO: Add action for Facebook */ }) {
             Image(painter = painterResource(id = R.mipmap.google), contentDescription = "Facebook")
