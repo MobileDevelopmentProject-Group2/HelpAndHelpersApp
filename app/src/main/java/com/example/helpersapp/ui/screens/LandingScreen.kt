@@ -30,5 +30,8 @@ fun LandingScreen(navController: NavController, usersViewModel: ViewModel) {
         Button(onClick = { navController.navigate("main") }) {
             Text(text = "To Main Screen")
         }
+        Button(onClick = { navController.navigate("addHelp") }) {
+            Text(text = "To Add New Help Screen")
+        }
     }
 }
