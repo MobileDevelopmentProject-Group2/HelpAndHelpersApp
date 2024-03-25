@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">HelpersApp</string>
+    <string name="post_a_new_help_request">Post a new help request</string>
+    <string name="category">"Category: "</string>
+    <string name="work_details">"Work details: "</string>
+    <string name="date_of_work">"Date of work: "</string>
+    <string name="select_date">Select date</string>
+    <string name="selected_date">Selected date: %1$s</string>
+    <string name="time">"Time: "</string>
+    <string name="price_range">"Price range: "</string>
+    <string name="range">Range: %1$s € - %2$s €</string>
 </resources>

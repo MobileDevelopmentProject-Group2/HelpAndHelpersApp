@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "243699060489",
+    "project_id": "careconnect-65e41",
+    "storage_bucket": "careconnect-65e41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243699060489:android:9e8c7fce6f6383cdc54dd8",
+        "android_client_info": {
+          "package_name": "com.example.helpersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_kc_hS6WZy5VTY8jbDww6yxXepzed1yE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
