@@ -61,8 +61,8 @@ fun LandingScreen(navController: NavController) {
                 .height(50.dp)
                 .padding(horizontal = 15.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
         ) {
@@ -76,7 +76,11 @@ fun LandingScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth(0.6f)
                 .height(50.dp)
-                .padding(horizontal = 15.dp)
+                .padding(horizontal = 15.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            )
         )
         {
             Text(text = "Register")
