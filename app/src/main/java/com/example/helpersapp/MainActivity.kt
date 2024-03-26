@@ -53,8 +53,7 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
     ) {
         composable("home") {
             LandingScreen(
-                navController,
-                usersViewModel
+                navController
             )
         }
         composable("main") {
