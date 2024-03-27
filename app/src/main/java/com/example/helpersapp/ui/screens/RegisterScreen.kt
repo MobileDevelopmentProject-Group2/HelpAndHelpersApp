@@ -128,7 +128,7 @@ fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
         TextButton(onClick = { navController.navigate("login") }) {
             Text("Already a user? Login", style = MaterialTheme.typography.bodyMedium)
         }
-        Button(onClick = { navController.navigate("home")}) {
+        Button(onClick = { navController.navigate("main")}) {
             Text(text = "Home")
         }
     }
