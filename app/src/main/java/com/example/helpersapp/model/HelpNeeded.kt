@@ -6,5 +6,5 @@ data class HelpNeeded(
     var date: String = "",
     var time: String = "",
     var priceRange: ClosedFloatingPointRange<Float> = 0.0f..0.0f,
-    var location: String = "",
+    var postalCode: String = "",
 )
