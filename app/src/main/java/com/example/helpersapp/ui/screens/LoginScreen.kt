@@ -89,7 +89,7 @@ fun LoginScreen(navController: NavController, usersViewModel: ViewModel) {
             Text("Not a user? Register here",
                 style = MaterialTheme.typography.bodyLarge)
         }
-        Button(onClick = { navController.navigate("home")}) {
+        Button(onClick = { navController.navigate("main")}) {
             Text(text = "Home")
         }
         SodaLogo()
