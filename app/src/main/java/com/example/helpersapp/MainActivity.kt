@@ -19,8 +19,10 @@ import com.example.helpersapp.ui.screens.AddNewHelpScreen
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
+import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.HelperViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +30,9 @@ class MainActivity : ComponentActivity() {
 
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
+        val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
+
+
 
         setContent {
             HelpersAppTheme {
@@ -38,14 +43,16 @@ class MainActivity : ComponentActivity() {
                 ) {
                     AppLayout(
                         usersViewModel,
-                        helpViewModel)
+                        helpViewModel,
+                        helperViewModel
+                    )
                 }
             }
         }
     }
 }
 @Composable
-fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
+fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperViewModel: HelperViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -80,6 +87,12 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
             AddNewHelpScreen(
                 navController,
                 helpViewModel
+            )
+        }
+        composable("postHelper") {
+            PostNewHelperDetailsScreen(
+                navController,
+                helperViewModel
             )
         }
     }
