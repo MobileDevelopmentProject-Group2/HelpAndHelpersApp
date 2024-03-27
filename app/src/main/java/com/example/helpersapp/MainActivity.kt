@@ -50,7 +50,9 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
+//below old code, try to do some changes
+//fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
+fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel) {
     val navController = rememberNavController()
 //new code
 val usersViewModel: UsersViewModel = viewModel()

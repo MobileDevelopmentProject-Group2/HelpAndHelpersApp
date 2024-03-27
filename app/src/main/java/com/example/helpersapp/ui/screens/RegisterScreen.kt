@@ -5,10 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -16,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,22 +22,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.ModifierLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.SemanticsProperties.Text
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType.Companion.Text
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.UsersViewModel
 import kotlinx.coroutines.launch
 import androidx.compose.material3.Text as Text
+
 
 //import sun.tools.jstat.Alignment
 
@@ -52,6 +46,11 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+
+    //if (navigateToLogin) {
+    //    navController.navigate("login")
+    //    usersViewModel.clearNavigateToLogin()
+   // }
     // Add this to handle keyboard actions like dismissing the keyboard
     val localFocusManager = LocalFocusManager.current
     var firstname by remember{ mutableStateOf(" ")}
@@ -59,6 +58,11 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
     var email by remember{ mutableStateOf("")}
     var password by remember{ mutableStateOf("")}
     var address by remember{ mutableStateOf("")}
+    var username by remember { mutableStateOf("") }
+//notice and message
+    var showRegistrationResult by remember { mutableStateOf(false) }
+    var registrationSuccessful by remember { mutableStateOf(false) }
+
 
     Column(
         // add padding
@@ -134,6 +138,38 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
             onClick = {
                 // Handle the sign-up logic here
                 coroutineScope.launch {
+                    val success = usersViewModel.registerUser(
+                        firstname = firstname.trim(),
+                        lastname = lastname.trim(),
+                        email = email.trim(),
+                        password = password,
+                        address = address.trim(),
+                        username = email.trim()
+                    )
+                    registrationSuccessful = success
+                    showRegistrationResult = true
+
+                }},
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("Register")
+        }
+        if(showRegistrationResult) {
+            LaunchedEffect(key1 = showRegistrationResult) {
+                if (registrationSuccessful) {
+                    Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
+                    navController.navigate("login")
+                } else {
+                    Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT).show()
+                }
+                showRegistrationResult = false
+            }
+        }
+        /*
+        Button(
+            onClick = {
+                // Handle the sign-up logic here
+                coroutineScope.launch {
                     usersViewModel.registerUser(
                         firstname = firstname.trim(),
                         lastname = lastname.trim(),
@@ -142,10 +178,14 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
                         address = address.trim()
                     )
             }},
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("Register")
         }
+            */
+
+
+
         TextButton(onClick = { navController.navigate("login") }) {
             Text("Already a user? Login", style = MaterialTheme.typography.bodyMedium)
         }

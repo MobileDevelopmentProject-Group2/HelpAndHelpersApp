@@ -1,43 +1,67 @@
 package com.example.helpersapp.viewModel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlin.collections.hashMapOf as hashMapOf
 
 
 class UsersViewModel: ViewModel()  {
     private val db = FirebaseFirestore.getInstance()
-    private val _statusMessage = MutableLiveData<String?>()
-    val statusMessage: LiveData<String?>
-        get() = _statusMessage
-    fun registerUser(firstname: String, lastname: String, email: String, password: String, address: String) {
-        Log.d("UsersViewModel", "UsersViewModel")
-        viewModelScope.launch {
-            try {
-                val newUser = hashMapOf(
-                    "firstname" to firstname,
-                    "lastname" to lastname,
-                    "email" to email,
-                    "password" to password,
-                    "address" to address
-                )
-                db.collection("users").add(newUser).await()
-                _statusMessage.value = "User registered successfully"
-            } catch (e:Exception) {
 
-        // Handle the exception by updating the status message
-                    _statusMessage.value = "Failed to register user: ${e.message}"
-
-            }
+    suspend fun registerUser(
+        firstname: String,
+        lastname: String,
+        email: String,
+        password: String,
+        address: String,
+        username: String
+    ): Boolean {
+        return try {
+            val newUser = hashMapOf(
+                "firstname" to firstname,
+                "lastname" to lastname,
+                "email" to email,
+                "address" to address,
+                //add username
+                "username" to username
+            )
+            val username = email.replace(".", ",")
+            db.collection("users").add(newUser).await()
+            true // Return true on success
+        } catch (e: Exception) {
+            Log.e("UsersViewModel", "Failed to register user", e)
+            false // Return false on failure
         }
     }
-    fun clearStatusMessage() {
-        _statusMessage.value = null
-    }
 }
+/*
+0327 old code
+    private val db = FirebaseFirestore.getInstance()
+    private val _statusMessage = MutableLiveData<String?>()
+    val statusMessage: MutableLiveData<String?> = _statusMessage
+
+    //val statusMessage: LiveData<String?>
+      //  get() = _statusMessage
+    private val _navigateToLogin = MutableLiveData<Boolean>(false)
+    val navigateToLogin: LiveData<Boolean> = _navigateToLogin
+    //private val _navigateToLogin = MutableStateFlow(false)
+    //val navigateToLogin = _navigateToLogin.asStateFlow()
+       viewModelScope.launch {
+           try {
+               val newUser = hashMapOf(
+                   "firstname" to firstname,
+                   "lastname" to lastname,
+                   "email" to email,
+                   //"password" to password,
+                   "address" to address
+               )
+               db.collection("users").add(newUser).await()
+               true // Return true on success
+           } catch (e:Exception) {
+               Log.e("UsersViewModel", "Failed to register user", e)
+               false // Return false on failure
+
+           }
+       } */
