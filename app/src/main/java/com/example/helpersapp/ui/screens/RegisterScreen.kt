@@ -1,5 +1,6 @@
 package com.example.helpersapp.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,12 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.ModifierLocalProvider
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.SemanticsProperties.Text
@@ -33,13 +36,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.helpersapp.R
+import com.example.helpersapp.viewModel.UsersViewModel
+import kotlinx.coroutines.launch
 import androidx.compose.material3.Text as Text
 
 //import sun.tools.jstat.Alignment
 
 @Composable
-fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
+// has error at first code, so try new one
+//fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
+//new code of mine
+fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel) {
     // below my code
+    //for viewmodel
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     // Add this to handle keyboard actions like dismissing the keyboard
     val localFocusManager = LocalFocusManager.current
     var firstname by remember{ mutableStateOf(" ")}
@@ -47,6 +59,7 @@ fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
     var email by remember{ mutableStateOf("")}
     var password by remember{ mutableStateOf("")}
     var address by remember{ mutableStateOf("")}
+
     Column(
         // add padding
         modifier = Modifier
@@ -120,13 +133,25 @@ fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
         Button(
             onClick = {
                 // Handle the sign-up logic here
-            },
+                coroutineScope.launch {
+                    usersViewModel.registerUser(
+                        firstname = firstname.trim(),
+                        lastname = lastname.trim(),
+                        email = email.trim(),
+                        password = password,
+                        address = address.trim()
+                    )
+            }},
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("Register")
         }
         TextButton(onClick = { navController.navigate("login") }) {
             Text("Already a user? Login", style = MaterialTheme.typography.bodyMedium)
+        }
+        //new code for paivacy policy
+        TextButton(onClick = { navController.navigate("Privacy policy") }) {
+            Text("By Register to a member, you agree our privacy policy", style = MaterialTheme.typography.bodyMedium)
         }
         Button(onClick = { navController.navigate("home")}) {
             Text(text = "Home")

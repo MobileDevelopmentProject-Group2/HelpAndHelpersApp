@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.helpersapp.ui.theme.HelpersAppTheme
@@ -44,9 +45,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
+
 @Composable
 fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
     val navController = rememberNavController()
+//new code
+val usersViewModel: UsersViewModel = viewModel()
+val helpViewModel: HelpViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -84,3 +91,5 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
         }
     }
 }
+
+
