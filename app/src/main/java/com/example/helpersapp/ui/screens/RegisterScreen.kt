@@ -153,7 +153,8 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
         TextButton(onClick = { navController.navigate("Privacy policy") }) {
             Text("By Register to a member, you agree our privacy policy", style = MaterialTheme.typography.bodyMedium)
         }
-        Button(onClick = { navController.navigate("home")}) {
+
+        Button(onClick = { navController.navigate("main")}) {
             Text(text = "Home")
         }
     }

@@ -1,5 +1,6 @@
 package com.example.helpersapp.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.helpersapp.model.HelpNeeded
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,9 +12,12 @@ class HelpViewModel: ViewModel()  {
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
     val newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
 
+
     fun changeWorkDetails(newWorkDetails: String) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(workDetails = newWorkDetails)
+        Log.d("HelpViewModel", "HelpViewModel created ${_newHelpNeeded.value}")
     }
+
     fun changePriceRange(newPriceRange: ClosedFloatingPointRange<Float>) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(priceRange = newPriceRange)
     }

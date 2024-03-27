@@ -89,7 +89,7 @@ fun LoginScreen(navController: NavController, usersViewModel: ViewModel) {
             Text("Not a user? Register here",
                 style = MaterialTheme.typography.bodyLarge)
         }
-        Button(onClick = { navController.navigate("home")}) {
+        Button(onClick = { navController.navigate("main")}) {
             Text(text = "Home")
         }
         SodaLogo()
@@ -100,7 +100,7 @@ fun LoginScreen(navController: NavController, usersViewModel: ViewModel) {
 
 @Composable
 fun SodaLogo() {
-   val socialLogos = listOf(R.mipmap.facebook, R.mipmap.google, R.mipmap.twitter)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,20 +118,5 @@ fun SodaLogo() {
         IconButton(onClick = { /* TODO: Add action for Facebook */ }) {
             Image(painter = painterResource(id = R.mipmap.twitter), contentDescription = "Facebook")
         }
-        /*
-              socialLogos.forEach { logoRes ->
-            Image(
-                painter = painterResource(id = logoRes),
-                contentDescription = "Social media",
-                modifier = Modifier.size(48.dp)
-                )
-        }
-
-                IconButton(
-            onClick = { /* TODO: Add action for Facebook */ })
-        {
-            Icon(painter = painterResource(id = R.mipmap.facebook), contentDescription = "Facebook")
-        }
-        * */
     }
 }

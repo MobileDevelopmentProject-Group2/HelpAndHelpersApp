@@ -17,6 +17,7 @@ import com.example.helpersapp.ui.theme.HelpersAppTheme
 import com.example.helpersapp.viewModel.UsersViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.helpersapp.ui.screens.AddNewHelpScreen
+import com.example.helpersapp.ui.screens.HelpDetailsScreen
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
@@ -60,8 +61,7 @@ val helpViewModel: HelpViewModel = viewModel()
     ) {
         composable("home") {
             LandingScreen(
-                navController,
-                usersViewModel
+                navController
             )
         }
         composable("main") {
@@ -85,6 +85,12 @@ val helpViewModel: HelpViewModel = viewModel()
         }
         composable("addHelp") {
             AddNewHelpScreen(
+                navController,
+                helpViewModel
+            )
+        }
+        composable("helpDetails") {
+            HelpDetailsScreen(
                 navController,
                 helpViewModel
             )
