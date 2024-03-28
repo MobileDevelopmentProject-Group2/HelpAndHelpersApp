@@ -9,4 +9,11 @@
     <string name="time">"Time: "</string>
     <string name="price_range">"Price range: "</string>
     <string name="range">Range: %1$s € - %2$s €</string>
+
+    <string name="welcome_message">Welcome to\nCareConnect</string>
+    <string name="log_in">Log in</string>
+    <string name="register">Register</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="slogan">Bridging Nanny and Tutoring Needs\nwith Providers!</string>
+
 </resources>
