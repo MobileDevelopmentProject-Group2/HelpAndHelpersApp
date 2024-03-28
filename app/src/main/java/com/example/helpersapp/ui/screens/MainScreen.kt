@@ -22,7 +22,19 @@ fun MainScreen(navController: NavController, usersViewModel: ViewModel, helpNeed
             text = "Main/home Screen"
         )
         Button(onClick = { navController.navigate("home")}) {
-            Text(text = "Home")
+            Text(text = "to landing screen")
+        }
+        Button(onClick = { navController.navigate("login") }) {
+            Text(text = "To Login Screen")
+        }
+        Button(onClick = { navController.navigate("register") }) {
+            Text(text = "To Register Screen")
+        }
+        Button(onClick = { navController.navigate("addHelp") }) {
+            Text(text = "To Add New Help Screen")
+        }
+        Button(onClick = { navController.navigate("helpDetails") }) {
+            Text(text = "To Help Details Screen")
         }
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -185,20 +186,52 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                     )
                 }
             }
-            Button(
-                onClick = { /*TODO*/ },
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray.copy(alpha = 0.2f),
-                    contentColor = Color.Black,
-                ),
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
-                    .padding(top = 35.dp)
-                    .height(52.dp)
-                    .width(210.dp)
+                    .fillMaxWidth()
             ) {
-                Text(text = "Post to confirm")
+                Button(
+                    onClick = { navController.navigateUp() },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(text = "Back")
+                    }
+                }
+                Button(
+                    onClick = { navController.navigate("helpDetails") },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Text(text = "Post to confirm")
+                }
             }
+
         }
     }
 }
