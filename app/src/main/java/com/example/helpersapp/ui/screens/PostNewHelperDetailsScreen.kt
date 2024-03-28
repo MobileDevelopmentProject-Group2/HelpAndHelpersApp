@@ -3,7 +3,6 @@ package com.example.helpersapp.ui.screens
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -106,8 +104,9 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
 
     var about by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
+    var helpdetails by remember { mutableStateOf("") }
     var experience by remember { mutableStateOf("") }
-    //var username by remember { mutableStateOf("") }
+
     // username for developing status
     val username = "dev_user3"
 /*
@@ -163,6 +162,20 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                     .padding(16.dp)
                     .fillMaxWidth()
                     .height(200.dp),
+                value = helpdetails,
+                onValueChange = { helpdetails = it },
+                shape = MaterialTheme.shapes.medium
+            )
+
+            Text(
+                text = stringResource(R.string.previous_experience),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .height(200.dp),
                 value = experience,
                 onValueChange = { experience = it },
                 shape = MaterialTheme.shapes.medium
@@ -170,34 +183,48 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
 
             Button(
                 onClick = {
-                    try {
-                        saveUserData(about, category, experience, username)
-                    } catch (e: Exception) {
-                        Log.e(TAG, " an error while saving data to Firestore.", e)
-                    }
+                    helperViewModel.saveUserData(
+                        about,
+                        category,
+                        helpdetails,
+                        experience,
+                        username,
+                        onSuccess = {
+                            Log.d(TAG, "DocumentSnapshot successfully written!")
+                        },
+                        onFailure = { e ->
+                            Log.e(TAG, " an error while saving data to Firestore.", e)
+                        }
+                    )
                 },
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray.copy(alpha = 0.2f),
-                    contentColor = Color.Black,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
+
                 modifier = Modifier
-                    .padding(top = 35.dp)
+                    .padding(top = 35.dp, bottom = 20.dp)
                     .height(52.dp)
                     .width(210.dp)
+                    .align(Alignment.CenterHorizontally)
             ) {
                 Text(text = "Post")
             }
+
         }
     }
 }
 
-fun saveUserData(about: String, category: String, experience: String, username: String) {
+
+/*
+fun saveUserData(about: String, category: String, helpdetails: String, experience: String, username: String) {
     val db = FirebaseFirestore.getInstance()
 
     val userData = hashMapOf(
         "about" to about,
         "category" to category,
+        "helpdetails" to helpdetails,
         "experience" to experience,
         "username" to username
     )
@@ -211,3 +238,5 @@ fun saveUserData(about: String, category: String, experience: String, username: 
             Log.w(TAG, "Error writing document", e)
         }
 }
+
+ */
