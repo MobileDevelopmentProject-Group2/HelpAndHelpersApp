@@ -5,6 +5,6 @@ data class HelpNeeded(
     var workDetails: String = "",
     var date: String = "",
     var time: String = "",
-    var priceRange: ClosedFloatingPointRange<Float> = 0.0f..0.0f,
-    var postalCode: String = "",
+    var priceRange: ClosedFloatingPointRange<Float> = 0.0f..500.0f,
+    var postalCode: Int = 0
 )
