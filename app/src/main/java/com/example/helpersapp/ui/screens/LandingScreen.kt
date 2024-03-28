@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,8 +47,7 @@ fun LandingScreen(navController: NavController) {
             modifier = Modifier.height(130.dp)
         )
         Text(
-            text = "Welcome to \n" +
-                    "CareConnect",
+            text = stringResource(id = R.string.welcome_message),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.displayMedium
         )
@@ -66,7 +66,7 @@ fun LandingScreen(navController: NavController) {
             )
 
         ) {
-            Text("Log in")
+            Text(stringResource(id = R.string.log_in))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -83,20 +83,20 @@ fun LandingScreen(navController: NavController) {
             )
         )
         {
-            Text(text = "Register")
+            Text(stringResource(id = R.string.register))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Bridging Nanny and Tutoring Needs\nwith Providers!",
+            text = stringResource(id = R.string.slogan),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center
 
         )
 
         TextButton(onClick = { navController.navigate("register") }) {
-            Text("Privacy policy", style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(id = R.string.privacy_policy), style = MaterialTheme.typography.bodyLarge)
         }
 
         SodaLogo2()
