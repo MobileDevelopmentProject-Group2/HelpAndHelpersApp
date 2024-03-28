@@ -36,5 +36,8 @@ fun MainScreen(navController: NavController, usersViewModel: ViewModel, helpNeed
         Button(onClick = { navController.navigate("helpDetails") }) {
             Text(text = "To Help Details Screen")
         }
+        Button(onClick = { navController.navigate("postHelper") }) {
+            Text(text = "To Post New Helper Details Screen")
+        }
     }
 }

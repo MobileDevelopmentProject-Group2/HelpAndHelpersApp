@@ -1,5 +1,7 @@
 package com.example.helpersapp.ui.screens
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.HelperViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
@@ -55,58 +58,75 @@ fun CategorySelectionRow(
 ) {
     var selectedCategories by remember { mutableStateOf(emptySet<String>()) }
 
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = "Choose the category for the expertise you are offering:",
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp)
         )
-        Checkbox(
-            checked = "Nanny" in selectedCategories,
-            onCheckedChange = { isChecked ->
-                selectedCategories = if (isChecked) {
-                    selectedCategories + "Nanny"
-                } else {
-                    selectedCategories - "Nanny"
-                }
-                onCategorySelected(selectedCategories)
-            },
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        Text("Nanny", modifier = Modifier.padding(end = 16.dp))
-        Checkbox(
-            checked = "Tutor" in selectedCategories,
-            onCheckedChange = { isChecked ->
-                selectedCategories = if (isChecked) {
-                    selectedCategories + "Tutor"
-                } else {
-                    selectedCategories - "Tutor"
-                }
-                onCategorySelected(selectedCategories)
-            },
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        Text("Tutor")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Checkbox(
+                checked = "Nanny" in selectedCategories,
+                onCheckedChange = { isChecked ->
+                    selectedCategories = if (isChecked) {
+                        selectedCategories + "Nanny"
+                    } else {
+                        selectedCategories - "Nanny"
+                    }
+                    onCategorySelected(selectedCategories)
+                },
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text("Nanny")
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = "Tutor" in selectedCategories,
+                onCheckedChange = { isChecked ->
+                    selectedCategories = if (isChecked) {
+                        selectedCategories + "Tutor"
+                    } else {
+                        selectedCategories - "Tutor"
+                    }
+                    onCategorySelected(selectedCategories)
+                },
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text("Tutor")
+        }
     }
 }
 
-
-
 @Composable
 fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: HelperViewModel) {
+
+    var about by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+    var experience by remember { mutableStateOf("") }
+    //var username by remember { mutableStateOf("") }
+    // username for developing status
+    val username = "dev_user3"
+/*
+    // get username by Firebase Authentication
+    val firebaseAuth = FirebaseAuth.getInstance()
+    val currentUser = firebaseAuth.currentUser
+    val username = currentUser?.displayName ?: "unknown_user"
+
+ */
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         ShowIMage1()
         Column(
             modifier = Modifier
-                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
         ) {
             Text(
                 text = stringResource(R.string.post_your_area_of_expertise),
@@ -115,8 +135,7 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
             )
             Column {
                 Text(
-                    text = "Tell shortly about yourself:",
-                    style = MaterialTheme.typography.labelSmall,
+                    text = stringResource(R.string.tell_shortly_about_yourself),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
                 OutlinedTextField(
@@ -124,32 +143,39 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth()
                         .height(100.dp),
-                    value = "",
-                    onValueChange = {},
+                    value = about,
+                    onValueChange = { about = it },
                     shape = MaterialTheme.shapes.medium
                 )
             }
 
             CategorySelectionRow(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                onCategorySelected = { /* Handle selected category */ }
+                onCategorySelected = { category = it.joinToString(", ") }
             )
 
-
+            Text(
+                text = stringResource(R.string.describe_in_more_details),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
             OutlinedTextField(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
                     .height(200.dp),
-                value = "",
-                onValueChange = {},
-                label = { Text("Describe in more details what you could do:") },
+                value = experience,
+                onValueChange = { experience = it },
                 shape = MaterialTheme.shapes.medium
             )
-            // Add file upload for certifications
-            // Add photo upload
+
             Button(
-                onClick = { /* TODO: Implement post functionality */ },
+                onClick = {
+                    try {
+                        saveUserData(about, category, experience, username)
+                    } catch (e: Exception) {
+                        Log.e(TAG, " an error while saving data to Firestore.", e)
+                    }
+                },
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray.copy(alpha = 0.2f),
@@ -166,164 +192,22 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
     }
 }
 
+fun saveUserData(about: String, category: String, experience: String, username: String) {
+    val db = FirebaseFirestore.getInstance()
 
-/*
+    val userData = hashMapOf(
+        "about" to about,
+        "category" to category,
+        "experience" to experience,
+        "username" to username
+    )
 
-@Composable
-fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: HelperViewModel) {
-    /*val newHelp by helpViewModel.newHelpNeeded.collectAsState()
-    val radioButtonOptions = listOf("nanny", "tutor")
-    val (selectedCategory, onCategorySelected) = remember { mutableStateOf(radioButtonOptions[0]) }
-    var sliderPosition by remember { mutableStateOf(0f..500f) }
-**/
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        ShowIMage1()
-        Column(
-            modifier = Modifier
-                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = stringResource(R.string.post_a_new_help_request),
-                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Row(
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = stringResource(R.string.category))
-                /*CategoryRadioButtons(
-                    radioButtonOptions = radioButtonOptions,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = onCategorySelected
-                )*/
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.work_details))
-                /*OutlinedTextField(
-                   modifier = Modifier
-                       .padding(16.dp)
-                       .width(210.dp),
-
-                   value = newHelp.workDetails,
-                   onValueChange = { helpViewModel.changeWorkDetails(it) },
-                   label = { Text("Add work details") },
-                   shape = MaterialTheme.shapes.medium
-
-
-                )*/
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(text = stringResource(R.string.date_of_work))
-                Column {
-                    Button(
-                        onClick = { /*TODO*/ },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Gray.copy(alpha = 0.2f),
-                            contentColor = Color.Black,
-                        ),
-                        border = BorderStroke(1.dp, color = Color.DarkGray),
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth()
-                            .height(52.dp)
-                    ) {
-                        Row {
-                            Text(stringResource(R.string.select_date))
-                            Icon(
-                                imageVector = Icons.Outlined.DateRange,
-                                contentDescription = null,
-                                modifier = Modifier.padding(start = 40.dp)
-                            )
-                        }
-                    }
-                    /*
-                    if (newHelp.date != "") {
-                        Text(text = stringResource(R.string.selected_date, newHelp.date))
-                    }*/
-                }
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.time))
-                /*
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .width(210.dp),
-                    value = newHelp.time,
-                    onValueChange = { helpViewModel.changeWorkDetails(it) },
-                    label = { Text("Add time of work") },
-                    shape = MaterialTheme.shapes.medium
-                )*/
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.price_range))
-                /*
-                Column {
-                    RangeSlider(
-                        value = sliderPosition,
-                        steps = 100,
-                        onValueChange = { range -> sliderPosition = range },
-                        valueRange = 0f..500f,
-                        onValueChangeFinished = {
-                            helpViewModel.changePriceRange(sliderPosition)
-                        },
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .width(210.dp)
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 25.dp),
-                        text = stringResource(
-                            R.string.range,
-                            sliderPosition.start.toInt(),
-                            sliderPosition.endInclusive.toInt()
-                        )
-                    )*/
-                }
-            }
-            Button(
-                onClick = { /*TODO*/ },
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray.copy(alpha = 0.2f),
-                    contentColor = Color.Black,
-                ),
-                modifier = Modifier
-                    .padding(top = 35.dp)
-                    .height(52.dp)
-                    .width(210.dp)
-            ) {
-                Text(text = "Post to confirm")
-            }
+    db.collection("helpers").document(username)
+        .set(userData)
+        .addOnSuccessListener {
+            Log.d(TAG, "DocumentSnapshot successfully written!")
         }
-    }
-
-*/
-
-
+        .addOnFailureListener { e ->
+            Log.w(TAG, "Error writing document", e)
+        }
+}

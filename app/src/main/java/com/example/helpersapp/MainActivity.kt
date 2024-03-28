@@ -89,18 +89,16 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperVie
                 helpViewModel
             )
         }
-
-        composable("postHelper") {
-            PostNewHelperDetailsScreen(
-                navController,
-                helperViewModel
-            )
-        }
-
         composable("helpDetails") {
             HelpDetailsScreen(
                 navController,
                 helpViewModel
+            )
+        }
+        composable("postHelper") {
+            PostNewHelperDetailsScreen(
+                navController,
+                helperViewModel
             )
         }
     }
