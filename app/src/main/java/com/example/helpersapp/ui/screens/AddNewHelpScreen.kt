@@ -1,5 +1,8 @@
 package com.example.helpersapp.ui.screens
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -33,38 +37,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.CategoryRadioButtons
+import com.example.helpersapp.ui.components.DatePicker
+import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 
-@Composable
-fun ShowIMage() {
-    Image(
-        painter = painterResource(id = R.drawable.bottom_background_with_logo),
-        contentDescription = "Background image of the bottom bar",
-        contentScale = ContentScale.FillWidth,
-        alignment = Alignment.BottomEnd,
-        modifier = Modifier
-            .fillMaxSize()
-            .height(200.dp)
-    )
-}
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel) {
     val newHelp by helpViewModel.newHelpNeeded.collectAsState()
     val radioButtonOptions = listOf("nanny", "tutor")
-    val (selectedCategory, onCategorySelected) = remember { mutableStateOf(radioButtonOptions[0])}
-    var sliderPosition by remember { mutableStateOf(0f..500f) }
+    var (selectedCategory, onCategorySelected) = remember { mutableStateOf(radioButtonOptions[0])}
+    var selectedDate by remember { mutableStateOf(newHelp.date) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var sliderPosition by remember { mutableStateOf(newHelp.priceRange) }
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        ShowIMage()
+        ShowBottomImage()
         Column(
             modifier = Modifier
                 .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
@@ -83,11 +82,14 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = stringResource(R.string.category))
+
+
                 CategoryRadioButtons(
                     radioButtonOptions = radioButtonOptions,
                     selectedCategory = selectedCategory,
                     onCategorySelected = onCategorySelected
                 )
+                newHelp.category = selectedCategory
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -109,20 +111,22 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 Text(text = stringResource(R.string.date_of_work))
                 Column {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { showDatePicker = true },
                         shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Gray.copy(alpha = 0.2f),
-                            contentColor = Color.Black,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
                         border = BorderStroke(1.dp, color = Color.DarkGray),
                         modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth()
+                            .padding(20.dp)
+                            .width(210.dp)
                             .height(52.dp)
                     ) {
                         Row {
@@ -134,10 +138,27 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                             )
                         }
                     }
-                    if (newHelp.date != "") {
-                        Text(text = stringResource(R.string.selected_date, newHelp.date))
-                    }
                 }
+            }
+            if (showDatePicker) {
+                DatePicker { date ->
+                    selectedDate = date
+                    Toast.makeText(
+                        context,
+                        "Date selected: $date",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    showDatePicker = false
+                }
+            }
+            newHelp.date = selectedDate
+
+            if (newHelp.date != "") {
+                Text(
+                    text = stringResource(R.string.selected_date, newHelp.date),
+                    modifier = Modifier
+                        .padding(top = 2.dp, start = 45.dp, end = 16.dp)
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -151,7 +172,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                         .padding(16.dp)
                         .width(210.dp),
                     value = newHelp.time,
-                    onValueChange = { helpViewModel.changeWorkDetails(it) },
+                    onValueChange = { helpViewModel.changeTime(it) },
                     label = { Text("Add time of work")},
                     shape = MaterialTheme.shapes.medium
                 )
@@ -187,6 +208,24 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                 }
             }
             Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(text = "Postal code")
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .width(210.dp),
+                    value = newHelp.postalCode.toString(),
+                    onValueChange = { helpViewModel.changePostalCode(it.toInt()) },
+                    label = { Text("Add postal code")},
+                    shape = MaterialTheme.shapes.medium,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+            Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -217,7 +256,18 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                     }
                 }
                 Button(
-                    onClick = { navController.navigate("helpDetails") },
+                    onClick = {
+                        if (newHelp.workDetails != "" && newHelp.date != "" && newHelp.time != "" && newHelp.priceRange != 0f..500f && newHelp.category != "" && newHelp.postalCode != 0) {
+                            newHelp.date = selectedDate
+                            navController.navigate("helpDetails")
+                        } else {
+                            Toast.makeText(
+                                navController.context,
+                                "Please fill in all the fields",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
                     shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
