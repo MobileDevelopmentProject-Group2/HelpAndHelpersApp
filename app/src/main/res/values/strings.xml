@@ -9,4 +9,8 @@
     <string name="time">"Time: "</string>
     <string name="price_range">"Price range: "</string>
     <string name="range">Range: %1$s € - %2$s €</string>
+    <string name="post_your_area_of_expertise">Post your area of expertise</string>
+    <string name="tell_shortly_about_yourself">tell shortly about yourself:</string>
+    <string name="describe_in_more_details">Describe in more details what you could do:</string>
+    <string name="previous_experience">Please note Educatioal background /work experiences .</string>
 </resources>
