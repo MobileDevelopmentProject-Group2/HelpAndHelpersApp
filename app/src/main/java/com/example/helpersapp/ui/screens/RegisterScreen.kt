@@ -165,24 +165,6 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
                 showRegistrationResult = false
             }
         }
-        /*
-        Button(
-            onClick = {
-                // Handle the sign-up logic here
-                coroutineScope.launch {
-                    usersViewModel.registerUser(
-                        firstname = firstname.trim(),
-                        lastname = lastname.trim(),
-                        email = email.trim(),
-                        password = password,
-                        address = address.trim()
-                    )
-            }},
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Text("Register")
-        }
-            */
 
 
 
@@ -199,3 +181,42 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
         }
     }
 }
+
+/*
+327 old code
+  Button(
+      onClick = {
+          // Handle the sign-up logic here
+          coroutineScope.launch {
+              usersViewModel.registerUser(
+                  firstname = firstname.trim(),
+                  lastname = lastname.trim(),
+                  email = email.trim(),
+                  password = password,
+                  address = address.trim()
+              )
+      }},
+              modifier = Modifier.align(Alignment.CenterHorizontally)
+  ) {
+      Text("Register")
+  }
+      */
+
+/* 328 try the auth keep old code here
+  Button(
+            onClick = {
+                // Handle the sign-up logic here
+                coroutineScope.launch {
+                    val success = usersViewModel.registerUser(
+                        firstname = firstname.trim(),
+                        lastname = lastname.trim(),
+                        email = email.trim(),
+                        password = password,
+                        address = address.trim(),
+                        username = email.trim()
+                    )
+                    registrationSuccessful = success
+                    showRegistrationResult = true
+
+                }},
+* */

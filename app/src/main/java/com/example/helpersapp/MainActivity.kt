@@ -8,8 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,6 +21,8 @@ import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
+import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity() {
 
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
-
+        //add login viewmodel
+        val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         setContent {
             HelpersAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -40,7 +41,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     AppLayout(
                         usersViewModel,
-                        helpViewModel)
+                        helpViewModel,
+                        loginViewModel)
                 }
             }
         }
@@ -52,11 +54,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 //below old code, try to do some changes
 //fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
-fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel) {
+fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, loginViewModel: LoginViewModel)
+{
     val navController = rememberNavController()
 //new code
 val usersViewModel: UsersViewModel = viewModel()
 val helpViewModel: HelpViewModel = viewModel()
+val loginViewModel: LoginViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -76,7 +80,9 @@ val helpViewModel: HelpViewModel = viewModel()
         composable("login") {
             LoginScreen(
                 navController,
-                usersViewModel
+                usersViewModel,
+                //add login viewmodel
+                loginViewModel
             )
         }
         composable("register") {

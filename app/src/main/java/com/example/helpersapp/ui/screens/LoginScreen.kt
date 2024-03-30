@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -31,9 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.helpersapp.R
+import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
-fun LoginScreen(navController: NavController, usersViewModel: ViewModel) {
+fun LoginScreen(
+    navController: NavController,
+    usersViewModel: ViewModel,
+    loginViewModel: LoginViewModel
+) {
     val localFocusManager = LocalFocusManager.current
     var email by remember{ mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
