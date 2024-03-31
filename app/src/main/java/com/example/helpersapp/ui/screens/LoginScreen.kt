@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
@@ -22,24 +23,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.LoginViewModel
 
+
+
 @Composable
 fun LoginScreen(
     navController: NavController,
-    usersViewModel: ViewModel,
+    //usersViewModel: ViewModel,
     loginViewModel: LoginViewModel
 ) {
     val localFocusManager = LocalFocusManager.current
     var email by remember{ mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
+    //new code
+    //val loginSuccess by loginViewModel.loginSuccess.observeAsState()
+    var errorMessage by remember { mutableStateOf<String>("") }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -71,18 +79,40 @@ fun LoginScreen(
             onValueChange = {email = it},
             label = { Text(text = "Email") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
+
         )
         OutlinedTextField(
             value = password,
             onValueChange = {password = it},
             label = { Text(text = "Password") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
+
         )
+        // Display error message if not null or empty
+            if(!errorMessage.isNullOrEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         Button(
             onClick = {
                 // Handle the sign-up logic here
+                   localFocusManager.clearFocus()
+                   loginViewModel.loginUser(email, password){
+                          success, error ->
+                          if(success){
+                            navController.navigate("main")
+                          }else{
+                              errorMessage = "Login failed: $error"
+                          }
+                   }
+
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
@@ -100,6 +130,8 @@ fun LoginScreen(
 
 
 }
+
+
 
 @Composable
 fun SodaLogo() {

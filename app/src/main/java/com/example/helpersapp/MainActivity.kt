@@ -23,6 +23,9 @@ import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.helpersapp.viewModel.HelperViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.initialize
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +33,12 @@ class MainActivity : ComponentActivity() {
 
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
+        val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
         //add login viewmodel
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+
+        //Firebase.initialize(this)
+
         setContent {
             HelpersAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -58,9 +65,9 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, logi
 {
     val navController = rememberNavController()
 //new code
-val usersViewModel: UsersViewModel = viewModel()
-val helpViewModel: HelpViewModel = viewModel()
-val loginViewModel: LoginViewModel = viewModel()
+    val usersViewModel: UsersViewModel = viewModel()
+    val helpViewModel: HelpViewModel = viewModel()
+    val loginViewModel: LoginViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -80,7 +87,7 @@ val loginViewModel: LoginViewModel = viewModel()
         composable("login") {
             LoginScreen(
                 navController,
-                usersViewModel,
+                //usersViewModel,
                 //add login viewmodel
                 loginViewModel
             )
@@ -91,12 +98,7 @@ val loginViewModel: LoginViewModel = viewModel()
                 usersViewModel
             )
         }
-        composable("addHelp") {
-            AddNewHelpScreen(
-                navController,
-                helpViewModel
-            )
-        }
+
         composable("helpDetails") {
             HelpDetailsScreen(
                 navController,
@@ -106,4 +108,11 @@ val loginViewModel: LoginViewModel = viewModel()
     }
 }
 
-
+/*
+        composable("addHelp") {
+            AddNewHelpScreen(
+                navController,
+                helpViewModel
+            )
+        }
+* */

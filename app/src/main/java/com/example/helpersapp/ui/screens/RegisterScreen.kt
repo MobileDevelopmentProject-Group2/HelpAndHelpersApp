@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.UsersViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import androidx.compose.material3.Text as Text
 
 
@@ -53,15 +54,17 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
    // }
     // Add this to handle keyboard actions like dismissing the keyboard
     val localFocusManager = LocalFocusManager.current
-    var firstname by remember{ mutableStateOf(" ")}
-    var lastname by remember{ mutableStateOf(" ")}
+    var firstname by remember{ mutableStateOf("")}
+    var lastname by remember{ mutableStateOf("")}
     var email by remember{ mutableStateOf("")}
     var password by remember{ mutableStateOf("")}
     var address by remember{ mutableStateOf("")}
     var username by remember { mutableStateOf("") }
-//notice and message
+
+
+    //notice and message
     var showRegistrationResult by remember { mutableStateOf(false) }
-    var registrationSuccessful by remember { mutableStateOf(false) }
+    var registrationSuccessful by remember { mutableStateOf("") }
 
 
     Column(
@@ -78,7 +81,6 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
             contentDescription =null,
             modifier = Modifier
                 .fillMaxWidth()
-                //.height(150.dp)
             )
 
         Text(
@@ -87,7 +89,6 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.displayMedium
         )
-        //Spacer(modifier = Modifier.height(200.dp))
 
         OutlinedTextField(
             value = firstname,
@@ -136,34 +137,61 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
         //Spacer(modifier = Modifier.height(100.dp))
         Button(
             onClick = {
-                // Handle the sign-up logic here
+                var returnMsg = "";
                 coroutineScope.launch {
-                    val success = usersViewModel.registerUser(
-                        firstname = firstname.trim(),
-                        lastname = lastname.trim(),
-                        email = email.trim(),
-                        password = password,
-                        address = address.trim(),
-                        username = email.trim()
-                    )
-                    registrationSuccessful = success
-                    showRegistrationResult = true
+                    // Registration step 1 - Register user to document store
+                    var returnMessage = usersViewModel.registerUserToDocumentStore(firstname.trim(), lastname.trim(), email.trim(), password.trim(), address.trim())
 
-                }},
+                    if (returnMessage.equals("User already exists") || returnMessage.equals("User created successfully")) {
+                        // Registration step 2 - Register user to auth database
+                        returnMessage = usersViewModel.registerUserToAuthDatabase(email.trim(), password.trim())
+
+                        if (returnMessage.equals("Registration step 2 completed.")) {
+                            Toast.makeText(context, "Registration successful", Toast.LENGTH_LONG).show()
+                            navController.navigate("login")
+                        } else {
+                            Toast.makeText(context, returnMessage, Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        // In case 1 step fails, show some meaningful error message
+                        Toast.makeText(context, returnMessage, Toast.LENGTH_LONG).show()
+                        returnMsg = "Registration failed: " + returnMessage
+                    }
+                }
+
+                // Handle the sign-up logic here
+/*                runBlocking {
+                    coroutineScope.launch {
+                        val success = usersViewModel.registerUser(
+                            firstname = firstname.trim(),
+                            lastname = lastname.trim(),
+                            email = email.trim(),
+                            password = password,
+                            address = address.trim(),
+                            username = email.trim()
+                        )
+                        registrationSuccessful = success
+                        showRegistrationResult = true
+
+                    }
+                }*/
+            },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("Register")
         }
         if(showRegistrationResult) {
-            LaunchedEffect(key1 = showRegistrationResult) {
-                if (registrationSuccessful) {
+
+/*            LaunchedEffect(key1 = showRegistrationResult) {
+                if (registrationSuccessful.equals("OK")) {
                     Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
+
                     navController.navigate("login")
                 } else {
-                    Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Registration failed: " + registrationSuccessful, Toast.LENGTH_SHORT).show()
                 }
                 showRegistrationResult = false
-            }
+            }*/
         }
 
 
