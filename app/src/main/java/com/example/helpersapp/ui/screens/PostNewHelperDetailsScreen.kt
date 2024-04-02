@@ -32,22 +32,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
+import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.google.firebase.firestore.FirebaseFirestore
-
-
-@Composable
-fun ShowIMage1() {
-    Image(
-        painter = painterResource(id = R.drawable.bottom_background_with_logo),
-        contentDescription = "Background image of the bottom bar",
-        contentScale = ContentScale.FillWidth,
-        alignment = Alignment.BottomEnd,
-        modifier = Modifier
-            .fillMaxSize()
-            .height(200.dp)
-    )
-}
 
 @Composable
 fun CategorySelectionRow(
@@ -120,7 +107,7 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        ShowIMage1()
+        ShowBottomImage()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -215,6 +202,7 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
         }
     }
 }
+
 
 
 /*

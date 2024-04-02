@@ -222,7 +222,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                     onValueChange = { helpViewModel.changePostalCode(it.toInt()) },
                     label = { Text("Add postal code")},
                     shape = MaterialTheme.shapes.medium,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
             Row(
