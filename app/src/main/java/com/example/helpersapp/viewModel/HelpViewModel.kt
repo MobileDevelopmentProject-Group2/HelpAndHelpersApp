@@ -27,7 +27,7 @@ class HelpViewModel: ViewModel()  {
     fun changePriceRange(newPriceRange: ClosedFloatingPointRange<Float>) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(priceRange = newPriceRange)
     }
-    fun changePostalCode(newPostalCode: Int) {
+    fun changePostalCode(newPostalCode: String) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(postalCode = newPostalCode)
         Log.d("HelpViewModel", "HelpViewModel created ${_newHelpNeeded.value}")
     }

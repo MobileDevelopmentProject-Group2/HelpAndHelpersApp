@@ -219,10 +219,10 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                         .padding(16.dp)
                         .width(210.dp),
                     value = newHelp.postalCode.toString(),
-                    onValueChange = { helpViewModel.changePostalCode(it.toInt()) },
+                    onValueChange = { helpViewModel.changePostalCode(it.toString()) },
                     label = { Text("Add postal code")},
                     shape = MaterialTheme.shapes.medium,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
             Row(
@@ -257,7 +257,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                 }
                 Button(
                     onClick = {
-                        if (newHelp.workDetails != "" && newHelp.date != "" && newHelp.time != "" && newHelp.priceRange != 0f..500f && newHelp.category != "" && newHelp.postalCode != 0) {
+                        if (newHelp.workDetails != "" && newHelp.date != "" && newHelp.time != "" && newHelp.priceRange != 0f..500f && newHelp.category != "" && newHelp.postalCode != null) {
                             newHelp.date = selectedDate
                             navController.navigate("helpDetails")
                         } else {
