@@ -3,6 +3,7 @@ package com.example.helpersapp.ui.screens
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -168,63 +172,61 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                 shape = MaterialTheme.shapes.medium
             )
 
-            Button(
-                onClick = {
-                    helperViewModel.saveUserData(
-                        about,
-                        category,
-                        helpdetails,
-                        experience,
-                        username,
-                        onSuccess = {
-                            Log.d(TAG, "DocumentSnapshot successfully written!")
-                        },
-                        onFailure = { e ->
-                            Log.e(TAG, " an error while saving data to Firestore.", e)
-                        }
-                    )
-                },
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
-
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
-                    .padding(top = 35.dp, bottom = 20.dp)
-                    .height(52.dp)
-                    .width(210.dp)
-                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
             ) {
-                Text(text = "Post")
+                Button(
+                    onClick = { navController.navigateUp() },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(text = "Back")
+                }
+
+                Button(
+                    onClick = {
+                        helperViewModel.saveUserData(
+                            about,
+                            category,
+                            helpdetails,
+                            experience,
+                            username,
+                            onSuccess = {
+                                Log.d(TAG, "DocumentSnapshot successfully written!")
+                            },
+                            onFailure = { e ->
+                                Log.e(TAG, " an error while saving data to Firestore.", e)
+                            }
+                        )
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Text(text = "Post")
+                }
             }
 
         }
     }
 }
-
-
-
-/*
-fun saveUserData(about: String, category: String, helpdetails: String, experience: String, username: String) {
-    val db = FirebaseFirestore.getInstance()
-
-    val userData = hashMapOf(
-        "about" to about,
-        "category" to category,
-        "helpdetails" to helpdetails,
-        "experience" to experience,
-        "username" to username
-    )
-
-    db.collection("helpers").document(username)
-        .set(userData)
-        .addOnSuccessListener {
-            Log.d(TAG, "DocumentSnapshot successfully written!")
-        }
-        .addOnFailureListener { e ->
-            Log.w(TAG, "Error writing document", e)
-        }
-}
-
- */
