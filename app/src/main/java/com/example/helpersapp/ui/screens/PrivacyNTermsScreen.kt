@@ -2,6 +2,7 @@ package com.example.helpersapp.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,6 +30,8 @@ fun PrivacyNTermsScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        val bottomImageHeight = 300.dp
+
         ShowBottomImage()
         Column(
             modifier = Modifier
@@ -37,7 +41,8 @@ fun PrivacyNTermsScreen(navController: NavController) {
         ) {
             Text(
                 text = "Privacy & Terms",
-                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(bottom = 24.dp),
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(
@@ -45,30 +50,32 @@ fun PrivacyNTermsScreen(navController: NavController) {
                 style = MaterialTheme.typography.bodyLarge)
             Column {
                 Text(
-                    text = stringResource(R.string.tell_shortly_about_yourself),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    text = "Data Usage",
+                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                    //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                    style = MaterialTheme.typography.titleLarge,
                 )
+                Text(
+                    text = stringResource(R.string.UsageData),
+                    style = MaterialTheme.typography.bodyLarge)
+
             }
 
-
-            }
             Button(
                 onClick = { navController.navigate("register") },
+                modifier = Modifier
+                    .padding(top = 24.dp),
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
-                modifier = Modifier
-                    .padding(top = 35.dp)
-                    .height(52.dp)
-                    .width(150.dp)
-            ) {
+
+                ) {
                 Text(text = "Back")
+
             }
-
         }
-    }
-
+        } }
 
 

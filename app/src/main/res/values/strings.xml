@@ -23,23 +23,22 @@
     <string name="previous_experience">Please note Educatioal background /work experiences .</string>
 
     <string name="privacy_policy_content">
-       CareConnect ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by CareConnect.
-    This Privacy Policy applies to our website, [Your Website], and its associated subdomains (collectively, our "Service"). By accessing or using our Service, you agree to this Privacy Policy.
-    INFORMATION COLLECTION AND USE
-    We collect several different types of information for various purposes to provide and improve our Service to you.
-    Personal Data
-    While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). Personally identifiable information may include, but is not limited to:
-    1. Email address
-    2. First name and last name
-    3. Phone number
-    4. Address, State, Province, ZIP/Postal code, City
+       CareConnect ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by CareConnect.\n
+    This Privacy Policy applies to our website, [Your Website], and its associated subdomains (collectively, our "Service"). By accessing or using our Service, you agree to this Privacy Policy.\n
+    INFORMATION COLLECTION AND USE\n
+    We collect several different types of information for various purposes to provide and improve our Service to you.\n
+    Personal Data\n
+    While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). Personally identifiable information may include, but is not limited to:\n
+    1. Email address.\n
+    2. First name and last name.\n
+    3. Phone number.\n
+    4. Address, State, Province, ZIP/Postal code, City.\n
     </string>
     <string name="UsageData">
-        Usage Data
-    We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device ("Usage Data").
-    TRACKING and COOKIES DATA
-    We use cookies and similar tracking technologies to track the activity on our Service and hold certain information.
-    Cookies are files with a small amount of data which may include an anonymous unique identifier. Cookies are sent to your browser from a website and stored on your device. Tracking technologies also used are beacons, tags, and scripts to collect and track information and to improve and analyze our Service.
-    You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service.
+    We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device ("Usage Data").\n
+    TRACKING and COOKIES DATA\n
+    We use cookies and similar tracking technologies to track the activity on our Service and hold certain information.\n
+    Cookies are files with a small amount of data which may include an anonymous unique identifier. Cookies are sent to your browser from a website and stored on your device. Tracking technologies also used are beacons, tags, and scripts to collect and track information and to improve and analyze our Service.\n
+    You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service.\n
     </string>
 </resources>
