@@ -69,7 +69,7 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperVie
                 navController,
                 usersViewModel,
                 helpViewModel
-            )
+          )
         }
         composable("login") {
             LoginScreen(

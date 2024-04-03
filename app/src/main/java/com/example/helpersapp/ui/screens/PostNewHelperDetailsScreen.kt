@@ -69,8 +69,7 @@ fun UploadImageToStorage(navController: NavController) {
 }
 
 // 選択した画像をFirebase Storageにアップロードする関数
-fun
-            (uri: Uri) {
+fun uploadImageToStorage(uri: Uri) {
     val storageRef = Firebase.storage.reference.child("images/${System.currentTimeMillis()}")
     storageRef.putFile(uri)
         .addOnSuccessListener {
