@@ -189,7 +189,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                         value = sliderPosition,
                         steps = 100,
                         onValueChange = { range -> sliderPosition = range },
-                        valueRange = 0f..500f,
+                        valueRange = 0f..100f,
                         onValueChangeFinished = {
                             helpViewModel.changePriceRange(sliderPosition)
                         },
@@ -232,7 +232,6 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
             ) {
                 Button(
                     onClick = { navController.navigateUp() },
-                    shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -268,7 +267,6 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                             ).show()
                         }
                     },
-                    shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer

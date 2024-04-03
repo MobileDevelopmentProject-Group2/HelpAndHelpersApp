@@ -17,9 +17,13 @@ class HelpViewModel: ViewModel()  {
 
     val db = Firebase.firestore
     //val user = Firebase.auth.currentUser
-    val user = "username3"
+    val user = "username4"
+
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
     val newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
+
+    private val _helpList = MutableStateFlow<List<HelpNeeded>>(emptyList())
+    val helpList: StateFlow<List<HelpNeeded>> = _helpList.asStateFlow()
 
     fun changeWorkDetails(newWorkDetails: String) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(workDetails = newWorkDetails)
@@ -29,12 +33,10 @@ class HelpViewModel: ViewModel()  {
     }
     fun changePostalCode(newPostalCode: String) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(postalCode = newPostalCode)
-        Log.d("HelpViewModel", "HelpViewModel created ${_newHelpNeeded.value}")
     }
     fun changeTime(newTime: String) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(time = newTime)
     }
-
 
     fun addNewHelpToCollection() {
         viewModelScope.launch {
@@ -52,7 +54,7 @@ class HelpViewModel: ViewModel()  {
                         ))
                         .addOnSuccessListener {
                             Log.d("HelpViewModel", "Help added successfully")
-
+                            //Toast.makeText(null, "Help added successfully", Toast.LENGTH_SHORT).show()
                         }
                         .addOnFailureListener {
                             Log.e("HelpViewModel", it.message.toString())
@@ -62,7 +64,27 @@ class HelpViewModel: ViewModel()  {
                 Log.e("HelpViewModel", e.message.toString())
                 Toast.makeText(null, "Error adding help", Toast.LENGTH_SHORT).show()
             }
-
+        }
+    }
+    fun getAllHelpRequests() {
+        viewModelScope.launch {
+            try {
+                user?.let { user ->
+                    db.collection("helpDetails")
+                        .get()
+                        .addOnSuccessListener {
+                            Log.d("HelpViewModel", "Help request list fetched successfully")
+                            it.documents.forEach { help ->
+                                Log.d("HelpViewModel", help.get("workDetails").toString())
+                            }
+                        }
+                        .addOnFailureListener {
+                            Log.e("HelpViewModel", it.message.toString())
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e("HelpViewModel", e.message.toString())
+            }
         }
     }
 }

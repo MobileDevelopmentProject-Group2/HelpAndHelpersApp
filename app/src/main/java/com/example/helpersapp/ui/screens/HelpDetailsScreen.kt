@@ -63,7 +63,6 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
             ) {
                 Button(
                     onClick = { navController.navigateUp() },
-                    shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -85,7 +84,6 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                         helpViewModel.addNewHelpToCollection()
                         navController.navigate("main")
                     },
-                    shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
