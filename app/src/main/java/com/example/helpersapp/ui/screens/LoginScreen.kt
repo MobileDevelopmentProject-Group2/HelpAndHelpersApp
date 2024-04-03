@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -89,8 +90,8 @@ fun LoginScreen(
             label = { Text(text = "Password") },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
-
+            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() }),
+            visualTransformation = PasswordVisualTransformation()
         )
         // Display error message if not null or empty
             if(!errorMessage.isNullOrEmpty()) {

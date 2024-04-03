@@ -10,9 +10,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.helpersapp.viewModel.HelperViewModel
 
 @Composable
-fun MainScreen(navController: NavController, usersViewModel: ViewModel, helpNeededViewModel: ViewModel) {
+fun MainScreen(
+    navController: NavController,
+    usersViewModel: ViewModel,
+    helpNeededViewModel: ViewModel,
+    helperViewModel: HelperViewModel
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

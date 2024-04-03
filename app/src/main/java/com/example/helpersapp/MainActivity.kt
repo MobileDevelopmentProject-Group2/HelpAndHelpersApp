@@ -19,24 +19,21 @@ import com.example.helpersapp.ui.screens.HelpDetailsScreen
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
+import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.helpersapp.viewModel.HelperViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.initialize
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
-
         //add login viewmodel
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
@@ -50,10 +47,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     AppLayout(
                         usersViewModel,
                         helpViewModel,
-                        loginViewModel)
+                        helperViewModel,
+                        loginViewModel
+                    )
 
                 }
             }
@@ -65,19 +65,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 
-//below old code, try to do some changes
-//fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel) {
-fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, loginViewModel: LoginViewModel)
+fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, helperViewModel: HelperViewModel, loginViewModel: LoginViewModel)
 {
-    //need to check userviewmodel or viewmodel, which one is correct
-//fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperViewModel: HelperViewModel) {
-
     val navController = rememberNavController()
-//new code
-    val usersViewModel: UsersViewModel = viewModel()
-    val helpViewModel: HelpViewModel = viewModel()
-    val loginViewModel: LoginViewModel = viewModel()
-    val helperViewModel: HelperViewModel = viewModel()
+
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -91,7 +82,8 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, logi
             MainScreen(
                 navController,
                 usersViewModel,
-                helpViewModel
+                helpViewModel,
+                helperViewModel
             )
         }
         composable("login") {
@@ -127,14 +119,11 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, logi
                 helperViewModel
             )
         }
+        composable("privacy") {
+            PrivacyNTermsScreen(
+                navController
+            )
+        }
     }
 }
 
-/*
-        composable("addHelp") {
-            AddNewHelpScreen(
-                navController,
-                helpViewModel
-            )
-        }
-* */

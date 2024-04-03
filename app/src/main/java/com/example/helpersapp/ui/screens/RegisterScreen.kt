@@ -12,9 +12,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +31,6 @@ import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.UsersViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import androidx.compose.material3.Text as Text
 
 
 //import sun.tools.jstat.Alignment
@@ -47,11 +45,6 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-
-    //if (navigateToLogin) {
-    //    navController.navigate("login")
-    //    usersViewModel.clearNavigateToLogin()
-   // }
     // Add this to handle keyboard actions like dismissing the keyboard
     val localFocusManager = LocalFocusManager.current
     var firstname by remember{ mutableStateOf("")}
@@ -60,7 +53,6 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
     var password by remember{ mutableStateOf("")}
     var address by remember{ mutableStateOf("")}
     var username by remember { mutableStateOf("") }
-
 
     //notice and message
     var showRegistrationResult by remember { mutableStateOf(false) }
@@ -134,7 +126,7 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
         )
-        //Spacer(modifier = Modifier.height(100.dp))
+
         Button(
             onClick = {
                 var returnMsg = "";
@@ -159,48 +151,19 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
                     }
                 }
 
-                // Handle the sign-up logic here
-/*                runBlocking {
-                    coroutineScope.launch {
-                        val success = usersViewModel.registerUser(
-                            firstname = firstname.trim(),
-                            lastname = lastname.trim(),
-                            email = email.trim(),
-                            password = password,
-                            address = address.trim(),
-                            username = email.trim()
-                        )
-                        registrationSuccessful = success
-                        showRegistrationResult = true
 
-                    }
-                }*/
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("Register")
         }
-        if(showRegistrationResult) {
-
-/*            LaunchedEffect(key1 = showRegistrationResult) {
-                if (registrationSuccessful.equals("OK")) {
-                    Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
-
-                    navController.navigate("login")
-                } else {
-                    Toast.makeText(context, "Registration failed: " + registrationSuccessful, Toast.LENGTH_SHORT).show()
-                }
-                showRegistrationResult = false
-            }*/
-        }
-
 
 
         TextButton(onClick = { navController.navigate("login") }) {
             Text("Already a user? Login", style = MaterialTheme.typography.bodyMedium)
         }
         //new code for paivacy policy
-        TextButton(onClick = { navController.navigate("Privacy policy") }) {
+        TextButton(onClick = { navController.navigate("privacy") }) {
             Text("By Register to a member, you agree our privacy policy", style = MaterialTheme.typography.bodyMedium)
         }
 
@@ -209,42 +172,3 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
         }
     }
 }
-
-/*
-327 old code
-  Button(
-      onClick = {
-          // Handle the sign-up logic here
-          coroutineScope.launch {
-              usersViewModel.registerUser(
-                  firstname = firstname.trim(),
-                  lastname = lastname.trim(),
-                  email = email.trim(),
-                  password = password,
-                  address = address.trim()
-              )
-      }},
-              modifier = Modifier.align(Alignment.CenterHorizontally)
-  ) {
-      Text("Register")
-  }
-      */
-
-/* 328 try the auth keep old code here
-  Button(
-            onClick = {
-                // Handle the sign-up logic here
-                coroutineScope.launch {
-                    val success = usersViewModel.registerUser(
-                        firstname = firstname.trim(),
-                        lastname = lastname.trim(),
-                        email = email.trim(),
-                        password = password,
-                        address = address.trim(),
-                        username = email.trim()
-                    )
-                    registrationSuccessful = success
-                    showRegistrationResult = true
-
-                }},
-* */
