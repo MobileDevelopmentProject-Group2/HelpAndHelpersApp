@@ -2,7 +2,6 @@ package com.example.helpersapp.ui.screens
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,15 +29,61 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelperViewModel
-import com.google.firebase.firestore.FirebaseFirestore
+
+
+import android.net.Uri
+
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+
+
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+
+@Composable
+fun UploadImageToStorage(navController: NavController) {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // ActivityResultLauncherを作成して画像選択アクションを処理する
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        imageUri = uri
+    }
+
+    Column {
+        // 画像の選択ボタン
+        Button(onClick = { launcher.launch("image/*") }) {
+            Text("Select Image")
+        }
+
+        // 画像のアップロードボタン
+        Button(onClick = { imageUri?.let { uploadImageToStorage(it) } }) {
+            Text("Upload Image to Storage")
+        }
+    }
+}
+
+// 選択した画像をFirebase Storageにアップロードする関数
+fun uploadImageToStorage(uri: Uri) {
+    val storageRef = Firebase.storage.reference.child("images/${System.currentTimeMillis()}")
+    storageRef.putFile(uri)
+        .addOnSuccessListener {
+            Log.d("FirebaseStorage", "Upload success")
+        }
+        .addOnFailureListener { exception ->
+            Log.e("FirebaseStorage", "Error uploading image", exception)
+        }
+}
+
+
+
+
+
 
 @Composable
 fun CategorySelectionRow(
@@ -89,6 +134,9 @@ fun CategorySelectionRow(
         }
     }
 }
+
+
+
 
 @Composable
 fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: HelperViewModel) {
@@ -172,6 +220,9 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                 shape = MaterialTheme.shapes.medium
             )
 
+            // UploadImageToStorageコンポーネントを追加
+            UploadImageToStorage(navController)
+
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
@@ -223,7 +274,7 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                         .height(52.dp)
                         .width(150.dp)
                 ) {
-                    Text(text = "Post")
+                    Text(text = "Post to confirm")
                 }
             }
 
