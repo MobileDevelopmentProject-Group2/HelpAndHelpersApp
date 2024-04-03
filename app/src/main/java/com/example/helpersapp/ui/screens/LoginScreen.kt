@@ -8,10 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -24,19 +23,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.helpersapp.R
+import com.example.helpersapp.viewModel.LoginViewModel
+
+
 
 @Composable
-fun LoginScreen(navController: NavController, usersViewModel: ViewModel) {
+fun LoginScreen(
+    navController: NavController,
+    //usersViewModel: ViewModel,
+    loginViewModel: LoginViewModel
+) {
     val localFocusManager = LocalFocusManager.current
     var email by remember{ mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
+    //new code
+    //val loginSuccess by loginViewModel.loginSuccess.observeAsState()
+    var errorMessage by remember { mutableStateOf<String>("") }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -68,18 +80,40 @@ fun LoginScreen(navController: NavController, usersViewModel: ViewModel) {
             onValueChange = {email = it},
             label = { Text(text = "Email") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
+
         )
         OutlinedTextField(
             value = password,
             onValueChange = {password = it},
             label = { Text(text = "Password") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() }),
+            visualTransformation = PasswordVisualTransformation()
         )
+        // Display error message if not null or empty
+            if(!errorMessage.isNullOrEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         Button(
             onClick = {
                 // Handle the sign-up logic here
+                   localFocusManager.clearFocus()
+                   loginViewModel.loginUser(email, password){
+                          success, error ->
+                          if(success){
+                            navController.navigate("main")
+                          }else{
+                              errorMessage = "Login failed: $error"
+                          }
+                   }
+
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
@@ -98,9 +132,11 @@ fun LoginScreen(navController: NavController, usersViewModel: ViewModel) {
 
 }
 
+
+
 @Composable
 fun SodaLogo() {
-   val socialLogos = listOf(R.mipmap.facebook, R.mipmap.google, R.mipmap.twitter)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -110,7 +146,7 @@ fun SodaLogo() {
 
 //this iconbutton looks not right
         IconButton(onClick = { /* TODO: Add action for Facebook */ }) {
-            Image(painter = painterResource(id = R.mipmap.facebook), contentDescription = "Facebook")
+            Image(painter = painterResource(id = R.drawable.facebook), contentDescription = "Facebook")
         }
         IconButton(onClick = { /* TODO: Add action for Facebook */ }) {
             Image(painter = painterResource(id = R.mipmap.google), contentDescription = "Facebook")
@@ -118,20 +154,5 @@ fun SodaLogo() {
         IconButton(onClick = { /* TODO: Add action for Facebook */ }) {
             Image(painter = painterResource(id = R.mipmap.twitter), contentDescription = "Facebook")
         }
-        /*
-              socialLogos.forEach { logoRes ->
-            Image(
-                painter = painterResource(id = logoRes),
-                contentDescription = "Social media",
-                modifier = Modifier.size(48.dp)
-                )
-        }
-
-                IconButton(
-            onClick = { /* TODO: Add action for Facebook */ })
-        {
-            Icon(painter = painterResource(id = R.mipmap.facebook), contentDescription = "Facebook")
-        }
-        * */
     }
 }

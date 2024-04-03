@@ -8,8 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.helpersapp.ui.theme.HelpersAppTheme
@@ -20,19 +19,25 @@ import com.example.helpersapp.ui.screens.HelpDetailsScreen
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
+import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.helpersapp.viewModel.HelperViewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
+        //add login viewmodel
+        val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
+        //Firebase.initialize(this)
 
 
         setContent {
@@ -42,19 +47,28 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     AppLayout(
                         usersViewModel,
                         helpViewModel,
-                        helperViewModel
+                        helperViewModel,
+                        loginViewModel
                     )
+
                 }
             }
         }
     }
 }
+
+
+
 @Composable
-fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperViewModel: HelperViewModel) {
+
+fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, helperViewModel: HelperViewModel, loginViewModel: LoginViewModel)
+{
     val navController = rememberNavController()
+
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -68,13 +82,16 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperVie
             MainScreen(
                 navController,
                 usersViewModel,
-                helpViewModel
-          )
+                helpViewModel,
+                helperViewModel
+            )
         }
         composable("login") {
             LoginScreen(
                 navController,
-                usersViewModel
+                //usersViewModel,
+                //add login viewmodel
+                loginViewModel
             )
         }
         composable("register") {
@@ -83,6 +100,7 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperVie
                 usersViewModel
             )
         }
+
         composable("addHelp") {
             AddNewHelpScreen(
                 navController,
@@ -101,5 +119,11 @@ fun AppLayout(usersViewModel: ViewModel, helpViewModel: HelpViewModel, helperVie
                 helperViewModel
             )
         }
+        composable("privacy") {
+            PrivacyNTermsScreen(
+                navController
+            )
+        }
     }
 }
+
