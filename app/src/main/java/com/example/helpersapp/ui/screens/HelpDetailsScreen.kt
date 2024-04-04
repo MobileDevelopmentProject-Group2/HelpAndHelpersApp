@@ -23,9 +23,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.ui.components.HelpDetailsItem
@@ -92,7 +95,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                         .padding(top = 35.dp)
                         .height(52.dp)
                         .width(150.dp)
-                    ) {
+                ) {
                     Text(text = "Confirm")
                 }
             }

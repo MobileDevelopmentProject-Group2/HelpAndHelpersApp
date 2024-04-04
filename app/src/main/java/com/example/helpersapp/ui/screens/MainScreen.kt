@@ -7,16 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.ExitToApp
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
@@ -32,19 +31,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.helpersapp.R
-import com.example.helpersapp.ui.components.CategoryRadioButtons
+import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
@@ -58,8 +58,10 @@ fun MainScreen(
     helpViewModel: HelpViewModel,
     helperViewModel: HelperViewModel)
 {
+    val helpList by helpViewModel.helpList.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    helpViewModel.getAllHelpRequests()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -133,7 +135,7 @@ fun MainScreen(
                                     Image(
                                         painter = painterResource(id = R.drawable.baby_face_icon),
                                         contentDescription = "child",
-                                        modifier = Modifier.size(30.dp)
+                                        modifier = Modifier.size(25.dp)
                                     )
                                 }
                             }
@@ -155,7 +157,7 @@ fun MainScreen(
                                     Image(
                                         painter = painterResource(id = R.drawable.reading),
                                         contentDescription = "reading",
-                                        modifier = Modifier.size(30.dp)
+                                        modifier = Modifier.size(25.dp)
                                     )
                                 }
                             }
@@ -183,7 +185,7 @@ fun MainScreen(
                                     Image(
                                         painter = painterResource(id = R.drawable.baby_face_icon),
                                         contentDescription = "child",
-                                        modifier = Modifier.size(30.dp)
+                                        modifier = Modifier.size(25.dp)
                                     )
                                 }
                             }
@@ -205,21 +207,26 @@ fun MainScreen(
                                     Image(
                                         painter = painterResource(id = R.drawable.reading),
                                         contentDescription = "reading",
-                                        modifier = Modifier.size(30.dp)
+                                        modifier = Modifier.size(25.dp)
                                     )
                                 }
                             }
                         }
                         Text(
-                            text = "List of all recent requests for help:",
+                            text = "List of all help requests:",
+                            fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 30.dp, bottom = 5.dp)
+                            modifier = Modifier
+                                .padding(top = 30.dp, bottom = 5.dp)
+
                         )
-                        Button(onClick = { helpViewModel.getAllHelpRequests() }) {
-                            Text(text = "List all recent requests")
+                        if (helpList.isNotEmpty()) {
+                            ListAllHelpNeeded(helpList, helpViewModel, navController)
                         }
 
                         Spacer(modifier = Modifier.padding(50.dp))
+
+                        //here are the buttons to navigate to other screens; we can remove these later
                         Button(onClick = { navController.navigate("home") }) {
                             Text(text = "to landing screen")
                         }
