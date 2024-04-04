@@ -25,6 +25,7 @@ import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.helpersapp.ui.screens.UserProfileScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 
 
@@ -122,7 +123,13 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
         composable("privacy") {
             PrivacyNTermsScreen(
                 navController
-            )
+            )}
+        //user profit for testing
+       composable("profile") {
+                UserProfileScreen(
+                    navController,
+                    usersViewModel
+                )
         }
     }
 }

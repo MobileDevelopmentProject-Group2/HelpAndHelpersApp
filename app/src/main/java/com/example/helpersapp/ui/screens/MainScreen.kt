@@ -45,5 +45,8 @@ fun MainScreen(
         Button(onClick = { navController.navigate("postHelper") }) {
             Text(text = "To Post New Helper Details Screen")
         }
+        Button(onClick = { navController.navigate("profile") }) {
+            Text(text = "profile")
+        }
     }
 }

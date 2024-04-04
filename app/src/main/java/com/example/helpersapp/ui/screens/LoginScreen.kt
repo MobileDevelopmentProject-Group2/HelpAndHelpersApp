@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +35,8 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.LoginViewModel
-
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 
 @Composable
@@ -49,6 +51,16 @@ fun LoginScreen(
     //new code
     //val loginSuccess by loginViewModel.loginSuccess.observeAsState()
     var errorMessage by remember { mutableStateOf<String>("") }
+    //0404 try new code to prevent user to login again if already login
+    /*
+    val user = Firebase.auth.currentUser?.uid
+
+    if (user != null) {
+        LaunchedEffect(Unit) {
+        navController.navigate("profile") {
+            popUpTo("login") { inclusive = true }
+        }
+    } }*/
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -66,8 +78,8 @@ fun LoginScreen(
             contentDescription =null,
             modifier = Modifier
                 .height(180.dp)
-                //.padding(top=1.dp)
-                //.fillMaxWidth()
+            //.padding(top=1.dp)
+            //.fillMaxWidth()
 
         )
         Text(
@@ -94,25 +106,31 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation()
         )
         // Display error message if not null or empty
-            if(!errorMessage.isNullOrEmpty()) {
-                Text(
-                    text = errorMessage,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+        if(!errorMessage.isNullOrEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
         Button(
             onClick = {
                 // Handle the sign-up logic here
-                   localFocusManager.clearFocus()
-                   loginViewModel.loginUser(email, password){
-                          success, error ->
-                          if(success){
-                            navController.navigate("main")
-                          }else{
-                              errorMessage = "Login failed: $error"
-                          }
-                   }
+                localFocusManager.clearFocus()
+                loginViewModel.loginUser(email, password){
+                        success, error ->
+                    if(success){
+                        navController.navigate("main")
+                        //add if user login in already then cant link to login screen
+                        /*
+                        {
+                            popUpTo("login") { inclusive = true }
+                        }
+                             */
+                    }else{
+                        errorMessage = "Login failed: $error"
+                    }
+                }
 
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -131,7 +149,6 @@ fun LoginScreen(
 
 
 }
-
 
 
 @Composable
@@ -156,3 +173,4 @@ fun SodaLogo() {
         }
     }
 }
+

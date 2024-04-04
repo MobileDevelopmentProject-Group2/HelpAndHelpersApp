@@ -2,15 +2,20 @@ package com.example.helpersapp.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 
 class LoginViewModel : ViewModel() {
-    private val firebaseAuth:FirebaseAuth = FirebaseAuth.getInstance()
-    //val loginSuccess = MutableLiveData<Boolean>()
-    //val errorMessage = MutableLiveData<String>()
+    val firebaseAuth:FirebaseAuth = FirebaseAuth.getInstance()
+    //get user login data
+    //val user : FirebaseUser?
+    //get() = Firebase.auth.currentUser
+
     fun loginUser(email: String, password: String, onResult:  (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             try {
@@ -23,10 +28,9 @@ class LoginViewModel : ViewModel() {
 
             }catch (e:Exception) {
                 onResult(false, e.message ?: "An error occurred")
-                }
+            }
         }
     }
-    }
-
+}
 
 

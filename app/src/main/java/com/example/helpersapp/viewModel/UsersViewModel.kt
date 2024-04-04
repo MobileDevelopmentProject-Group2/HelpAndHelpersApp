@@ -11,6 +11,8 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -21,6 +23,9 @@ class UsersViewModel: ViewModel()  {
     //get the firebase auth
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
+    //get user data from firebase to userdetail screen, testing
+    private val _userDetails = MutableStateFlow<Map<String, Any>?>(null)
+    val userDetails: StateFlow<Map<String, Any>?> = _userDetails
 
     private fun createUserIdFromEmail(email: String): String {
         // lowercase email address
@@ -197,6 +202,20 @@ class UsersViewModel: ViewModel()  {
 
         return status;
     }
+    //get user data
+
+    fun fetchUserDetails(userId: String) {
+            viewModelScope.launch {
+                try {
+                    val documentSnapshot  = db.collection("users").document(userId).get().await()
+                    _userDetails.value = documentSnapshot.data
+                } catch (e: Exception) {
+                    Log.e("Error message: ", "Failed to fetch user details", e)
+                }
+            }
+
+        }
+
 }
 
 

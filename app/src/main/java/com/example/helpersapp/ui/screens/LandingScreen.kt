@@ -99,6 +99,7 @@ fun LandingScreen(navController: NavController) {
             Text(stringResource(id = R.string.privacy_policy), style = MaterialTheme.typography.bodyLarge)
         }
 
+
         SodaLogo2()
     }
 }
