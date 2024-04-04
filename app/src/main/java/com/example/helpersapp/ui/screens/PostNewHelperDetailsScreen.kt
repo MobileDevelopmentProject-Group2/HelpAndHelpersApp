@@ -47,25 +47,21 @@ import com.google.firebase.storage.ktx.storage
 fun UploadImageToStorage(navController: NavController) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // ActivityResultLauncherを作成して画像選択アクションを処理する
+    // Create an ActivityResultLauncher to handle image selection actions
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         imageUri = uri
     }
 
     Column {
-        // 画像の選択ボタン
         Button(onClick = { launcher.launch("image/*") }) {
             Text("Select Image")
         }
 
-        // 画像のアップロードボタン
         Button(onClick = { imageUri?.let { uploadImageToStorage(it) } }) {
             Text("Upload Image to Storage")
         }
     }
 }
-
-// 選択した画像をFirebase Storageにアップロードする関数
 fun uploadImageToStorage(uri: Uri) {
     val storageRef = Firebase.storage.reference.child("images/${System.currentTimeMillis()}")
     storageRef.putFile(uri)
@@ -127,15 +123,6 @@ fun CategorySelectionRow(
     }
 }
 @Composable
-fun getUserId(): String? {
-    // Firebase Authentication
-    val currentUser = FirebaseAuth.getInstance().currentUser
-
-    return currentUser?.uid
-}
-
-
-@Composable
 fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: HelperViewModel) {
 
     var about by remember { mutableStateOf("") }
@@ -146,14 +133,6 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
     val username = Firebase.auth.currentUser?.uid
     // username for developing status
     //val username = "dev_user66"
-
-    ///////////////////////////how to get user name?
-    // get username by Firebase Authentication
-  /*  val firebaseAuth = FirebaseAuth.getInstance()
-    val currentUser = firebaseAuth.currentUser
-    val username = currentUser?.displayName ?: "unknown_user"
-
-   */
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -219,7 +198,6 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                 shape = MaterialTheme.shapes.medium
             )
 
-            // UploadImageToStorageコンポーネントを追加
             UploadImageToStorage(navController)
 
             Row(
@@ -246,7 +224,6 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                     )
                     Text(text = "Back")
                 }
-
                 Button(
                     onClick = {
                         if (username != null) {
@@ -278,7 +255,6 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                     Text(text = "Post to confirm")
                 }
             }
-
         }
     }
 }
