@@ -31,6 +31,9 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+    fun logoutUser() {
+        firebaseAuth.signOut()
+    }
 }
 
 
