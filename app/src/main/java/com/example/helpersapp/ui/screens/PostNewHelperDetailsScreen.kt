@@ -35,14 +35,11 @@ import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelperViewModel
-
-
+import com.google.firebase.auth.FirebaseAuth
 import android.net.Uri
-
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-
-
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
@@ -79,11 +76,6 @@ fun uploadImageToStorage(uri: Uri) {
             Log.e("FirebaseStorage", "Error uploading image", exception)
         }
 }
-
-
-
-
-
 
 @Composable
 fun CategorySelectionRow(
@@ -134,8 +126,13 @@ fun CategorySelectionRow(
         }
     }
 }
+@Composable
+fun getUserId(): String? {
+    // Firebase Authentication
+    val currentUser = FirebaseAuth.getInstance().currentUser
 
-
+    return currentUser?.uid
+}
 
 
 @Composable
@@ -146,15 +143,17 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
     var helpdetails by remember { mutableStateOf("") }
     var experience by remember { mutableStateOf("") }
 
+    val username = Firebase.auth.currentUser?.uid
     // username for developing status
-    val username = "dev_user3"
-/*
+    //val username = "dev_user66"
+
+    ///////////////////////////how to get user name?
     // get username by Firebase Authentication
-    val firebaseAuth = FirebaseAuth.getInstance()
+  /*  val firebaseAuth = FirebaseAuth.getInstance()
     val currentUser = firebaseAuth.currentUser
     val username = currentUser?.displayName ?: "unknown_user"
 
- */
+   */
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -250,19 +249,21 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
 
                 Button(
                     onClick = {
-                        helperViewModel.saveUserData(
-                            about,
-                            category,
-                            helpdetails,
-                            experience,
-                            username,
-                            onSuccess = {
-                                Log.d(TAG, "DocumentSnapshot successfully written!")
-                            },
-                            onFailure = { e ->
-                                Log.e(TAG, " an error while saving data to Firestore.", e)
-                            }
-                        )
+                        if (username != null) {
+                            helperViewModel.saveUserData(
+                                about,
+                                category,
+                                helpdetails,
+                                experience,
+                                username,
+                                onSuccess = {
+                                    Log.d(TAG, "DocumentSnapshot successfully written!")
+                                },
+                                onFailure = { e ->
+                                    Log.e(TAG, " an error while saving data to Firestore.", e)
+                                }
+                            )
+                        }
                     },
                     shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
@@ -281,3 +282,5 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
         }
     }
 }
+
+
