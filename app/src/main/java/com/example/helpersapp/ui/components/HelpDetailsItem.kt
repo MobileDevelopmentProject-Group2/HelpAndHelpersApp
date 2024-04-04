@@ -23,7 +23,8 @@ fun HelpDetailsItem(helpDetails: HelpNeeded) {
         "Date" to helpDetails.date,
         "Time" to helpDetails.time,
         "Price Range" to helpDetails.priceRange.toString(),
-        "Postal Code" to helpDetails.postalCode.toString()
+        "Postal Code" to helpDetails.postalCode,
+        "Request posted" to formatDateValue(helpDetails.requestPostDate),
     )
     Column(
         modifier = Modifier
@@ -46,7 +47,7 @@ fun HelpDetailsItem(helpDetails: HelpNeeded) {
                             .weight(1f)
                     )
                     Text(
-                        text = if (label != "Price Range") value else helpDetails.priceRange.start.toInt().toString() + " € - " + helpDetails.priceRange.endInclusive.toInt().toString() + " €",
+                        text = if (label != "Price Range") value else helpDetails.priceRange.endInclusive.toInt().toString() + " € - " + helpDetails.priceRange.start.toInt().toString() + " €",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Start,
                         modifier = Modifier
