@@ -23,6 +23,7 @@ class HelpViewModel: ViewModel() {
 
     val db = Firebase.firestore
     val user = Firebase.auth.currentUser?.uid
+    val userEmail = Firebase.auth.currentUser?.email
     val dateNow = System.currentTimeMillis()
 
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
@@ -65,6 +66,7 @@ class HelpViewModel: ViewModel() {
                             )
                         )
                         .addOnSuccessListener {
+                            Log.d("HelpViewEmail" ,"${userEmail}")
                             Log.d("HelpViewModel", "Help added successfully")
                             //Toast.makeText(null, "Help added successfully", Toast.LENGTH_SHORT).show()
                         }
