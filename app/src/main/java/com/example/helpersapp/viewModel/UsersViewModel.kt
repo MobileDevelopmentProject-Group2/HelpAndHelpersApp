@@ -5,22 +5,33 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.helpersapp.model.HelpNeeded
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.collections.hashMapOf as hashMapOf
+import com.example.helpersapp.model.User
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 class UsersViewModel: ViewModel()  {
     //get the firebase auth
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
+
+    val userEmail = Firebase.auth.currentUser?.email
+    val userName = createUserIdFromEmail(userEmail.toString())
+
+    private val _userDetails = MutableStateFlow(User())
+    val userDetails: StateFlow<User> = _userDetails.asStateFlow()
 
     private fun createUserIdFromEmail(email: String): String {
         // lowercase email address
@@ -34,6 +45,26 @@ class UsersViewModel: ViewModel()  {
 
         Log.d("UsersViewModel", "UserId resolved to: $userIdFromEmail")
         return userIdFromEmail
+    }
+    fun getUserDetails () {
+        viewModelScope.launch {
+            try {
+                userEmail?.let {
+                    val user = db.collection("users")
+                        .document(userName)
+                        .get()
+                        .addOnSuccessListener { user ->
+                            _userDetails.value = user.toObject(User::class.java)!!
+                            Log.d("UsersViewModel", "User details retrieved successfully: ${_userDetails.value}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("UsersViewModel", "Failed to get user details", e)
+                        }
+                    }
+            } catch (e: Exception) {
+                Log.e("UsersViewModel", "Failed to get user details", e)
+            }
+        }
     }
 
     suspend fun registerUserToDocumentStore(firstname: String, lastname: String, email: String, password: String, address: String): String
