@@ -58,10 +58,14 @@ fun MainScreen(
     helpViewModel: HelpViewModel,
     helperViewModel: HelperViewModel)
 {
+    helpViewModel.getAllHelpRequests()
+    usersViewModel.getUserDetails()
     val helpList by helpViewModel.helpList.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    helpViewModel.getAllHelpRequests()
+    val user by usersViewModel.userDetails.collectAsState()
+
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -109,7 +113,7 @@ fun MainScreen(
                                 .padding(bottom = 30.dp)
                                 .align(Alignment.CenterHorizontally),
                             style = MaterialTheme.typography.titleLarge,
-                            text = "Welcome to CareConnect!",
+                            text = "Welcome to CareConnect ${user.firstname}!",
                         )
                         Text(
                             text = "Get a list of all helper persons by category:",
