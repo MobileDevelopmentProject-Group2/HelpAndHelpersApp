@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.helpersapp.ui.theme.HelpersAppTheme
@@ -115,8 +114,9 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
         }
         composable("postHelper") {
             PostNewHelperDetailsScreen(
+                usersViewModel,
                 navController,
-                helperViewModel
+                helperViewModel,
             )
         }
         composable("privacy") {
@@ -126,4 +126,5 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
         }
     }
 }
+
 
