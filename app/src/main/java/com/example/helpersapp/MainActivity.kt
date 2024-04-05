@@ -115,8 +115,9 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
         }
         composable("postHelper") {
             PostNewHelperDetailsScreen(
+                usersViewModel,
                 navController,
-                helperViewModel
+                helperViewModel,
             )
         }
         composable("privacy") {
@@ -129,11 +130,5 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
     }
 }
 
-/*
-       composable("profile") {
-                UserProfileScreen(
-                    navController,
-                    usersViewModel
-                )
-        }
-* */
+
+

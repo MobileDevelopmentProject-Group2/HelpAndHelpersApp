@@ -2,7 +2,7 @@ package com.example.helpersapp.ui.screens
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -26,27 +29,50 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
+import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelperViewModel
-import com.google.firebase.firestore.FirebaseFirestore
-
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
+import com.example.helpersapp.ui.components.createUsername
+import com.example.helpersapp.viewModel.UsersViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 @Composable
-fun ShowIMage1() {
-    Image(
-        painter = painterResource(id = R.drawable.bottom_background_with_logo),
-        contentDescription = "Background image of the bottom bar",
-        contentScale = ContentScale.FillWidth,
-        alignment = Alignment.BottomEnd,
-        modifier = Modifier
-            .fillMaxSize()
-            .height(200.dp)
-    )
+fun UploadImageToStorage(navController: NavController) {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Create an ActivityResultLauncher to handle image selection actions
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        imageUri = uri
+    }
+
+    Column {
+        Button(onClick = { launcher.launch("image/*") }) {
+            Text("Select Image")
+        }
+
+        Button(onClick = { imageUri?.let { uploadImageToStorage(it) } }) {
+            Text("Upload Image to Storage")
+        }
+    }
+}
+fun uploadImageToStorage(uri: Uri) {
+    val storageRef = Firebase.storage.reference.child("images/${System.currentTimeMillis()}")
+    storageRef.putFile(uri)
+        .addOnSuccessListener {
+            Log.d("FirebaseStorage", "Upload success")
+        }
+        .addOnFailureListener { exception ->
+            Log.e("FirebaseStorage", "Error uploading image", exception)
+        }
 }
 
 @Composable
@@ -98,35 +124,41 @@ fun CategorySelectionRow(
         }
     }
 }
-
 @Composable
-fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: HelperViewModel) {
+fun PostNewHelperDetailsScreen(
+    usersViewModel: UsersViewModel,
+    navController: NavController,
+    helperViewModel: HelperViewModel,
+    ) {
 
     var about by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
     var helpdetails by remember { mutableStateOf("") }
     var experience by remember { mutableStateOf("") }
 
-    // username for developing status
-    val username = "dev_user3"
-/*
-    // get username by Firebase Authentication
-    val firebaseAuth = FirebaseAuth.getInstance()
-    val currentUser = firebaseAuth.currentUser
-    val username = currentUser?.displayName ?: "unknown_user"
+    val useremail = Firebase.auth.currentUser?.email
+    val username = createUsername(useremail ?: "")
+    //val username = Firebase.auth.currentUser?.uid
 
- */
+    // username for developing status
+    //val username = "dev_user66"
+    val user by usersViewModel.userDetails.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        ShowIMage1()
+        ShowBottomImage()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
         ) {
+            Text(
+                text = "Hi,${user.firstname}!",
+                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                style = MaterialTheme.typography.titleLarge,
+            )
             Text(
                 text = stringResource(R.string.post_your_area_of_expertise),
                 modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
@@ -181,62 +213,65 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                 shape = MaterialTheme.shapes.medium
             )
 
-            Button(
-                onClick = {
-                    helperViewModel.saveUserData(
-                        about,
-                        category,
-                        helpdetails,
-                        experience,
-                        username,
-                        onSuccess = {
-                            Log.d(TAG, "DocumentSnapshot successfully written!")
-                        },
-                        onFailure = { e ->
-                            Log.e(TAG, " an error while saving data to Firestore.", e)
-                        }
-                    )
-                },
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
+            UploadImageToStorage(navController)
 
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
-                    .padding(top = 35.dp, bottom = 20.dp)
-                    .height(52.dp)
-                    .width(210.dp)
-                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
             ) {
-                Text(text = "Post")
+                Button(
+                    onClick = { navController.navigateUp() },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(text = "Back")
+                }
+                Button(
+                    onClick = {
+                        if (username != null) {
+                            helperViewModel.saveUserData(
+                                about,
+                                category,
+                                helpdetails,
+                                experience,
+                                username,
+                                onSuccess = {
+                                    Log.d(TAG, "DocumentSnapshot successfully written!")
+                                },
+                                onFailure = { e ->
+                                    Log.e(TAG, " an error while saving data to Firestore.", e)
+                                }
+                            )
+                        }
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Text(text = "Post to confirm")
+                }
             }
-
         }
     }
 }
 
 
-/*
-fun saveUserData(about: String, category: String, helpdetails: String, experience: String, username: String) {
-    val db = FirebaseFirestore.getInstance()
-
-    val userData = hashMapOf(
-        "about" to about,
-        "category" to category,
-        "helpdetails" to helpdetails,
-        "experience" to experience,
-        "username" to username
-    )
-
-    db.collection("helpers").document(username)
-        .set(userData)
-        .addOnSuccessListener {
-            Log.d(TAG, "DocumentSnapshot successfully written!")
-        }
-        .addOnFailureListener { e ->
-            Log.w(TAG, "Error writing document", e)
-        }
-}
-
- */
