@@ -35,10 +35,12 @@ import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelperViewModel
-import com.google.firebase.auth.FirebaseAuth
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
+import com.example.helpersapp.ui.components.createUsername
+import com.example.helpersapp.viewModel.UsersViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -123,16 +125,24 @@ fun CategorySelectionRow(
     }
 }
 @Composable
-fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: HelperViewModel) {
+fun PostNewHelperDetailsScreen(
+    usersViewModel: UsersViewModel,
+    navController: NavController,
+    helperViewModel: HelperViewModel,
+    ) {
 
     var about by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
     var helpdetails by remember { mutableStateOf("") }
     var experience by remember { mutableStateOf("") }
 
-    val username = Firebase.auth.currentUser?.uid
+    val useremail = Firebase.auth.currentUser?.email
+    val username = createUsername(useremail ?: "")
+    //val username = Firebase.auth.currentUser?.uid
+
     // username for developing status
     //val username = "dev_user66"
+    val user by usersViewModel.userDetails.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -144,6 +154,11 @@ fun PostNewHelperDetailsScreen(navController: NavController, helperViewModel: He
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
         ) {
+            Text(
+                text = "Hi,${user.firstname}!",
+                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                style = MaterialTheme.typography.titleLarge,
+            )
             Text(
                 text = stringResource(R.string.post_your_area_of_expertise),
                 modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
