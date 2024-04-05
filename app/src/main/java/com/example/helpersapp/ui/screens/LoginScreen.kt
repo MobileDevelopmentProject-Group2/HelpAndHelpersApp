@@ -51,16 +51,7 @@ fun LoginScreen(
     //new code
     //val loginSuccess by loginViewModel.loginSuccess.observeAsState()
     var errorMessage by remember { mutableStateOf<String>("") }
-    //0404 try new code to prevent user to login again if already login
-    /*
-    val user = Firebase.auth.currentUser?.uid
 
-    if (user != null) {
-        LaunchedEffect(Unit) {
-        navController.navigate("profile") {
-            popUpTo("login") { inclusive = true }
-        }
-    } }*/
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,

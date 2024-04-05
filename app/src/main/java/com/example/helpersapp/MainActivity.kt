@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.helpersapp.ui.theme.HelpersAppTheme
@@ -25,7 +24,6 @@ import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.helpersapp.ui.screens.UserProfileScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 
 
@@ -84,7 +82,8 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
                 navController,
                 usersViewModel,
                 helpViewModel,
-                helperViewModel
+                helperViewModel,
+                loginViewModel
             )
         }
         composable("login") {
@@ -125,12 +124,16 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
                 navController
             )}
         //user profit for testing
+
+
+    }
+}
+
+/*
        composable("profile") {
                 UserProfileScreen(
                     navController,
                     usersViewModel
                 )
         }
-    }
-}
-
+* */
