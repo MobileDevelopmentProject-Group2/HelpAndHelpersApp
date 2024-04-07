@@ -114,12 +114,6 @@ fun LoginScreen(
                         success, error ->
                     if(success){
                         navController.navigate("main")
-                        //add if user login in already then cant link to login screen
-                        /*
-                        {
-                            popUpTo("login") { inclusive = true }
-                        }
-                             */
                     }else{
                         errorMessage = "Login failed: $error"
                     }
