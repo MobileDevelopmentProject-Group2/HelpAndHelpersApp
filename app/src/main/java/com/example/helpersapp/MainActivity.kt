@@ -70,7 +70,7 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "main"
     ) {
         composable("home") {
             LandingScreen(
@@ -122,7 +122,8 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
         }
         composable("privacy") {
             PrivacyNTermsScreen(
-                navController
+                navController,
+                loginViewModel
             )}
         //user profit for testing
 

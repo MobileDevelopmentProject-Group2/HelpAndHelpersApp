@@ -28,13 +28,21 @@ class UsersViewModel: ViewModel()  {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     //get user data from firebase to userdetail screen, testing
-    val userEmail = Firebase.auth.currentUser?.email
-    val userName = createUserIdFromEmail(userEmail.toString())
+    // Why we store these as local variables when no need
+    //val userEmail = Firebase.auth.currentUser?.email
+    //val userName = createUserIdFromEmail(userEmail.toString())
 
     private val _userDetails = MutableStateFlow(User())
     val userDetails: StateFlow<User> = _userDetails.asStateFlow()
 
     private fun createUserIdFromEmail(email: String): String {
+        // Parameter sanity check
+        if(email.isNullOrEmpty() || email.isBlank() ||
+                !email.contains('@') || !email.contains('.')) {
+            Log.e("UsersViewModel", "Invalid email: $email")
+            return "";
+        }
+
         // lowercase email address
         var userIdFromEmail = email.lowercase()
         // remove TLD from email
@@ -50,6 +58,14 @@ class UsersViewModel: ViewModel()  {
     fun getUserDetails () {
         viewModelScope.launch {
             try {
+                val userEmail = Firebase.auth.currentUser?.email
+                val userName = createUserIdFromEmail(userEmail.toString())
+
+                // Sanity check
+                if (userName.isNullOrEmpty()) {
+                    throw Exception("No current user")
+                }
+
                 userEmail?.let {
                     val user = db.collection("users")
                         .document(userName)
@@ -233,111 +249,3 @@ class UsersViewModel: ViewModel()  {
 }
 
 
-
-
-/*
-0327 old code
-    private val db = FirebaseFirestore.getInstance()
-    private val _statusMessage = MutableLiveData<String?>()
-    val statusMessage: MutableLiveData<String?> = _statusMessage
-
-    //val statusMessage: LiveData<String?>
-      //  get() = _statusMessage
-    private val _navigateToLogin = MutableLiveData<Boolean>(false)
-    val navigateToLogin: LiveData<Boolean> = _navigateToLogin
-    //private val _navigateToLogin = MutableStateFlow(false)
-    //val navigateToLogin = _navigateToLogin.asStateFlow()
-       viewModelScope.launch {
-           try {
-               val newUser = hashMapOf(
-                   "firstname" to firstname,
-                   "lastname" to lastname,
-                   "email" to email,
-                   //"password" to password,
-                   "address" to address
-               )
-               db.collection("users").add(newUser).await()
-               true // Return true on success
-           } catch (e:Exception) {
-               Log.e("UsersViewModel", "Failed to register user", e)
-               false // Return false on failure
-
-           }
-       } */
-/* 328 try the auth keep old code here
-suspend fun registerUser(
-        firstname: String,
-        lastname: String,
-        email: String,
-        password: String,
-        address: String,
-        username: String
-    ): Boolean {
-        return try {
-            val newUser = hashMapOf(
-                "firstname" to firstname,
-                "lastname" to lastname,
-                "email" to email,
-                "address" to address,
-                //add username
-                //"username" to username
-            )
-            val username = email.replace(".", ",")
-            db.collection("users").add(newUser).await()
-            true // Return true on success
-        } catch (e: Exception) {
-            Log.e("UsersViewModel", "Failed to register user", e)
-            false // Return false on failure
-        }
-    }
-* */
-//write to auth db
-/*    suspend fun registerUser(
-        firstname: String,
-        lastname: String,
-        email: String,
-        password: String,
-        address: String,
-        username: String
-    ): Boolean {
-            if (firstname.isBlank() || lastname.isBlank() || email.isBlank() || password.isBlank() || address.isBlank() ) {
-            Log.e("UsersViewModel", "All fields must be filled out.")
-            return false
-        }
-        return try {
-            // Sanitize email address by removing possible spaces in middle of string
-            var sanitizedEmail = email.replace(" ", "")
-
-            val newUser = hashMapOf(
-                "firstname" to firstname,
-                "lastname" to lastname,
-                "email" to sanitizedEmail,
-                "address" to address,
-                //add username
-                "username" to username
-            )
-            // Sanitize data for username
-            if (!sanitizedEmail.contains("@")) {
-                throw Exception("Invalid email address")
-            }
-
-
-            // lowercase email address
-            var username = sanitizedEmail.lowercase()
-            // remove TLD from email
-            username = username.substring(0, (username.lastIndexOf('.')-1))
-            // remove . from email
-            username = username.replace(".", "")
-            // remove @ from email
-            username = username.replace("@", "")
-
-            // Add user to Firestore (Replaces existing one..)
-            db.collection("users").document(username).set(newUser).await()
-            true // Return true on success
-        } catch (e: Exception) {
-            Log.e("UsersViewModel", "Failed to register user", e)
-            false // Return false on failure
-        }
-    }   }
-
- */

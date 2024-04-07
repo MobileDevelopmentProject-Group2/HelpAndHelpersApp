@@ -1,5 +1,6 @@
 package com.example.helpersapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +49,8 @@ import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 fun MainScreen(
@@ -58,6 +61,16 @@ fun MainScreen(
     loginViewModel: LoginViewModel
 )
 {
+    val userLoggedIn = (Firebase.auth.currentUser != null)
+
+    // Main screen should not be accessible if there is no current user
+    //disable the button if user not login yet
+    if (!userLoggedIn) {
+        Log.w("MainScreen", "Trying to access main screen without current user logged in, redirect navigation to home screen")
+        navController.navigate("home")
+        return
+    }
+
     helpViewModel.getAllHelpRequests()
     usersViewModel.getUserDetails()
     val helpList by helpViewModel.helpList.collectAsState()

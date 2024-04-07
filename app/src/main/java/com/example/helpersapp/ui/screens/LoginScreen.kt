@@ -51,6 +51,8 @@ fun LoginScreen(
     //new code
     //val loginSuccess by loginViewModel.loginSuccess.observeAsState()
     var errorMessage by remember { mutableStateOf<String>("") }
+    val currentUser = Firebase.auth.currentUser
+    val userLoggedIn = (currentUser != null)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -132,8 +134,10 @@ fun LoginScreen(
             Text("Not a user? Register here",
                 style = MaterialTheme.typography.bodyLarge)
         }
-        Button(onClick = { navController.navigate("main")}) {
+        //if user lgoin, then link to the home
+        Button(enabled = userLoggedIn, onClick = { navController.navigate("main")}) {
             Text(text = "Home")
+
         }
         SodaLogo()
     }
