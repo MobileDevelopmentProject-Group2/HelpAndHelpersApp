@@ -55,7 +55,7 @@ import java.util.UUID
 
 
 @Composable
-fun UploadImageAndCertificateToStorage(navController: NavController) {
+fun UploadImageAndCertificateToStorage(navController: NavController, helperViewModel: HelperViewModel,) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var certificateUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -94,43 +94,13 @@ fun UploadImageAndCertificateToStorage(navController: NavController) {
         }
 
         Button(onClick = {
-            imageUri?.let { uploadProfilePictureToStorage(it) }
-            certificateUri?.let { uploadCertificateToStorage(it) }
-        }) {
+            imageUri?.let { helperViewModel.uploadProfilePicture(it) }
+            certificateUri?.let { helperViewModel.uploadCertificate(it) }
+        })  {
             Text("Upload")
         }
     }
 }
-
-fun uploadProfilePictureToStorage(uri: Uri) {
-    val useremail = Firebase.auth.currentUser?.email
-    val username = createUsername(useremail ?: "")
-    val storageRef = Firebase.storage.reference.child("$username/profile_picture.jpg")
-
-    storageRef.putFile(uri)
-        .addOnSuccessListener {
-            Log.d("FirebaseStorage", "Profile picture upload success")
-        }
-        .addOnFailureListener { exception ->
-            Log.e("FirebaseStorage", "Error uploading profile picture", exception)
-        }
-}
-
-fun uploadCertificateToStorage(uri: Uri) {
-    val useremail = Firebase.auth.currentUser?.email
-    val username = createUsername(useremail ?: "")
-    val certificateId = UUID.randomUUID().toString()
-    val storageRef = Firebase.storage.reference.child("$username/certificates/$certificateId.pdf")
-
-    storageRef.putFile(uri)
-        .addOnSuccessListener {
-            Log.d("FirebaseStorage", "Certificate upload success")
-        }
-        .addOnFailureListener { exception ->
-            Log.e("FirebaseStorage", "Error uploading certificate", exception)
-        }
-}
-
 @Composable
 fun CategorySelectionRow(
     modifier: Modifier = Modifier,
@@ -194,10 +164,6 @@ fun PostNewHelperDetailsScreen(
 
     val useremail = Firebase.auth.currentUser?.email
     val username = createUsername(useremail ?: "")
-    //val username = Firebase.auth.currentUser?.uid
-
-    // username for developing status
-    //val username = "dev_user66"
     val user by usersViewModel.userDetails.collectAsState()
 
     Box(
@@ -269,8 +235,7 @@ fun PostNewHelperDetailsScreen(
                 shape = MaterialTheme.shapes.medium
             )
 
-            //UploadImageToStorage(navController)
-            UploadImageAndCertificateToStorage(navController)
+            UploadImageAndCertificateToStorage(navController,helperViewModel)
 
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
