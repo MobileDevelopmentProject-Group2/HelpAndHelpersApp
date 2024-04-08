@@ -67,7 +67,7 @@ fun MainScreen(
     //disable the button if user not login yet
     if (!userLoggedIn) {
         Log.w("MainScreen", "Trying to access main screen without current user logged in, redirect navigation to home screen")
-        navController.navigate("main")
+        navController.navigate("home")
         return
     }
 
