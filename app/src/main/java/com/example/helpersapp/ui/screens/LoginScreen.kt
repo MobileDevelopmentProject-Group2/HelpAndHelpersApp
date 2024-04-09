@@ -64,16 +64,12 @@ fun LoginScreen(
             contentDescription =null,
             modifier = Modifier
                 .fillMaxWidth()
-
         )
         Image(
             painter = painterResource(id = R.mipmap.logo) ,
             contentDescription =null,
             modifier = Modifier
                 .height(180.dp)
-            //.padding(top=1.dp)
-            //.fillMaxWidth()
-
         )
         Text(
             text = "Login" ,

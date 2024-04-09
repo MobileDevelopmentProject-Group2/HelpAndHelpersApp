@@ -1,5 +1,6 @@
 package com.example.helpersapp.ui.screens
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,7 +50,7 @@ import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
-fun PrivacyNTermsScreen(
+fun AboutAndContactScreen(
     navController: NavController,
     loginViewModel: LoginViewModel
 ) {
@@ -72,7 +73,7 @@ fun PrivacyNTermsScreen(
                     icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
                     label = { Text(text = "My data") },
                     selected = false,
-                    onClick = { navController.navigate("my_data") }
+                    onClick = { /*TODO*/ }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.Phone, contentDescription = null) },
@@ -103,37 +104,73 @@ fun PrivacyNTermsScreen(
                                 .padding(bottom = 30.dp)
                                 .align(Alignment.CenterHorizontally),
                             style = MaterialTheme.typography.titleLarge,
-                            text = "Privacy and Terms",
+                            text = "About CareConnect",
+                            fontWeight = FontWeight.Bold
                         )
 
                         Row {
                         }
                         Text(
-                            text = stringResource(R.string.privacy_policy_content),
+                            text = "At CareConnect, we believe every child deserves the best care and education. " +
+                                    "We are dedicated to connecting parents with the top nannies and tutors across the country. " +
+                                    "Through a rigorous screening process, we ensure only the most qualified candidates are matched with families, " +
+                                    "promoting a safe and nurturing environment for children's growth and learning.",
                             style = MaterialTheme.typography.bodyLarge
                         )
-
+                        Spacer(modifier = Modifier.height(16.dp))
                         Column {
                             Text(
-                                text = "Data Usage",
+                                text = "Our Vision",
                                 modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                                //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
                                 style = MaterialTheme.typography.titleLarge,
                             )
                             Text(
-                                text =
-                                    "We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device." +
-                                    "TRACKING and COOKIES DATA"+
-                                    "We use cookies and similar tracking technologies to track the activity on our Service and hold certain information."+
-                                    "Cookies are files with a small amount of data which may include an anonymous unique identifier. Cookies are sent to your browser from a website and stored on your device. Tracking technologies also used are beacons, tags, and scripts to collect and track information and to improve and analyze our Service"+
-                                    "You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service",
+                                text = "To be the most trusted platform for parental support services, " +
+                                        "where every parent can find peace of mind knowing their children are in good hands.",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Our Missions",
+                                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Text(
+                                text = "Helping parents by providing them with a wide range of quality caregivers and educators, " +
+                                        "enabling them to balance work and family life more effectively.",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Divider()
+                            Text(
+                                text = "Contact Us",
+                                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Text(
+                                text = "We're here to help and answer any question you might have. " +
+                                        "We look forward to hearing from you.",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = "Email: support@careconnect.com",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = "Phone: +358 40 123-4567",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = "Address: 123 CareConnect Lane, Education City, Oulu, 12345",
                                 style = MaterialTheme.typography.bodyLarge
                             )
 
                         }
 
+
+
                         Button(
-                            onClick = { navController.navigate("register") },
+                            onClick = { navController.navigate("main") },
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             shape = MaterialTheme.shapes.medium,

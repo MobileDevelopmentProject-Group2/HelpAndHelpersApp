@@ -21,10 +21,13 @@ import com.example.helpersapp.ui.screens.MainScreen
 import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
+import com.example.helpersapp.ui.screens.AboutAndContactScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.helpersapp.ui.screens.NyDataScreen
 import com.example.helpersapp.viewModel.HelperViewModel
+import com.example.helpersapp.viewModel.UpdateUserViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +38,7 @@ class MainActivity : ComponentActivity() {
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
         //add login viewmodel
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-
+        val updateUserViewModel = ViewModelProvider(this)[UpdateUserViewModel::class.java]
         //Firebase.initialize(this)
 
 
@@ -51,7 +54,8 @@ class MainActivity : ComponentActivity() {
                         usersViewModel,
                         helpViewModel,
                         helperViewModel,
-                        loginViewModel
+                        loginViewModel,
+                        updateUserViewModel
                     )
 
                 }
@@ -64,13 +68,19 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 
-fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, helperViewModel: HelperViewModel, loginViewModel: LoginViewModel)
+fun AppLayout(
+    usersViewModel: UsersViewModel,
+    helpViewModel: HelpViewModel,
+    helperViewModel: HelperViewModel,
+    loginViewModel: LoginViewModel,
+    updateUserViewModel: UpdateUserViewModel
+)
 {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = "main"
+        startDestination = "home"
     ) {
         composable("home") {
             LandingScreen(
@@ -83,7 +93,7 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
                 usersViewModel,
                 helpViewModel,
                 helperViewModel,
-                loginViewModel
+                loginViewModel,
             )
         }
         composable("login") {
@@ -125,8 +135,21 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
                 navController,
                 loginViewModel
             )}
+        //add about screen
+        composable("about") {
+            AboutAndContactScreen(
+                navController,
+                loginViewModel
+            )}
         //user profit for testing
+        composable("my_data") {
+            NyDataScreen(
+                navController,
+                updateUserViewModel,
+                usersViewModel,
+                loginViewModel,
 
+            )}
 
     }
 }

@@ -49,6 +49,7 @@ import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
+import com.example.helpersapp.viewModel.UpdateUserViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -96,13 +97,13 @@ fun MainScreen(
                     icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
                     label = { Text(text = "My data") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("my_data") }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.Phone, contentDescription = null) },
                     label = { Text(text = "About / contact") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("about") }
                 )
             }
         }) {
