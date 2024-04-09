@@ -48,11 +48,13 @@ import com.example.helpersapp.ui.components.CategoryRadioButtons
 import com.example.helpersapp.ui.components.DatePicker
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel) {
     val newHelp by helpViewModel.newHelpNeeded.collectAsState()
+
     val radioButtonOptions = listOf("nanny", "tutor")
     var (selectedCategory, onCategorySelected) = remember { mutableStateOf(radioButtonOptions[0])}
     var selectedDate by remember { mutableStateOf(newHelp.date) }
@@ -104,7 +106,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                         .width(210.dp),
                     value = newHelp.workDetails,
                     onValueChange = { helpViewModel.changeWorkDetails(it) },
-                    label = { Text("Add work details")},
+                    label = { Text(stringResource(R.string.add_work_details))},
                     shape = MaterialTheme.shapes.medium
                 )
             }
@@ -173,7 +175,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                         .width(210.dp),
                     value = newHelp.time,
                     onValueChange = { helpViewModel.changeTime(it) },
-                    label = { Text("Add time of work")},
+                    label = { Text(stringResource(R.string.add_time_of_work))},
                     shape = MaterialTheme.shapes.medium
                 )
             }
@@ -213,14 +215,14 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Text(text = "Postal code")
+                Text(text = stringResource(R.string.postal_code))
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(16.dp)
                         .width(210.dp),
                     value = newHelp.postalCode.toString(),
                     onValueChange = { helpViewModel.changePostalCode(it.toString()) },
-                    label = { Text("Add postal code")},
+                    label = { Text(stringResource(R.string.add_postal_code))},
                     shape = MaterialTheme.shapes.medium,
                     //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
@@ -251,7 +253,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                             contentDescription = null,
                             modifier = Modifier.padding(end = 8.dp)
                         )
-                        Text(text = "Back")
+                        Text(text = stringResource(R.string.back))
                     }
                 }
                 Button(
@@ -276,7 +278,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                         .height(52.dp)
                         .width(150.dp)
                 ) {
-                    Text(text = "Post to confirm")
+                    Text(text = stringResource(R.string.post_to_confirm))
                 }
             }
 

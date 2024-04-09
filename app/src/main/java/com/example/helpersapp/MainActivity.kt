@@ -24,20 +24,18 @@ import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
-        //add login viewmodel
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-
-        //Firebase.initialize(this)
-
 
         setContent {
             HelpersAppTheme {
@@ -46,28 +44,25 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     AppLayout(
                         usersViewModel,
                         helpViewModel,
                         helperViewModel,
                         loginViewModel
                     )
-
                 }
             }
         }
     }
 }
-
-
-
 @Composable
-
-fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, helperViewModel: HelperViewModel, loginViewModel: LoginViewModel)
-{
+fun AppLayout(
+    usersViewModel: UsersViewModel,
+    helpViewModel: HelpViewModel,
+    helperViewModel: HelperViewModel,
+    loginViewModel: LoginViewModel
+) {
     val navController = rememberNavController()
-
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -80,16 +75,14 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
         composable("main") {
             MainScreen(
                 navController,
-                usersViewModel,
                 helpViewModel,
-                helperViewModel
+                helperViewModel,
+                loginViewModel
             )
         }
         composable("login") {
             LoginScreen(
                 navController,
-                //usersViewModel,
-                //add login viewmodel
                 loginViewModel
             )
         }
@@ -99,7 +92,6 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
                 usersViewModel
             )
         }
-
         composable("addHelp") {
             AddNewHelpScreen(
                 navController,
@@ -109,7 +101,8 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
         composable("helpDetails") {
             HelpDetailsScreen(
                 navController,
-                helpViewModel
+                helpViewModel,
+                loginViewModel
             )
         }
         composable("postHelper") {
@@ -117,11 +110,18 @@ fun AppLayout(usersViewModel: UsersViewModel, helpViewModel: HelpViewModel, help
                 usersViewModel,
                 navController,
                 helperViewModel,
+                loginViewModel
             )
         }
         composable("privacy") {
             PrivacyNTermsScreen(
                 navController
+            )
+        }
+        composable("helpByCategory") {
+            HelpByCategoryScreen(
+                navController,
+                helpViewModel
             )
         }
     }

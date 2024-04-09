@@ -47,6 +47,7 @@ import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.viewModel.HelperViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -155,6 +156,7 @@ fun PostNewHelperDetailsScreen(
     usersViewModel: UsersViewModel,
     navController: NavController,
     helperViewModel: HelperViewModel,
+    loginViewModel: LoginViewModel,
     ) {
 
     var about by remember { mutableStateOf("") }
@@ -164,7 +166,8 @@ fun PostNewHelperDetailsScreen(
 
     val useremail = Firebase.auth.currentUser?.email
     val username = createUsername(useremail ?: "")
-    val user by usersViewModel.userDetails.collectAsState()
+    val user by loginViewModel.userDetails.collectAsState()
+
 
     Box(
         modifier = Modifier.fillMaxSize()
