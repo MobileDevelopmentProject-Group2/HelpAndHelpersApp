@@ -42,7 +42,6 @@ fun ListAllHelpNeeded(helpList: List<HelpNeeded>, helpViewModel: HelpViewModel, 
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, bottom = 8.dp)
-                    .background(color = Color.White)
                     .clickable(
                         onClick = {
                             helpViewModel.setNewHelpNeeded(it)
@@ -51,7 +50,9 @@ fun ListAllHelpNeeded(helpList: List<HelpNeeded>, helpViewModel: HelpViewModel, 
                     ),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 8.dp
-                )
+                ),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

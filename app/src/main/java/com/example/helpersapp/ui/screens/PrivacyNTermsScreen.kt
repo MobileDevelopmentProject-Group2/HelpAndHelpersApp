@@ -53,7 +53,7 @@ fun PrivacyNTermsScreen(navController: NavController) {
 
             }
             Button(
-                onClick = { navController.navigate("register") },
+                onClick = { navController.navigateUp() },
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
