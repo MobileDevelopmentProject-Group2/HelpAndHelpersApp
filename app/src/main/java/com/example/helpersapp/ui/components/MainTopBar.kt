@@ -33,11 +33,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainTopBar(navController: NavController, drawerState: DrawerState, scope: kotlinx.coroutines.CoroutineScope) {
+fun MainTopBar(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: kotlinx.coroutines.CoroutineScope,
+    loginViewModel: LoginViewModel,
+    helpViewModel: HelpViewModel
+) {
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(
@@ -80,7 +88,13 @@ fun MainTopBar(navController: NavController, drawerState: DrawerState, scope: ko
 
             ) {
                 IconButton(
-                    onClick = { /*Add function call for logout when the function is ready*/ },
+                    onClick = {
+                        helpViewModel.emptyHelpList()
+                        helpViewModel.emptyNewHelpNeeded()
+                        helpViewModel.setCategory("")
+                        loginViewModel.logoutUser()
+                        navController.navigate("home")
+                    },
                 ) {
                     Icon(Icons.Filled.ExitToApp, contentDescription = "logout")
                 }

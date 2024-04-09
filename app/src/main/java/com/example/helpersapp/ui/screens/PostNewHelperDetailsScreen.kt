@@ -40,6 +40,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import com.example.helpersapp.ui.components.createUsername
+import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -129,6 +130,7 @@ fun PostNewHelperDetailsScreen(
     usersViewModel: UsersViewModel,
     navController: NavController,
     helperViewModel: HelperViewModel,
+    loginViewModel: LoginViewModel,
     ) {
 
     var about by remember { mutableStateOf("") }
@@ -142,7 +144,7 @@ fun PostNewHelperDetailsScreen(
 
     // username for developing status
     //val username = "dev_user66"
-    val user by usersViewModel.userDetails.collectAsState()
+    val user by loginViewModel.userDetails.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
