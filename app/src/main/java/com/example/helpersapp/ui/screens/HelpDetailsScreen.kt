@@ -40,6 +40,7 @@ import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
 fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel, loginViewModel: LoginViewModel) {
+    val screenState by helpViewModel.helpDetailsScreenState.collectAsState()
     val helpDetails by helpViewModel.newHelpNeeded.collectAsState()
     val userID by loginViewModel.userID.collectAsState()
 
@@ -70,6 +71,10 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
             ) {
                 Button(
                     onClick = {
+                        if (screenState == "contact") {
+                            helpViewModel.emptyNewHelpNeeded()
+                        }
+                        helpViewModel.setHelpDetailsScreenState("")
                         navController.navigateUp()
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -88,23 +93,43 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                     )
                     Text(text = stringResource(R.string.back_))
                 }
-                Button(
-                    onClick = {
-                        userID?.let { helpViewModel.addNewHelpToCollection(it) }
-                        helpViewModel.emptyNewHelpNeeded()
-                        navController.navigate("main")
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .height(52.dp)
-                        .width(150.dp)
-                ) {
-                    Text(text = stringResource(R.string.confirm))
+                if (screenState == "confirm") {
+                    Button(
+                        onClick = {
+                            userID?.let { helpViewModel.addNewHelpToCollection(it) }
+                            helpViewModel.emptyNewHelpNeeded()
+                            helpViewModel.setHelpDetailsScreenState("")
+                            navController.navigate("main")
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier
+                            .padding(top = 35.dp)
+                            .height(52.dp)
+                            .width(150.dp)
+                    ) {
+                        Text(text = stringResource(R.string.confirm))
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            navController.navigate("main")
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier
+                            .padding(top = 35.dp)
+                            .height(52.dp)
+                            .width(150.dp)
+                    ) {
+                        Text(text = "Contact this person")
+                    }
                 }
+
             }
         }
     }

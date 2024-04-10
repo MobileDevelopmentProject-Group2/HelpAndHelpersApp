@@ -260,6 +260,7 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                     onClick = {
                         if (newHelp.workDetails != "" && newHelp.date != "" && newHelp.time != "" && newHelp.priceRange != 0f..500f && newHelp.category != "" && newHelp.postalCode != null) {
                             newHelp.date = selectedDate
+                            helpViewModel.setHelpDetailsScreenState("confirm")
                             navController.navigate("helpDetails")
                         } else {
                             Toast.makeText(

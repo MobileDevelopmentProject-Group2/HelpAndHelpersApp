@@ -26,6 +26,9 @@ class HelpViewModel: ViewModel() {
     private val _category = MutableStateFlow("")
     var category: StateFlow<String> = _category.asStateFlow()
 
+    private val _helpDetailsScreenState = MutableStateFlow("")
+    var helpDetailsScreenState: StateFlow<String> = _helpDetailsScreenState.asStateFlow()
+
     fun setNewHelpNeeded(helpNeeded: HelpNeeded) {
         _newHelpNeeded.value = helpNeeded
     }
@@ -49,6 +52,9 @@ class HelpViewModel: ViewModel() {
     }
     fun emptyHelpList() {
         _helpList.value = emptyList()
+    }
+    fun setHelpDetailsScreenState(screenState: String) {
+        _helpDetailsScreenState.value = screenState
     }
     fun addNewHelpToCollection(userID: String) {
         val user = Firebase.auth.currentUser
