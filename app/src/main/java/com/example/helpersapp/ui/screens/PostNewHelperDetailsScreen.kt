@@ -1,7 +1,12 @@
 package com.example.helpersapp.ui.screens
 
 import android.content.ContentValues.TAG
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,59 +29,79 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+//import androidx.compose.ui.graphics.painter.rememberImagePainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ShowBottomImage
-import com.example.helpersapp.viewModel.HelperViewModel
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.collectAsState
 import com.example.helpersapp.ui.components.createUsername
+import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.util.UUID
+
 
 @Composable
-fun UploadImageToStorage(navController: NavController) {
+fun UploadImageAndCertificateToStorage(navController: NavController, helperViewModel: HelperViewModel,) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var certificateUri by remember { mutableStateOf<Uri?>(null) }
 
     // Create an ActivityResultLauncher to handle image selection actions
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    val imageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         imageUri = uri
     }
 
+    // Create an ActivityResultLauncher to handle certificate selection actions
+    val certificateLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        certificateUri = uri
+    }
     Column {
-        Button(onClick = { launcher.launch("image/*") }) {
-            Text("Select Image")
+        // Image preview
+        imageUri?.let { uri ->
+            Box(modifier = Modifier.padding(vertical = 8.dp)) {
+/*
+                Image(
+                    painter = rememberImagePainter(uri),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
+                )
+
+ */
+            }
+        }
+        Button(onClick = { imageLauncher.launch("image/*") }) {
+            Text("Select Profile Picture")
         }
 
-        Button(onClick = { imageUri?.let { uploadImageToStorage(it) } }) {
-            Text("Upload Image to Storage")
+        Button(onClick = { certificateLauncher.launch("application/pdf") }) {
+            Text("Select Certificate")
+        }
+
+        Button(onClick = {
+            imageUri?.let { helperViewModel.uploadProfilePicture(it) }
+            certificateUri?.let { helperViewModel.uploadCertificate(it) }
+        })  {
+            Text("Upload")
         }
     }
 }
-fun uploadImageToStorage(uri: Uri) {
-    val storageRef = Firebase.storage.reference.child("images/${System.currentTimeMillis()}")
-    storageRef.putFile(uri)
-        .addOnSuccessListener {
-            Log.d("FirebaseStorage", "Upload success")
-        }
-        .addOnFailureListener { exception ->
-            Log.e("FirebaseStorage", "Error uploading image", exception)
-        }
-}
-
 @Composable
 fun CategorySelectionRow(
     modifier: Modifier = Modifier,
@@ -140,11 +166,8 @@ fun PostNewHelperDetailsScreen(
 
     val useremail = Firebase.auth.currentUser?.email
     val username = createUsername(useremail ?: "")
-    //val username = Firebase.auth.currentUser?.uid
-
-    // username for developing status
-    //val username = "dev_user66"
     val user by loginViewModel.userDetails.collectAsState()
+
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -215,7 +238,7 @@ fun PostNewHelperDetailsScreen(
                 shape = MaterialTheme.shapes.medium
             )
 
-            UploadImageToStorage(navController)
+            UploadImageAndCertificateToStorage(navController,helperViewModel)
 
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -224,7 +247,7 @@ fun PostNewHelperDetailsScreen(
             ) {
                 Button(
                     onClick = { navController.navigateUp() },
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -259,7 +282,7 @@ fun PostNewHelperDetailsScreen(
                             )
                         }
                     },
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
