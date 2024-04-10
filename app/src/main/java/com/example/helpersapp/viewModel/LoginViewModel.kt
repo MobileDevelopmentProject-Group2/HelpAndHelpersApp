@@ -62,6 +62,10 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+    fun getUsername(): String {
+        return _userDetails.value.username
+    }
+
     fun logoutUser() {
         viewModelScope.launch {
             _userID.value = ""

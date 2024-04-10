@@ -3,6 +3,7 @@ package com.example.helpersapp.viewModel
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.helpersapp.model.HelperInfo
 import com.example.helpersapp.ui.components.createUsername
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -68,6 +69,33 @@ class HelperViewModel: ViewModel()  {
             }
             .addOnFailureListener { exception ->
                 Log.e("FirebaseStorage", "Error uploading certificate", exception)
+            }
+    }
+
+    fun getHelperDetails(username: String, onSuccess: (HelperInfo) -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("helpers").document(username)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val data = document.data
+                    val about = data?.get("about") as String
+                    val category = data["category"] as String
+                    val helpDetails = data["helpDetails"] as String
+                    val experience = data["experience"] as String
+                    val helperInfo = HelperInfo(
+                        username,
+                        about,
+                        category,
+                        helpDetails,
+                        experience
+                    )
+                    onSuccess(helperInfo)
+                } else {
+                    onFailure(Exception("Document does not exist or is null"))
+                }
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
             }
     }
 }
