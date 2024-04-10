@@ -35,7 +35,6 @@ import com.example.helpersapp.viewModel.UpdateUserViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
@@ -72,7 +71,6 @@ fun AppLayout(
     updateUserViewModel: UpdateUserViewModel
 )
 {
-
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -151,8 +149,14 @@ fun AppLayout(
                 loginViewModel,
                 helpViewModel
             )}
+        composable("helpByCategory") {
+            HelpByCategoryScreen(
+                navController,
+                helpViewModel
+            )
         }
-    }
+    }  }
+
 
 
 

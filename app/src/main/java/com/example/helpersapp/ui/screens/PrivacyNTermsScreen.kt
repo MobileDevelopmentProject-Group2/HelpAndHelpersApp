@@ -138,7 +138,6 @@ fun PrivacyNTermsScreen(
                                     "You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service",
                                 style = MaterialTheme.typography.bodyLarge
                             )
-
                         }
 
                         Button(
@@ -163,65 +162,3 @@ fun PrivacyNTermsScreen(
 
     }
 }
-
-/*
-
-@Composable
-fun PrivacyNTermsScreen(navController: NavController) {
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val bottomImageHeight = 300.dp
-
-        ShowBottomImage()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
-        ) {
-            Text(
-                text = "Privacy & Terms",
-                //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                modifier = Modifier.padding(bottom = 24.dp),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Text(
-                text = stringResource(R.string.privacy_policy_content),
-                style = MaterialTheme.typography.bodyLarge)
-            Column {
-                Text(
-                    text = "Data Usage",
-                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                    //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    text = stringResource(R.string.UsageData),
-                    style = MaterialTheme.typography.bodyLarge)
-
-            }
-
-            Button(
-<<<<<<< HEAD
-                onClick = { navController.navigate("register") },
-                modifier = Modifier
-                    .padding(top = 24.dp),
-=======
-                onClick = { navController.navigateUp() },
->>>>>>> origin/main
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-
-                ) {
-                Text(text = "Back")
-
-            }
-        }
-        } }
-
-*/
