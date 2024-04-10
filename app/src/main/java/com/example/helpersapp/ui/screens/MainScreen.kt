@@ -79,13 +79,13 @@ fun MainScreen(
                     icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
                     label = { Text(text = "My data") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("my_data") }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.Phone, contentDescription = null) },
                     label = { Text(text = "About / contact") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("about") }
                 )
             }
         }) {
@@ -99,7 +99,7 @@ fun MainScreen(
                         scope,
                         loginViewModel,
                         helpViewModel
-                ) },
+                    ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->
                     Column(

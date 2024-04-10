@@ -94,10 +94,11 @@ fun LandingScreen(navController: NavController) {
             textAlign = TextAlign.Center
 
         )
-
-        TextButton(onClick = { navController.navigate("register") }) {
+    // change the route to privacy route
+        TextButton(onClick = { navController.navigate("privacy") }) {
             Text(stringResource(id = R.string.privacy_policy), style = MaterialTheme.typography.bodyLarge)
         }
+
 
         SodaLogo2()
     }

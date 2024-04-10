@@ -147,31 +147,31 @@ class UsersViewModel: ViewModel()  {
                 db.collection("users").document(username).set(newUser).await()
             }
 
-/*            runBlocking {
-                db.collection("users").document(username).set(newUser).addOnSuccessListener {
-                    Log.d(
-                        "UsersViewModel",
-                        "User added to Firestore, proceed creating user in authorization database"
-                    )
-                    userCreatedToDocumentDatabase = true;
-                }.addOnFailureListener {
-                    Log.e("UsersViewModel", "Failed to add user to Firestore", it)
-                }.await()
-            }*/
-/*
-            if (userCreatedToDocumentDatabase) {
-                Log.d("UsersViewModel", "User created successfully")
+            /*            runBlocking {
+                            db.collection("users").document(username).set(newUser).addOnSuccessListener {
+                                Log.d(
+                                    "UsersViewModel",
+                                    "User added to Firestore, proceed creating user in authorization database"
+                                )
+                                userCreatedToDocumentDatabase = true;
+                            }.addOnFailureListener {
+                                Log.e("UsersViewModel", "Failed to add user to Firestore", it)
+                            }.await()
+                        }*/
+            /*
+                        if (userCreatedToDocumentDatabase) {
+                            Log.d("UsersViewModel", "User created successfully")
 
-                Firebase.auth.createUserWithEmailAndPassword(sanitizedEmail, password).addOnSuccessListener {
-                    Log.d("UsersViewModel", "User added to authorization database")
-                }.addOnFailureListener {
-                    Log.e("UsersViewModel", "Failed to add user to authorization database", it)
-                    throw Exception("Failed to add user to authorization database")
-                }.await()
-            } else {
-                Log.e("UsersViewModel", "Failed to create user")
-            }
-*/
+                            Firebase.auth.createUserWithEmailAndPassword(sanitizedEmail, password).addOnSuccessListener {
+                                Log.d("UsersViewModel", "User added to authorization database")
+                            }.addOnFailureListener {
+                                Log.e("UsersViewModel", "Failed to add user to authorization database", it)
+                                throw Exception("Failed to add user to authorization database")
+                            }.await()
+                        } else {
+                            Log.e("UsersViewModel", "Failed to create user")
+                        }
+            */
             status = "OK" // Return true on success
         } catch (e: Exception) {
             Log.e("UsersViewModel", "Failed to register user", e)

@@ -41,7 +41,7 @@ class LoginViewModel : ViewModel() {
 
             }catch (e:Exception) {
                 onResult(false, e.message ?: "An error occurred")
-                }
+            }
         }
     }
     private fun getUserDetails(userName: String) {
@@ -70,6 +70,5 @@ class LoginViewModel : ViewModel() {
         }
     }
 }
-
 
 
