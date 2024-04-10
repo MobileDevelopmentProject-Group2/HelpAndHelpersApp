@@ -47,11 +47,13 @@ import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.LoginViewModel
+import com.example.helpersapp.viewModel.HelpViewModel
 
 @Composable
 fun PrivacyNTermsScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    helpViewModel: HelpViewModel
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -64,9 +66,9 @@ fun PrivacyNTermsScreen(
                 Divider()
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = null) },
-                    label = { Text(text = "Application rights") },
+                    label = { Text(text = "Privacy policy") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("privacy") }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
@@ -86,7 +88,14 @@ fun PrivacyNTermsScreen(
         Box {
             ShowBottomImage()
             Scaffold(
-                topBar = { MainTopBar(navController, drawerState, loginViewModel, scope) },
+                topBar = {
+                    MainTopBar(
+                        navController,
+                        drawerState,
+                        scope,
+                        loginViewModel,
+                        helpViewModel
+                    ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->
                     Column(
@@ -195,9 +204,13 @@ fun PrivacyNTermsScreen(navController: NavController) {
             }
 
             Button(
+<<<<<<< HEAD
                 onClick = { navController.navigate("register") },
                 modifier = Modifier
                     .padding(top = 24.dp),
+=======
+                onClick = { navController.navigateUp() },
+>>>>>>> origin/main
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,

@@ -47,12 +47,14 @@ import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
+import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
 fun AboutAndContactScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    helpViewModel: HelpViewModel
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -65,9 +67,9 @@ fun AboutAndContactScreen(
                 Divider()
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = null) },
-                    label = { Text(text = "Application rights") },
+                    label = { Text(text = "Privacy policy") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("privacy") }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
@@ -87,7 +89,14 @@ fun AboutAndContactScreen(
         Box {
             ShowBottomImage()
             Scaffold(
-                topBar = { MainTopBar(navController, drawerState, loginViewModel, scope) },
+                topBar = {
+                    MainTopBar(
+                        navController,
+                        drawerState,
+                        scope,
+                        loginViewModel,
+                        helpViewModel
+                    ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->
                     Column(

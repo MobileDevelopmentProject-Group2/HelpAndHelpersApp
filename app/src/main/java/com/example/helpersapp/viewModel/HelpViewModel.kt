@@ -1,8 +1,6 @@
 package com.example.helpersapp.viewModel
 
 import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.HelpNeeded
@@ -13,29 +11,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 
 class HelpViewModel: ViewModel() {
 
     val db = Firebase.firestore
-    val user = Firebase.auth.currentUser?.uid
-    val userEmail = Firebase.auth.currentUser?.email
     val dateNow = System.currentTimeMillis()
 
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
-    val newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
+    var newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
 
     private val _helpList = MutableStateFlow<List<HelpNeeded>>(emptyList())
-    val helpList: StateFlow<List<HelpNeeded>> = _helpList.asStateFlow()
+    var helpList: StateFlow<List<HelpNeeded>> = _helpList.asStateFlow()
+
+    private val _category = MutableStateFlow("")
+    var category: StateFlow<String> = _category.asStateFlow()
 
     fun setNewHelpNeeded(helpNeeded: HelpNeeded) {
         _newHelpNeeded.value = helpNeeded
     }
-
     fun changeWorkDetails(newWorkDetails: String) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(workDetails = newWorkDetails)
     }
@@ -48,7 +41,18 @@ class HelpViewModel: ViewModel() {
     fun changeTime(newTime: String) {
         _newHelpNeeded.value = _newHelpNeeded.value.copy(time = newTime)
     }
-    fun addNewHelpToCollection() {
+    fun emptyNewHelpNeeded() {
+        _newHelpNeeded.value = HelpNeeded()
+    }
+    fun setCategory(category: String) {
+        _category.value = category
+    }
+    fun emptyHelpList() {
+        _helpList.value = emptyList()
+    }
+    fun addNewHelpToCollection(userID: String) {
+        val user = Firebase.auth.currentUser
+        Log.d("HelpViewModel", "Adding new help: ${userID}")
         viewModelScope.launch {
             try {
                 user?.let { user ->
@@ -61,26 +65,23 @@ class HelpViewModel: ViewModel() {
                                 "time" to _newHelpNeeded.value.time,
                                 "priceRange" to _newHelpNeeded.value.priceRange,
                                 "postalCode" to _newHelpNeeded.value.postalCode,
-                                "userId" to user,
+                                "userId" to userID,
                                 "requestPostDate" to dateNow
                             )
                         )
                         .addOnSuccessListener {
-                            Log.d("HelpViewEmail" ,"${userEmail}")
-                            Log.d("HelpViewModel", "Help added successfully")
-                            //Toast.makeText(null, "Help added successfully", Toast.LENGTH_SHORT).show()
-                        }
+                            Log.d("HelpViewModel", "Help added successfully") }
                         .addOnFailureListener {
                             Log.e("HelpViewModel", it.message.toString())
                         }
                 }
             } catch (e: Exception) {
                 Log.e("HelpViewModel", e.message.toString())
-                Toast.makeText(null, "Error adding help", Toast.LENGTH_SHORT).show()
             }
         }
     }
     fun getAllHelpRequests() {
+        val user = Firebase.auth.currentUser
         viewModelScope.launch {
             try {
                 user?.let {

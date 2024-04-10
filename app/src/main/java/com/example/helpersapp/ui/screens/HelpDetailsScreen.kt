@@ -27,17 +27,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.HelpDetailsItem
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
-fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel) {
+fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel, loginViewModel: LoginViewModel) {
     val helpDetails by helpViewModel.newHelpNeeded.collectAsState()
+    val userID by loginViewModel.userID.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -52,7 +56,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Details of Help Needed",
+                text = stringResource(R.string.details_of_help_needed),
                 modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
                 style = MaterialTheme.typography.titleLarge,
             )
@@ -65,7 +69,9 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                     .fillMaxWidth()
             ) {
                 Button(
-                    onClick = { navController.navigateUp() },
+                    onClick = {
+                        navController.navigateUp()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -80,11 +86,12 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    Text(text = "Back")
+                    Text(text = stringResource(R.string.back_))
                 }
                 Button(
                     onClick = {
-                        helpViewModel.addNewHelpToCollection()
+                        userID?.let { helpViewModel.addNewHelpToCollection(it) }
+                        helpViewModel.emptyNewHelpNeeded()
                         navController.navigate("main")
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -96,7 +103,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                         .height(52.dp)
                         .width(150.dp)
                 ) {
-                    Text(text = "Confirm")
+                    Text(text = stringResource(R.string.confirm))
                 }
             }
         }

@@ -43,6 +43,7 @@ import com.example.helpersapp.R
 import com.example.helpersapp.model.User
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
+import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
@@ -53,14 +54,15 @@ import androidx.compose.material3.Text as Text
 fun NyDataScreen(
     navController: NavController,
     updateUserViewModel: UpdateUserViewModel,
-    usersViewModel: UsersViewModel,
-    loginViewModel: UsersViewModel
+    //usersViewModel: UsersViewModel,
+    loginViewModel: LoginViewModel,
+    helpViewModel: HelpViewModel
 )
 {
     //add dwawerstate
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val user by usersViewModel.userDetails.collectAsState()
+    val user by loginViewModel.userDetails.collectAsState()
     var firstname by remember { mutableStateOf(user.firstname) }
     var lastname by remember { mutableStateOf(user.lastname) }
     var email by remember { mutableStateOf(user.email) }
@@ -77,9 +79,9 @@ fun NyDataScreen(
                 Divider()
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = null) },
-                    label = { Text(text = "Application rights") },
+                    label = { Text(text = "Privacy policy") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("privacy") }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
@@ -97,14 +99,21 @@ fun NyDataScreen(
         }) {
              ShowBottomImage()
         Scaffold (
-                topBar = { MainTopBar(navController, drawerState, loginViewModel, scope) },
+            topBar = {
+                MainTopBar(
+                    navController,
+                    drawerState,
+                    scope,
+                    loginViewModel,
+                    helpViewModel
+                ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
-                            .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 30.dp)
+                            .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 10.dp)
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -116,31 +125,70 @@ fun NyDataScreen(
                             style = MaterialTheme.typography.titleLarge,
                             text = "User Profile",
                         )
+                        OutlinedTextField(
+                            value = firstname ,
+                            onValueChange = {firstname = it },
+                            label = { Text("First Name")
+                            } )
 
-                        Row {
-                        }
-                        Text(
-                            text = stringResource(R.string.privacy_policy_content),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        OutlinedTextField(
+                            value = lastname ,
+                            onValueChange = {lastname = it },
+                            label = { Text("Last Name")
+                            } )
+                        OutlinedTextField(
+                            value = email ,
+                            onValueChange = {email = it },
+                            label = { Text("Email address")
+                            })
+                        OutlinedTextField(
+                            value = address,
+                            onValueChange = {address = it },
+                            label = { Text("Address")
+                            })
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = {password = it },
+                            label = { Text("New password")
+                            })
+                        OutlinedTextField(
+                            value = currentPassword,
+                            onValueChange = {currentPassword = it },
+                            label = { Text("Current Password (Required for Change)")
+                            })
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
 
-                        Column {
-                            Text(
-                                text = "Data Usage",
-                                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                                //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Text(
-                                text =
-                                "We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device." +
-                                        "TRACKING and COOKIES DATA"+
-                                        "We use cookies and similar tracking technologies to track the activity on our Service and hold certain information."+
-                                        "Cookies are files with a small amount of data which may include an anonymous unique identifier. Cookies are sent to your browser from a website and stored on your device. Tracking technologies also used are beacons, tags, and scripts to collect and track information and to improve and analyze our Service"+
-                                        "You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            onClick = {
+                                //try new code
+                                updateUserViewModel.verifyPwd(user.email, currentPassword) {
+                                        isPwdCorrect ->
+                                    if(isPwdCorrect) {
+                                        val updateUser = User(firstname, lastname, email, address)
+                                        updateUserViewModel.updateUserDetail(user.uid, updateUser){
+                                                isSuccess, updateMessage ->
+                                            message = updateMessage
+                                            if(isSuccess && password.isNotBlank()) {
+                                                updateUserViewModel.updateUserEmailAndPwd(email, password) {
+                                                        isPwdUpdateSuccess, pwdUpdateMessage ->
+                                                    message = pwdUpdateMessage
 
+                                                }
+                                            }
+                                        }
+                                    }else {
+                                        message = "Current password is incorrect"
+                                    }
+
+                                }
+                                //old code
+                                //val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@Button
+                                //val updatedUser = User(firstname, lastname, email, address, user.username)
+                                //updateUserViewModel.updateUserDetails(userId, updatedUser) { success, message ->
+                            }
+
+                        ) {
+                            Text("Update")
                         }
 
                         Button(
@@ -168,72 +216,9 @@ fun NyDataScreen(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            OutlinedTextField(
-                value = firstname ,
-                onValueChange = {firstname = it },
-                label = { Text("First Name")
-                } )
-            OutlinedTextField(
-                value = lastname ,
-                onValueChange = {lastname = it },
-                label = { Text("Last Name")
-                } )
-            OutlinedTextField(
-                value = email ,
-                onValueChange = {email = it },
-                label = { Text("Email address")
-                })
-            OutlinedTextField(
-                value = address,
-                onValueChange = {address = it },
-                label = { Text("Address")
-                })
-            OutlinedTextField(
-                value = password,
-                onValueChange = {password = it },
-                label = { Text("New password")
-                })
-            OutlinedTextField(
-                value = currentPassword,
-                onValueChange = {currentPassword = it },
-                label = { Text("Current Password (Required for Email/Password Change)")
-                })
-            Spacer(modifier = Modifier.height(8.dp))
 
 
-            Button(
 
-                onClick = {
-                    //try new code
-                    updateUserViewModel.verifyPwd(user.email, currentPassword) {
-                            isPwdCorrect ->
-                        if(isPwdCorrect) {
-                            val updateUser = User(firstname, lastname, email, address)
-                            updateUserViewModel.updateUserDetail(user.uid, updateUser){
-                                    isSuccess, updateMessage ->
-                                message = updateMessage
-                                if(isSuccess && password.isNotBlank()) {
-                                    updateUserViewModel.updateUserEmailAndPwd(email, password) {
-                                            isPwdUpdateSuccess, pwdUpdateMessage ->
-                                        message = pwdUpdateMessage
-
-                                    }
-                                }
-                            }
-                        }else {
-                            message = "Current password is incorrect"
-                        }
-
-                    }
-                    //old code
-                    //val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@Button
-                    //val updatedUser = User(firstname, lastname, email, address, user.username)
-                    //updateUserViewModel.updateUserDetails(userId, updatedUser) { success, message ->
-                }
-
-            ) {
-                Text("Update")
-            }
         }
     }
 

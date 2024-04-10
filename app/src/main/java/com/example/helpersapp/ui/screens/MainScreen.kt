@@ -1,6 +1,5 @@
 package com.example.helpersapp.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,50 +48,32 @@ import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
-import com.example.helpersapp.viewModel.UsersViewModel
-import com.example.helpersapp.viewModel.UpdateUserViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 
 @Composable
 fun MainScreen(
     navController: NavController,
-    usersViewModel: UsersViewModel,
     helpViewModel: HelpViewModel,
     helperViewModel: HelperViewModel,
     loginViewModel: LoginViewModel
 )
 {
-    val userLoggedIn = (Firebase.auth.currentUser != null)
-
-    // Main screen should not be accessible if there is no current user
-    //disable the button if user not login yet
-    if (!userLoggedIn) {
-        Log.w("MainScreen", "Trying to access main screen without current user logged in, redirect navigation to home screen")
-        navController.navigate("home")
-        return
-    }
-
     helpViewModel.getAllHelpRequests()
-    usersViewModel.getUserDetails()
     val helpList by helpViewModel.helpList.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val user by usersViewModel.userDetails.collectAsState()
-
-
+    val user by loginViewModel.userDetails.collectAsState()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Text("CareConnect app", modifier = Modifier.padding(16.dp))
+                Text(stringResource(R.string.careconnect_app), modifier = Modifier.padding(16.dp))
                 Divider()
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = null) },
-                    label = { Text(text = "Application rights") },
+                    label = { Text(text = "Privacy policy") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = { navController.navigate("privacy") }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
@@ -110,7 +92,14 @@ fun MainScreen(
         Box {
             ShowBottomImage()
             Scaffold(
-                topBar = { MainTopBar(navController, drawerState, loginViewModel, scope) },
+                topBar = {
+                    MainTopBar(
+                        navController,
+                        drawerState,
+                        scope,
+                        loginViewModel,
+                        helpViewModel
+                    ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->
                     Column(
@@ -127,10 +116,10 @@ fun MainScreen(
                                 .padding(bottom = 30.dp)
                                 .align(Alignment.CenterHorizontally),
                             style = MaterialTheme.typography.titleLarge,
-                            text = "Welcome to CareConnect ${user.firstname}!",
+                            text = stringResource(R.string.welcome_to_careconnect, user.firstname),
                         )
                         Text(
-                            text = "Get a list of all helper persons by category:",
+                            text = stringResource(R.string.get_a_list_of_all_helper_persons_by_category),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
                         )
@@ -148,7 +137,7 @@ fun MainScreen(
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(text = "List all nannies")
+                                    Text(text = stringResource(R.string.list_all_nannies))
 
                                     Image(
                                         painter = painterResource(id = R.drawable.baby_face_icon),
@@ -171,7 +160,7 @@ fun MainScreen(
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(text = "List all tutors")
+                                    Text(text = stringResource(R.string.list_all_tutors))
                                     Image(
                                         painter = painterResource(id = R.drawable.reading),
                                         contentDescription = "reading",
@@ -181,13 +170,16 @@ fun MainScreen(
                             }
                         }
                         Text(
-                            text = "Get list of all help requests by category:",
+                            text = stringResource(R.string.get_list_of_all_help_requests_by_category),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(top = 30.dp, bottom = 5.dp)
                         )
                         Row {
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    helpViewModel.setCategory("nanny")
+                                    navController.navigate("helpByCategory")
+                                },
                                 modifier = Modifier
                                     .width(150.dp),
                                 colors = ButtonDefaults.buttonColors(
@@ -199,7 +191,7 @@ fun MainScreen(
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(text = "Nanny needed")
+                                    Text(text = stringResource(R.string.nanny_needed))
                                     Image(
                                         painter = painterResource(id = R.drawable.baby_face_icon),
                                         contentDescription = "child",
@@ -209,7 +201,10 @@ fun MainScreen(
                             }
                             Spacer(modifier = Modifier.padding(10.dp))
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    helpViewModel.setCategory("tutor")
+                                    navController.navigate("helpByCategory")
+                                },
                                 modifier = Modifier
                                     .width(150.dp),
                                 colors = ButtonDefaults.buttonColors(
@@ -221,7 +216,7 @@ fun MainScreen(
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(text = "Tutor needed")
+                                    Text(text = stringResource(R.string.tutor_needed))
                                     Image(
                                         painter = painterResource(id = R.drawable.reading),
                                         contentDescription = "reading",
@@ -231,7 +226,7 @@ fun MainScreen(
                             }
                         }
                         Text(
-                            text = "List of all help requests:",
+                            text = stringResource(R.string.list_of_all_help_requests),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                             modifier = Modifier

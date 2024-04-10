@@ -41,4 +41,22 @@
     Cookies are files with a small amount of data which may include an anonymous unique identifier. Cookies are sent to your browser from a website and stored on your device. Tracking technologies also used are beacons, tags, and scripts to collect and track information and to improve and analyze our Service.\n
     You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service.\n
     </string>
+    <string name="careconnect_app">CareConnect app</string>
+    <string name="welcome_to_careconnect">Welcome to CareConnect %1$s!</string>
+    <string name="get_a_list_of_all_helper_persons_by_category">Get a list of all helper persons by category:</string>
+    <string name="list_all_nannies">List all nannies</string>
+    <string name="list_all_tutors">List all tutors</string>
+    <string name="get_list_of_all_help_requests_by_category">Get list of all help requests by category:</string>
+    <string name="nanny_needed">Nanny needed</string>
+    <string name="tutor_needed">Tutor needed</string>
+    <string name="postal_code">Postal code</string>
+    <string name="add_postal_code">Add postal code</string>
+    <string name="post_to_confirm">Post to confirm</string>
+    <string name="back">Back</string>
+    <string name="add_time_of_work">Add time of work</string>
+    <string name="add_work_details">Add work details</string>
+    <string name="details_of_help_needed">Details of Help Needed</string>
+    <string name="back_">Back</string>
+    <string name="confirm">Confirm</string>
+    <string name="list_of_all_help_requests">List of all help requests:</string>
 </resources>

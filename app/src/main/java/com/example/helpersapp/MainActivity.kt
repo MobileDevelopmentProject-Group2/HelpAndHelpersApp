@@ -26,6 +26,7 @@ import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.helpersapp.ui.screens.NyDataScreen
+import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
 
@@ -33,10 +34,10 @@ import com.example.helpersapp.viewModel.UpdateUserViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
-        //add login viewmodel
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         val updateUserViewModel = ViewModelProvider(this)[UpdateUserViewModel::class.java]
         //Firebase.initialize(this)
@@ -49,7 +50,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     AppLayout(
                         usersViewModel,
                         helpViewModel,
@@ -57,17 +57,12 @@ class MainActivity : ComponentActivity() {
                         loginViewModel,
                         updateUserViewModel
                     )
-
                 }
             }
         }
     }
 }
-
-
-
 @Composable
-
 fun AppLayout(
     usersViewModel: UsersViewModel,
     helpViewModel: HelpViewModel,
@@ -76,8 +71,8 @@ fun AppLayout(
     updateUserViewModel: UpdateUserViewModel
 )
 {
-    val navController = rememberNavController()
 
+    val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -90,7 +85,6 @@ fun AppLayout(
         composable("main") {
             MainScreen(
                 navController,
-                usersViewModel,
                 helpViewModel,
                 helperViewModel,
                 loginViewModel,
@@ -99,8 +93,6 @@ fun AppLayout(
         composable("login") {
             LoginScreen(
                 navController,
-                //usersViewModel,
-                //add login viewmodel
                 loginViewModel
             )
         }
@@ -110,7 +102,6 @@ fun AppLayout(
                 usersViewModel
             )
         }
-
         composable("addHelp") {
             AddNewHelpScreen(
                 navController,
@@ -120,7 +111,8 @@ fun AppLayout(
         composable("helpDetails") {
             HelpDetailsScreen(
                 navController,
-                helpViewModel
+                helpViewModel,
+                loginViewModel
             )
         }
         composable("postHelper") {
@@ -128,31 +120,39 @@ fun AppLayout(
                 usersViewModel,
                 navController,
                 helperViewModel,
+                loginViewModel
             )
         }
         composable("privacy") {
             PrivacyNTermsScreen(
                 navController,
-                loginViewModel
+                loginViewModel,
+                helpViewModel
             )}
         //add about screen
         composable("about") {
             AboutAndContactScreen(
                 navController,
-                loginViewModel
+                loginViewModel,
+                helpViewModel
             )}
+        composable("helpByCategory") {
+            HelpByCategoryScreen(
+                navController,
+                helpViewModel
+            )
+        }
         //user profit for testing
         composable("my_data") {
             NyDataScreen(
                 navController,
                 updateUserViewModel,
-                usersViewModel,
                 loginViewModel,
-
+                helpViewModel
             )}
-
+        }
     }
-}
+
 
 
 
