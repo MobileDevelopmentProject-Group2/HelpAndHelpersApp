@@ -247,7 +247,7 @@ fun PostNewHelperDetailsScreen(
             ) {
                 Button(
                     onClick = { navController.navigateUp() },
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -282,7 +282,7 @@ fun PostNewHelperDetailsScreen(
                             )
                         }
                     },
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
