@@ -5,5 +5,7 @@ data class User(
     var lastname: String = "",
     var email: String = "",
     var address: String = "",
-    var username: String = ""
+    var username: String = "",
+    //add user uid to slove fetch uid
+    var uid: String =""
 )

@@ -1,6 +1,5 @@
 package com.example.helpersapp.ui.components
 
-import android.text.Layout.Alignment
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,9 +32,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
+import kotlinx.coroutines.CoroutineScope
+import com.example.helpersapp.viewModel.HelpViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

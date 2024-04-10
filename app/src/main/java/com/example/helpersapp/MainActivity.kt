@@ -21,21 +21,27 @@ import com.example.helpersapp.ui.screens.MainScreen
 import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
+import com.example.helpersapp.ui.screens.AboutAndContactScreen
+import com.example.helpersapp.ui.screens.MyDataScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.viewModel.HelperViewModel
+import com.example.helpersapp.viewModel.UpdateUserViewModel
+
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+        val updateUserViewModel = ViewModelProvider(this)[UpdateUserViewModel::class.java]
+        //Firebase.initialize(this)
+
 
         setContent {
             HelpersAppTheme {
@@ -48,7 +54,8 @@ class MainActivity : ComponentActivity() {
                         usersViewModel,
                         helpViewModel,
                         helperViewModel,
-                        loginViewModel
+                        loginViewModel,
+                        updateUserViewModel
                     )
                 }
             }
@@ -60,8 +67,10 @@ fun AppLayout(
     usersViewModel: UsersViewModel,
     helpViewModel: HelpViewModel,
     helperViewModel: HelperViewModel,
-    loginViewModel: LoginViewModel
-) {
+    loginViewModel: LoginViewModel,
+    updateUserViewModel: UpdateUserViewModel
+)
+{
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -77,7 +86,7 @@ fun AppLayout(
                 navController,
                 helpViewModel,
                 helperViewModel,
-                loginViewModel
+                loginViewModel,
             )
         }
         composable("login") {
@@ -115,16 +124,40 @@ fun AppLayout(
         }
         composable("privacy") {
             PrivacyNTermsScreen(
-                navController
-            )
-        }
+                navController,
+                loginViewModel,
+                helpViewModel
+            )}
+        //add about screen
+        composable("about") {
+            AboutAndContactScreen(
+                navController,
+                loginViewModel,
+                helpViewModel
+            )}
         composable("helpByCategory") {
             HelpByCategoryScreen(
                 navController,
                 helpViewModel
             )
         }
-    }
-}
+        //user profit for testing
+        composable("my_data") {
+            MyDataScreen(
+                navController,
+                updateUserViewModel,
+                loginViewModel,
+                helpViewModel
+            )}
+        composable("helpByCategory") {
+            HelpByCategoryScreen(
+                navController,
+                helpViewModel
+            )
+        }
+    }  }
+
+
+
 
 
