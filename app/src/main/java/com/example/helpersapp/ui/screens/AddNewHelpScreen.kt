@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
+import com.example.helpersapp.model.HelpNeeded
 import com.example.helpersapp.ui.components.CategoryRadioButtons
 import com.example.helpersapp.ui.components.DatePicker
 import com.example.helpersapp.ui.components.ShowBottomImage
@@ -54,7 +55,6 @@ import com.example.helpersapp.viewModel.LoginViewModel
 @Composable
 fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel) {
     val newHelp by helpViewModel.newHelpNeeded.collectAsState()
-
     val radioButtonOptions = listOf("nanny", "tutor")
     var (selectedCategory, onCategorySelected) = remember { mutableStateOf(radioButtonOptions[0])}
     var selectedDate by remember { mutableStateOf(newHelp.date) }
@@ -233,7 +233,11 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
                     .fillMaxWidth()
             ) {
                 Button(
-                    onClick = { navController.navigateUp() },
+                    onClick = {
+                        navController.navigateUp()
+                        helpViewModel.setNewHelpNeeded(HelpNeeded())
+                        selectedDate = ""
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
