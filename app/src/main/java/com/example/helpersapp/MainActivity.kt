@@ -22,13 +22,14 @@ import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.ui.screens.AboutAndContactScreen
+import com.example.helpersapp.ui.screens.MyDataScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.helpersapp.ui.screens.NyDataScreen
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
+
 
 
 class MainActivity : ComponentActivity() {
@@ -144,7 +145,7 @@ fun AppLayout(
         }
         //user profit for testing
         composable("my_data") {
-            NyDataScreen(
+            MyDataScreen(
                 navController,
                 updateUserViewModel,
                 loginViewModel,

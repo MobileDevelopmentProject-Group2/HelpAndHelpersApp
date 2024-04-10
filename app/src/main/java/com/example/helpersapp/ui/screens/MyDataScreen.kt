@@ -51,7 +51,7 @@ import androidx.compose.material3.Text as Text
 
 
 @Composable
-fun NyDataScreen(
+fun MyDataScreen(
     navController: NavController,
     updateUserViewModel: UpdateUserViewModel,
     //usersViewModel: UsersViewModel,
