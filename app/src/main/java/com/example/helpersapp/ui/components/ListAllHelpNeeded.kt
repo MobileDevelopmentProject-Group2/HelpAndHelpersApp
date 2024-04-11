@@ -34,8 +34,11 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun ListAllHelpNeeded(helpList: List<HelpNeeded>, helpViewModel: HelpViewModel, navController: NavController) {
-
+fun ListAllHelpNeeded(
+    helpList: List<HelpNeeded>,
+    helpViewModel: HelpViewModel,
+    navController: NavController
+) {
     Column {
         helpList.forEach {
             ElevatedCard(
@@ -45,6 +48,7 @@ fun ListAllHelpNeeded(helpList: List<HelpNeeded>, helpViewModel: HelpViewModel, 
                     .clickable(
                         onClick = {
                             helpViewModel.setNewHelpNeeded(it)
+                            helpViewModel.setHelpDetailsScreenState("contact")
                             navController.navigate("helpDetails")
                         }
                     ),
