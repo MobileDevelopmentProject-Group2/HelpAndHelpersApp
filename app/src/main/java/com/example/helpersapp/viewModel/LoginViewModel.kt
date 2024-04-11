@@ -62,8 +62,48 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
     fun getUsername(): String {
         return _userDetails.value.username
+    }
+
+
+    fun deleteUser() {
+        viewModelScope.launch {
+            try {
+                val user = firebaseAuth.currentUser
+                user?.delete()
+                    ?.addOnSuccessListener {
+                        deleteUserData()
+                        Log.d("LoginViewModel", "User deleted successfully")
+                    }
+                    ?.addOnFailureListener { e ->
+                        Log.e("LoginViewModel", "Failed to delete user", e)
+                    }
+            } catch (e: Exception) {
+                Log.e("LoginViewModel", "Failed to delete user", e)
+            }
+        }
+    }
+    private fun deleteUserData() {
+        viewModelScope.launch {
+            try {
+                db.collection("users")
+                    .document(_userDetails.value.username)
+                    .delete()
+                    .addOnSuccessListener {
+                        _userDetails.value = User()
+                        _userID.value = ""
+                        firebaseAuth.signOut()
+                        Log.d("LoginViewModel", "User data deleted successfully")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("LoginViewModel", "Failed to delete user data", e)
+                    }
+            } catch (e: Exception) {
+                Log.e("LoginViewModel", "Failed to delete user data", e)
+            }
+        }
     }
 
     fun logoutUser() {

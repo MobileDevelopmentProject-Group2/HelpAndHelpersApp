@@ -31,7 +31,9 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
+import com.example.helpersapp.ui.components.ConfirmDeleteDialog
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
@@ -62,6 +65,7 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val user by loginViewModel.userDetails.collectAsState()
+    val openAlertDialog = rememberSaveable { mutableStateOf(false) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -235,6 +239,18 @@ fun MainScreen(
                         )
                         if (helpList.isNotEmpty()) {
                             ListAllHelpNeeded(helpList, helpViewModel, navController)
+                        }
+
+                        Button(
+                            onClick = { openAlertDialog.value = true },
+                        ) {
+                            Text(text = "Delete User")
+                        }
+                        if (openAlertDialog.value) {
+                            ConfirmDeleteDialog(
+                                loginViewModel = loginViewModel,
+                                navController = navController
+                            )
                         }
 
                         Spacer(modifier = Modifier.padding(50.dp))
