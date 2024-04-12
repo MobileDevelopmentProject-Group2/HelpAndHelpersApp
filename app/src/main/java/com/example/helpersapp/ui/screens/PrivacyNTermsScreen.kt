@@ -45,56 +45,21 @@ import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.MainTopBar
+import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.HelpViewModel
 
 @Composable
 fun PrivacyNTermsScreen(
-    navController: NavController,
-    loginViewModel: LoginViewModel,
-    helpViewModel: HelpViewModel
+    navController: NavController
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Text("CareConnect app", modifier = Modifier.padding(16.dp))
-                Divider()
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = null) },
-                    label = { Text(text = "Privacy policy") },
-                    selected = false,
-                    onClick = { navController.navigate("privacy") }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
-                    label = { Text(text = "My data") },
-                    selected = false,
-                    onClick = { navController.navigate("my_data") }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.Phone, contentDescription = null) },
-                    label = { Text(text = "About / contact") },
-                    selected = false,
-                    onClick = { navController.navigate("about") }
-                )
-            }
-        })
-    {
         Box {
             ShowBottomImage()
             Scaffold(
                 topBar = {
-                    MainTopBar(
+                    SecondTopBar(
                         navController,
-                        drawerState,
-                        scope,
-                        loginViewModel,
-                        helpViewModel
                     ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->
@@ -141,7 +106,7 @@ fun PrivacyNTermsScreen(
                         }
 
                         Button(
-                            onClick = { navController.navigate("register") },
+                            onClick = { navController.navigateUp() },
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             shape = MaterialTheme.shapes.medium,
@@ -159,6 +124,4 @@ fun PrivacyNTermsScreen(
                 }
             )
         }
-
-    }
 }

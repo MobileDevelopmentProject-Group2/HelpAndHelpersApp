@@ -17,6 +17,7 @@ import com.example.helpersapp.model.HelpNeeded
 
 @Composable
 fun HelpDetailsItem(helpDetails: HelpNeeded) {
+    val dateNow = System.currentTimeMillis().toString()
     val properties = arrayOf(
         "Category" to helpDetails.category,
         "Work Details" to helpDetails.workDetails,
@@ -24,7 +25,8 @@ fun HelpDetailsItem(helpDetails: HelpNeeded) {
         "Time" to helpDetails.time,
         "Price Range" to helpDetails.priceRange.toString(),
         "Postal Code" to helpDetails.postalCode,
-        "Request posted" to formatDateValue(helpDetails.requestPostDate),
+        if (helpDetails.requestPostDate.isNotEmpty()) "Request posted" to formatDateValue(helpDetails.requestPostDate.toString()) else "Request posted" to formatDateValue(dateNow),
+
     )
     Column(
         modifier = Modifier
@@ -38,22 +40,22 @@ fun HelpDetailsItem(helpDetails: HelpNeeded) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                ) {
-                    Text(
-                        text = "${label}: ",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .weight(1f)
-                    )
-                    Text(
-                        text = if (label != "Price Range") value else helpDetails.priceRange.endInclusive.toInt().toString() + " € - " + helpDetails.priceRange.start.toInt().toString() + " €",
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .weight(1f)
-                    )
-                }
+            ) {
+                Text(
+                    text = "${label}: ",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+                Text(
+                    text = if (label != "Price Range") value else helpDetails.priceRange.endInclusive.toInt().toString() + " € - " + helpDetails.priceRange.start.toInt().toString() + " €",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+            }
         }
     }
 }

@@ -46,6 +46,7 @@ import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.MainTopBar
+import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
@@ -53,151 +54,112 @@ import com.example.helpersapp.viewModel.LoginViewModel
 @Composable
 fun AboutAndContactScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel,
-    helpViewModel: HelpViewModel
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+    val helpViewModel = HelpViewModel()
+    val loginViewModel = LoginViewModel()
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Text("CareConnect app", modifier = Modifier.padding(16.dp))
-                Divider()
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = null) },
-                    label = { Text(text = "Privacy policy") },
-                    selected = false,
-                    onClick = { navController.navigate("privacy") }
+    Box {
+        ShowBottomImage()
+        Scaffold(
+            topBar = {
+                SecondTopBar(
+                    navController,
                 )
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
-                    label = { Text(text = "My data") },
-                    selected = false,
-                    onClick = { /*TODO*/ }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.Phone, contentDescription = null) },
-                    label = { Text(text = "About / contact") },
-                    selected = false,
-                    onClick = { navController.navigate("about") }
-                )
-            }
-        })
-    {
-        Box {
-            ShowBottomImage()
-            Scaffold(
-                topBar = {
-                    MainTopBar(
-                        navController,
-                        drawerState,
-                        scope,
-                        loginViewModel,
-                        helpViewModel
-                    ) },
-                containerColor = Color.Transparent,
-                content = { paddingValues ->
-                    Column(
+            },
+            containerColor = Color.Transparent,
+            content = { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 30.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 30.dp)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(bottom = 30.dp)
-                                .align(Alignment.CenterHorizontally),
-                            style = MaterialTheme.typography.titleLarge,
-                            text = "About CareConnect",
-                            fontWeight = FontWeight.Bold
-                        )
+                            .padding(bottom = 30.dp)
+                            .align(Alignment.CenterHorizontally),
+                        style = MaterialTheme.typography.titleLarge,
+                        text = "About CareConnect",
+                        fontWeight = FontWeight.Bold
+                    )
 
-                        Row {
-                        }
+                    Row {
+                    }
+                    Text(
+                        text = "At CareConnect, we believe every child deserves the best care and education. " +
+                                "We are dedicated to connecting parents with the top nannies and tutors across the country. " +
+                                "Through a rigorous screening process, we ensure only the most qualified candidates are matched with families, " +
+                                "promoting a safe and nurturing environment for children's growth and learning.",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Column {
                         Text(
-                            text = "At CareConnect, we believe every child deserves the best care and education. " +
-                                    "We are dedicated to connecting parents with the top nannies and tutors across the country. " +
-                                    "Through a rigorous screening process, we ensure only the most qualified candidates are matched with families, " +
-                                    "promoting a safe and nurturing environment for children's growth and learning.",
+                            text = "Our Vision",
+                            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = "To be the most trusted platform for parental support services, " +
+                                    "where every parent can find peace of mind knowing their children are in good hands.",
                             style = MaterialTheme.typography.bodyLarge
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Column {
-                            Text(
-                                text = "Our Vision",
-                                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Text(
-                                text = "To be the most trusted platform for parental support services, " +
-                                        "where every parent can find peace of mind knowing their children are in good hands.",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Our Missions",
-                                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Text(
-                                text = "Helping parents by providing them with a wide range of quality caregivers and educators, " +
-                                        "enabling them to balance work and family life more effectively.",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Divider()
-                            Text(
-                                text = "Contact Us",
-                                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Text(
-                                text = "We're here to help and answer any question you might have. " +
-                                        "We look forward to hearing from you.",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                text = "Email: support@careconnect.com",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                text = "Phone: +358 40 123-4567",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                text = "Address: 123 CareConnect Lane, Education City, Oulu, 12345",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Our Missions",
+                            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = "Helping parents by providing them with a wide range of quality caregivers and educators, " +
+                                    "enabling them to balance work and family life more effectively.",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Divider()
+                        Text(
+                            text = "Contact Us",
+                            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = "We're here to help and answer any question you might have. " +
+                                    "We look forward to hearing from you.",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "Email: support@careconnect.com",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "Phone: +358 40 123-4567",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "Address: 123 CareConnect Lane, Education City, Oulu, 12345",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
 
-                        }
+                    Button(
+                        onClick = { navController.navigateUp() },
+                        modifier = Modifier
+                            .padding(top = 24.dp),
+                        shape = MaterialTheme.shapes.medium,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
 
-
-
-                        Button(
-                            onClick = { navController.navigate("main") },
-                            modifier = Modifier
-                                .padding(top = 24.dp),
-                            shape = MaterialTheme.shapes.medium,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-
-                            ) {
-                            Text(text = "Back")
-
-                        }
-
+                        ) {
+                        Text(text = "Back")
                     }
                 }
-            )
-        }
-
+            }
+        )
     }
 }
 

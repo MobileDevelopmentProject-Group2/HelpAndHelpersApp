@@ -1,11 +1,13 @@
 package com.example.helpersapp.ui.screens
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,13 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
@@ -43,6 +42,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
     val screenState by helpViewModel.helpDetailsScreenState.collectAsState()
     val helpDetails by helpViewModel.newHelpNeeded.collectAsState()
     val userID by loginViewModel.userID.collectAsState()
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -115,7 +115,13 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                 } else {
                     Button(
                         onClick = {
-                            navController.navigate("main")
+                            context.sendMail(
+                                to = helpDetails.userEmail ?: "",
+                                subject = "Contact request from CareConnect"
+                            ) {
+                                navController.navigate("main")
+                                Toast.makeText(context, "Email sending successful", Toast.LENGTH_SHORT).show()
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -126,12 +132,30 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                             .height(52.dp)
                             .width(150.dp)
                     ) {
-                        Text(text = "Contact this person")
+                        Text(text = "Send mail")
                     }
                 }
-
             }
         }
     }
-
+}
+fun Context.sendMail(
+    to: String,
+    subject: String,
+    onSuccess: () -> Unit
+) {
+    try {
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.type = "vnd.android.cursor.item/email"
+        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        startActivity(intent)
+        onSuccess.invoke()
+    } catch (e: ActivityNotFoundException) {
+        // Handle case where no email app is available
+        Toast.makeText(this, "You need to have an emailing application available", Toast.LENGTH_SHORT).show()
+    } catch (t: Throwable) {
+        // Handle potential other type of exceptions
+        Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show()
+    }
 }

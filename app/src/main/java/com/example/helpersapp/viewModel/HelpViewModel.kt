@@ -58,6 +58,7 @@ class HelpViewModel: ViewModel() {
     }
     fun addNewHelpToCollection(userID: String) {
         val user = Firebase.auth.currentUser
+        val userEmail = Firebase.auth.currentUser?.email
         Log.d("HelpViewModel", "Adding new help: ${userID}")
         viewModelScope.launch {
             try {
@@ -72,7 +73,8 @@ class HelpViewModel: ViewModel() {
                                 "priceRange" to _newHelpNeeded.value.priceRange,
                                 "postalCode" to _newHelpNeeded.value.postalCode,
                                 "userId" to userID,
-                                "requestPostDate" to dateNow
+                                "requestPostDate" to dateNow,
+                                "userEmail" to userEmail
                             )
                         )
                         .addOnSuccessListener {
@@ -109,7 +111,8 @@ class HelpViewModel: ViewModel() {
                                         priceRange = (endInclusive.toFloat()).rangeTo(start.toFloat()),
                                         postalCode = doc.get("postalCode").toString(),
                                         userId = doc.get("userId").toString(),
-                                        requestPostDate = doc.get("requestPostDate").toString()
+                                        requestPostDate = doc.get("requestPostDate").toString(),
+                                        userEmail = doc.get("userEmail").toString()
                                     )
                                 )
                             }

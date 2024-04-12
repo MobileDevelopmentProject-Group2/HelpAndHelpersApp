@@ -127,17 +127,15 @@ fun AppLayout(
         }
         composable("privacy") {
             PrivacyNTermsScreen(
-                navController,
-                loginViewModel,
-                helpViewModel
-            )}
+                navController
+            )
+        }
         //add about screen
         composable("about") {
             AboutAndContactScreen(
                 navController,
-                loginViewModel,
-                helpViewModel
-            )}
+            )
+        }
         composable("helpByCategory") {
             HelpByCategoryScreen(
                 navController,
@@ -151,11 +149,6 @@ fun AppLayout(
                 updateUserViewModel,
                 loginViewModel,
                 helpViewModel
-            )}
-        composable("helpByCategory") {
-            HelpByCategoryScreen(
-                navController,
-                helpViewModel
             )
         }
         composable("helperDetailsScreen") {
@@ -165,7 +158,8 @@ fun AppLayout(
                 loginViewModel,
             )
         }
-    }  }
+    }
+}
 
 
 
