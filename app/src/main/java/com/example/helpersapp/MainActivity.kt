@@ -159,13 +159,10 @@ fun AppLayout(
             )
         }
         composable("helperDetailsScreen") {
-            val useremail = Firebase.auth.currentUser?.email
-            val username = createUsername(useremail ?: "")
             HelperDetailsScreen(
                 navController,
                 helperViewModel,
                 loginViewModel,
-               // username ?:""
             )
         }
     }  }
