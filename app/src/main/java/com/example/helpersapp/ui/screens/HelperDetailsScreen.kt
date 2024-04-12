@@ -1,6 +1,5 @@
 package com.example.helpersapp.ui.screens
 
-
 import android.content.ContentValues
 import android.util.Log
 import androidx.compose.foundation.Image
