@@ -23,13 +23,16 @@ import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.ui.screens.AboutAndContactScreen
 import com.example.helpersapp.ui.screens.MyDataScreen
+import com.example.helpersapp.ui.screens.HelperDetailsScreen
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
-
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class MainActivity : ComponentActivity() {
@@ -153,6 +156,13 @@ fun AppLayout(
             HelpByCategoryScreen(
                 navController,
                 helpViewModel
+            )
+        }
+        composable("helperDetailsScreen") {
+            HelperDetailsScreen(
+                navController,
+                helperViewModel,
+                loginViewModel,
             )
         }
     }  }

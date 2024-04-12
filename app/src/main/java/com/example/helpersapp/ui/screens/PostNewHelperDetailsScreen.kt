@@ -181,7 +181,7 @@ fun PostNewHelperDetailsScreen(
         ) {
             Text(
                 text = "Hi,${user.firstname}!",
-                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(
@@ -275,6 +275,7 @@ fun PostNewHelperDetailsScreen(
                                 username,
                                 onSuccess = {
                                     Log.d(TAG, "DocumentSnapshot successfully written!")
+                                    navController.navigate("helperDetailsScreen")
                                 },
                                 onFailure = { e ->
                                     Log.e(TAG, " an error while saving data to Firestore.", e)

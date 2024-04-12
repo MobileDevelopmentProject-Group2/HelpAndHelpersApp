@@ -62,6 +62,12 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
+    fun getUsername(): String {
+        return _userDetails.value.username
+    }
+
+
     fun deleteUser() {
         viewModelScope.launch {
             try {
@@ -99,6 +105,7 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
     fun logoutUser() {
         viewModelScope.launch {
             _userID.value = ""
