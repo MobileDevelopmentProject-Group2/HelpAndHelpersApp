@@ -167,7 +167,7 @@ fun PostNewHelperDetailsScreen(
     val useremail = Firebase.auth.currentUser?.email
     val username = createUsername(useremail ?: "")
     val user by loginViewModel.userDetails.collectAsState()
-
+    //val username = user.username,
 
     Box(
         modifier = Modifier.fillMaxSize()
