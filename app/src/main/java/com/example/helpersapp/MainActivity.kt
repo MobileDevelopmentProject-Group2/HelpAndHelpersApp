@@ -43,8 +43,6 @@ class MainActivity : ComponentActivity() {
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         val updateUserViewModel = ViewModelProvider(this)[UpdateUserViewModel::class.java]
-        //Firebase.initialize(this)
-
 
         setContent {
             HelpersAppTheme {
