@@ -129,6 +129,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                         Text(text = "Contact this person")
                     }
                 }
+
             }
         }
     }
