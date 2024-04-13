@@ -1,5 +1,6 @@
 package com.example.helpersapp.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.User
@@ -19,10 +20,12 @@ class UpdateUserViewModel: ViewModel() {
                 db.collection("users").document(userId).set(updateUser)
                     .addOnSuccessListener {
                         onComplete(true, "User data updated successfully.")
+                        Log.e("FirebaseStorage", "update user data")
                     }
                     .addOnFailureListener{
                         e->
                         onComplete(false, "Fail to change User data ${e.message}.")
+                        Log.e("FirebaseStorage", "Error uploading profile picture")
                     }
 
 
