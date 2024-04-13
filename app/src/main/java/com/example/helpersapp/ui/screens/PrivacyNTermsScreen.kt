@@ -1,100 +1,39 @@
 package com.example.helpersapp.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierInfo
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
-import com.example.helpersapp.ui.components.ListAllHelpNeeded
-import com.example.helpersapp.ui.components.MainTopBar
+import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
-import com.example.helpersapp.viewModel.LoginViewModel
-import com.example.helpersapp.viewModel.HelpViewModel
 
 @Composable
 fun PrivacyNTermsScreen(
-    navController: NavController,
-    loginViewModel: LoginViewModel,
-    helpViewModel: HelpViewModel
+    navController: NavController
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Text("CareConnect app", modifier = Modifier.padding(16.dp))
-                Divider()
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = null) },
-                    label = { Text(text = "Privacy policy") },
-                    selected = false,
-                    onClick = { navController.navigate("privacy") }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null) },
-                    label = { Text(text = "My data") },
-                    selected = false,
-                    onClick = { navController.navigate("my_data") }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(imageVector = Icons.Outlined.Phone, contentDescription = null) },
-                    label = { Text(text = "About / contact") },
-                    selected = false,
-                    onClick = { navController.navigate("about") }
-                )
-            }
-        })
-    {
         Box {
             ShowBottomImage()
             Scaffold(
                 topBar = {
-                    MainTopBar(
+                    SecondTopBar(
                         navController,
-                        drawerState,
-                        scope,
-                        loginViewModel,
-                        helpViewModel
                     ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->
@@ -141,7 +80,7 @@ fun PrivacyNTermsScreen(
                         }
 
                         Button(
-                            onClick = { navController.navigate("register") },
+                            onClick = { navController.navigateUp() },
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             shape = MaterialTheme.shapes.medium,
@@ -159,6 +98,4 @@ fun PrivacyNTermsScreen(
                 }
             )
         }
-
-    }
 }

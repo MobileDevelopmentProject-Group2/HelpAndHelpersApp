@@ -43,8 +43,6 @@ class MainActivity : ComponentActivity() {
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
         val loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         val updateUserViewModel = ViewModelProvider(this)[UpdateUserViewModel::class.java]
-        //Firebase.initialize(this)
-
 
         setContent {
             HelpersAppTheme {
@@ -127,17 +125,15 @@ fun AppLayout(
         }
         composable("privacy") {
             PrivacyNTermsScreen(
-                navController,
-                loginViewModel,
-                helpViewModel
-            )}
+                navController
+            )
+        }
         //add about screen
         composable("about") {
             AboutAndContactScreen(
                 navController,
-                loginViewModel,
-                helpViewModel
-            )}
+            )
+        }
         composable("helpByCategory") {
             HelpByCategoryScreen(
                 navController,
@@ -151,11 +147,6 @@ fun AppLayout(
                 updateUserViewModel,
                 loginViewModel,
                 helpViewModel
-            )}
-        composable("helpByCategory") {
-            HelpByCategoryScreen(
-                navController,
-                helpViewModel
             )
         }
         composable("helperDetailsScreen") {
@@ -165,7 +156,8 @@ fun AppLayout(
                 loginViewModel,
             )
         }
-    }  }
+    }
+}
 
 
 
