@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
+import com.example.helpersapp.ui.components.MainTopBar
+import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 
@@ -38,56 +41,61 @@ fun HelpByCategoryScreen(navController: NavController, helpViewModel: HelpViewMo
 
     Box(modifier = Modifier.fillMaxSize()) {
         ShowBottomImage()
-        Column(
-            modifier = Modifier
-                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = "All help requests in category: $category",
-                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            if (filteredList.isNotEmpty()) {
-                ListAllHelpNeeded(filteredList, helpViewModel, navController)
-            } else {
-                Text(text = "No help needed in this category")
-            }
-            Button(
-                onClick = {
-                    navController.navigateUp()
-                    helpViewModel.setCategory("")
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                modifier = Modifier
-                    .padding(top = 35.dp)
-                    .height(52.dp)
-                    .width(150.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-
+        Scaffold(
+            topBar = {
+                SecondTopBar(navController)
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            content = { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
+                    Text(
+                        text = "All help requests in category: $category",
+                        modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                        style = MaterialTheme.typography.titleLarge,
                     )
-                    Text(text = "Back")
+                    if (filteredList.isNotEmpty()) {
+                        ListAllHelpNeeded(filteredList, helpViewModel, navController)
+                    } else {
+                        Text(text = "No help needed in this category")
+                    }
+                    Button(
+                        onClick = {
+                            navController.navigateUp()
+                            helpViewModel.setCategory("")
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier
+                            .padding(top = 35.dp)
+                            .height(52.dp)
+                            .width(150.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly
+
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.ArrowBack,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(text = "Back")
+                        }
+                    }
+
                 }
             }
-
-        }
-
+        )
     }
-
-
-
 }

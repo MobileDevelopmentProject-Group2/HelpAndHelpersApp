@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
@@ -25,6 +26,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemColors
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -90,6 +93,17 @@ fun MainScreen(
                     label = { Text(text = "About / contact") },
                     selected = false,
                     onClick = { navController.navigate("about") }
+                )
+                Divider()
+                NavigationDrawerItem(
+                    icon = { Icon(imageVector = Icons.Outlined.Delete, contentDescription = null) },
+                    label = { Text(text = "Delete my user account") },
+                    selected = false,
+                    onClick = { openAlertDialog.value = true },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedTextColor = Color.Red,
+                        unselectedIconColor = Color.Red
+                    ),
                 )
             }
         }) {

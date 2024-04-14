@@ -8,5 +8,6 @@ data class HelpNeeded(
     var priceRange: ClosedFloatingPointRange<Float> = 0.0f..100.0f,
     var postalCode: String = "",
     var userId: String = "",
-    var requestPostDate: String = ""
+    var requestPostDate: String = "",
+    var userEmail: String = ""
 )
