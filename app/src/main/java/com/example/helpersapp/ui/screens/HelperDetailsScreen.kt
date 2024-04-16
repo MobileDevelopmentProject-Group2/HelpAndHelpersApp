@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -26,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -41,12 +44,12 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
 
+
 @Composable
 fun HelperDetailsScreen(
     navController: NavController,
     helperViewModel: HelperViewModel,
     loginViewModel: LoginViewModel,
-    //username: String
 ) {
     val helperInfo = remember { mutableStateOf(HelperInfo("", "", "", "", "")) }
     val user by loginViewModel.userDetails.collectAsState()
@@ -59,13 +62,32 @@ fun HelperDetailsScreen(
             },
             onFailure = { e ->
                 // Handle failure
+                Log.e("***", "Error fetching helper details: ${e.message}")
             }
         )
     }
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+
+    val username = loginViewModel.getUsername()
+    val url = "gs://careconnect-65e41.appspot.com/"
+    var byteArray by remember { mutableStateOf<ByteArray?>(null) }
+
+    LaunchedEffect(url) {
+        Firebase.storage.reference
+            .child("$username/profile_picture.jpg")
+            .getBytes(1024 * 1024)
+            .addOnSuccessListener { fetchedBytes ->
+                byteArray = fetchedBytes
+                Log.d("***", "Image successfully fetched. Image byte array size: ${fetchedBytes.size}.Fetching image from URL: $url")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("***", "Error fetching image: ${exception.message}")
+                byteArray = null
+            }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
         ShowBottomImage()
+
         Column(
             modifier = Modifier
                 .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
@@ -73,31 +95,40 @@ fun HelperDetailsScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        )
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        {
-            Text(
-                text = "Helper Detail",
-                modifier = Modifier.padding(vertical = 8.dp),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Divider(color = Color.Gray, thickness = 1.dp)
+            byteArray?.let {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = byteArray
+                    ),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(shape = CircleShape)
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            ShowStorageImage()
-
-            Text(text = "${user.firstname} ${user.lastname}",
-                style = MaterialTheme.typography.titleLarge,)
+            Text(
+                text = "${user.firstname} ${user.lastname}",
+                style = MaterialTheme.typography.titleLarge,
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             HelperDetail(helperInfo.value)
 
+            Text(
+                text = "Certification list : "
+            )
+
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
                     onClick = { navController.navigateUp() },
@@ -119,9 +150,7 @@ fun HelperDetailsScreen(
                     Text(text = "Modify")
                 }
                 Button(
-                    onClick = {
-                        navController.navigate("main")
-                    },
+                    onClick = { navController.navigate("main") },
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -138,47 +167,22 @@ fun HelperDetailsScreen(
         }
     }
 }
+
 @Composable
 fun HelperDetail(helperInfo: HelperInfo) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp),
+            .padding(bottom = 50.dp, start = 16.dp, end = 16.dp, top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(text = "About: ${helperInfo.about}")
-        Text(text = "Category: ${helperInfo.category}")
-        Text(text = "Details: ${helperInfo.details}")
-        Text(text = "Experience: ${helperInfo.experience}")
-    }
-}
-
-
-@Composable
-fun ShowStorageImage() {
-    var byteArray by remember { mutableStateOf<ByteArray?>(null) }
-
-    var painter = rememberAsyncImagePainter(
-        model = byteArray
-    )
-    val useremail = Firebase.auth.currentUser?.email
-    val username = createUsername(useremail ?: "")
-
-    Column() {
-        Firebase.storage.reference
-            .child("tomoemail/profile_picture.jpg")
-            //.child("{$username}/profile_picture.jpg")
-            .getBytes(1024*1024)
-            .addOnSuccessListener {
-                byteArray = it
-            }
-            .addOnFailureListener {
-                Log.e("***", it.message.toString())
-            }
-        Image(
-            painter = painter,
-            contentDescription = "images",
-            modifier = Modifier.fillMaxSize()
-        )
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(text = "About:\n${helperInfo.about}")
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(text = "Category:\n${helperInfo.category}")
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(text = "Details:\n${helperInfo.details}")
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(text = "Experience:\n${helperInfo.experience}")
     }
 }

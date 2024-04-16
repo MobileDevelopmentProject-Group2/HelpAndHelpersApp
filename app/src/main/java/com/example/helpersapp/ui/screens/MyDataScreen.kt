@@ -1,6 +1,7 @@
 package com.example.helpersapp.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Warning
@@ -25,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,20 +38,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.model.User
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
+import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.example.helpersapp.ui.components.createUsername
 
 
 @Composable
@@ -64,15 +68,16 @@ fun MyDataScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val user by loginViewModel.userDetails.collectAsState()
-    //val user by updateUserViewModel.userDetails.collectAsState()
     var firstname by remember { mutableStateOf(user.firstname) }
     var lastname by remember { mutableStateOf(user.lastname) }
     var email by remember { mutableStateOf(user.email) }
     var address by remember { mutableStateOf(user.address) }
-    //var password by remember { mutableStateOf("") }
-    //var currentPassword by remember { mutableStateOf("") }
-    //var message by remember { mutableStateOf("") }
     val userId = createUsername(email)
+    //delete user
+    val openAlertDialog = rememberSaveable { mutableStateOf(false) }
+    // update message notify
+    val context = LocalContext.current
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -98,6 +103,16 @@ fun MyDataScreen(
                     selected = false,
                     onClick = { navController.navigate("about") }
                 )
+                Divider()
+                NavigationDrawerItem(
+                    icon = { Icon(imageVector = Icons.Outlined.Delete, contentDescription = null) },
+                    label = { Text(text = "Delete my user account") },
+                    selected = false,
+                    onClick = { openAlertDialog.value = true },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedTextColor = Color.Red,
+                        unselectedIconColor = Color.Red
+                    ))
             }
         }) {
              ShowBottomImage()
@@ -156,10 +171,13 @@ fun MyDataScreen(
                             )
                               updateUserViewModel.updateUserDetail(userId, updateUser) {
                                       success, message ->
+                                     message
                                   if (success) {
-                                      Log.e("FirebaseStorage", "update user data")
+                                      //Log.e("FirebaseStorage", "update user data")
+                                      Toast.makeText(context, "User profile updated", Toast.LENGTH_LONG).show()
                                   }else {
                                       Log.e("FirebaseStorage", "faile",)
+                                      Toast.makeText(context, "Fail to update user profile, check again", Toast.LENGTH_LONG).show()
                                   }
                               }
 
@@ -191,44 +209,6 @@ fun MyDataScreen(
 
 }
 
-@Composable
-fun ConfirmChange(
-    navController: NavController,
-    loginViewModel: LoginViewModel
-) {
-    AlertDialog(
-        onDismissRequest = { navController.navigateUp() },
-        icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = "warning") },
-        title = { Text("Do you want to ") },
-        text = { Text("Are you sure you want to delete your data?\nThis will remove all register and user data.") },
-        confirmButton = {
-            Button(
-                onClick = {
-                    loginViewModel.deleteUser()
-                    navController.navigate("home")
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                ),
-                modifier = Modifier
-                    .padding(end = 25.dp)
-            ) {
-                Text("Delete")
-            }
-        },
-        dismissButton = {
-            Button(
-                onClick = {
-                    navController.navigate("main")
-                },
-                modifier = Modifier
-                    .padding(end = 20.dp)
-            ) {
-                Text("Cancel")
-            }
-        }
-    )
-}
 /*                        OutlinedTextField(
                             value = email ,
                             onValueChange = {email = it },
