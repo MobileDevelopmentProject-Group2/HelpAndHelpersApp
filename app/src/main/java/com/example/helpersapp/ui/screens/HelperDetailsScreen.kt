@@ -75,69 +75,67 @@ fun HelperDetailsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         )
 
-    {
-        Text(
-            text = "Helper Detail",
-            modifier = Modifier.padding(vertical = 8.dp),
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Divider(color = Color.Gray, thickness = 1.dp)
+        {
+            Text(
+                text = "Helper Detail",
+                modifier = Modifier.padding(vertical = 8.dp),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Divider(color = Color.Gray, thickness = 1.dp)
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        ShowStorageImage()
+            ShowStorageImage()
 
-        Text(text = "${user.firstname} ${user.lastname}",
-            style = MaterialTheme.typography.titleLarge,)
+            Text(text = "${user.firstname} ${user.lastname}",
+                style = MaterialTheme.typography.titleLarge,)
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        HelperDetail(helperInfo.value)
+            HelperDetail(helperInfo.value)
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Button(
-                onClick = { navController.navigateUp() },
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
-                    .padding(top = 35.dp)
-                    .height(52.dp)
-                    .width(150.dp)
+                    .fillMaxWidth()
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.ArrowBack,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(text = "Modify")
-            }
-            Button(
-                onClick = {
-                    navController.navigate("main")
-                },
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                modifier = Modifier
-                    .padding(top = 35.dp)
-                    .height(52.dp)
-                    .width(150.dp)
-            ) {
-                Text(text = "Confirm")
+                Button(
+                    onClick = { navController.navigateUp() },
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(text = "Modify")
+                }
+                Button(
+                    onClick = {
+                        navController.navigate("main")
+                    },
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .height(52.dp)
+                        .width(150.dp)
+                ) {
+                    Text(text = "Confirm")
+                }
             }
         }
-        }
-
-
     }
 }
 @Composable

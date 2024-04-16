@@ -1,11 +1,11 @@
 package com.example.helpersapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +14,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -25,6 +27,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,18 +39,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.helpersapp.R
 import com.example.helpersapp.model.User
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
-import com.example.helpersapp.viewModel.UsersViewModel
-import androidx.compose.material3.Text as Text
+import com.google.firebase.auth.FirebaseAuth
+import com.example.helpersapp.ui.components.createUsername
 
 
 @Composable
@@ -63,13 +64,15 @@ fun MyDataScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val user by loginViewModel.userDetails.collectAsState()
+    //val user by updateUserViewModel.userDetails.collectAsState()
     var firstname by remember { mutableStateOf(user.firstname) }
     var lastname by remember { mutableStateOf(user.lastname) }
     var email by remember { mutableStateOf(user.email) }
     var address by remember { mutableStateOf(user.address) }
-    var password by remember { mutableStateOf("") }
-    var currentPassword by remember { mutableStateOf("") }
-    var message by remember { mutableStateOf("") }
+    //var password by remember { mutableStateOf("") }
+    //var currentPassword by remember { mutableStateOf("") }
+    //var message by remember { mutableStateOf("") }
+    val userId = createUsername(email)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -136,63 +139,40 @@ fun MyDataScreen(
                             onValueChange = {lastname = it },
                             label = { Text("Last Name")
                             } )
-                        OutlinedTextField(
-                            value = email ,
-                            onValueChange = {email = it },
-                            label = { Text("Email address")
-                            })
+
                         OutlinedTextField(
                             value = address,
                             onValueChange = {address = it },
                             label = { Text("Address")
                             })
-                        OutlinedTextField(
-                            value = password,
-                            onValueChange = {password = it },
-                            label = { Text("New password")
-                            })
-                        OutlinedTextField(
-                            value = currentPassword,
-                            onValueChange = {currentPassword = it },
-                            label = { Text("Current Password (Required for Change)")
-                            })
+
                         Spacer(modifier = Modifier.height(8.dp))
-                        Button(
+                        Button(onClick = {
+                              val updateUser = User(
+                                  firstname = firstname,
+                                  lastname = lastname,
+                                  //email = email,
+                                  address = address
+                            )
+                              updateUserViewModel.updateUserDetail(userId, updateUser) {
+                                      success, message ->
+                                  if (success) {
+                                      Log.e("FirebaseStorage", "update user data")
+                                  }else {
+                                      Log.e("FirebaseStorage", "faile",)
+                                  }
+                              }
 
-                            onClick = {
-                                //try new code
-                                updateUserViewModel.verifyPwd(user.email, currentPassword) {
-                                        isPwdCorrect ->
-                                    if(isPwdCorrect) {
-                                        val updateUser = User(firstname, lastname, email, address)
-                                        updateUserViewModel.updateUserDetail(user.uid, updateUser){
-                                                isSuccess, updateMessage ->
-                                            message = updateMessage
-                                            if(isSuccess && password.isNotBlank()) {
-                                                updateUserViewModel.updateUserEmailAndPwd(email, password) {
-                                                        isPwdUpdateSuccess, pwdUpdateMessage ->
-                                                    message = pwdUpdateMessage
 
-                                                }
-                                            }
-                                        }
-                                    }else {
-                                        message = "Current password is incorrect"
-                                    }
 
-                                }
-                                //old code
-                                //val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@Button
-                                //val updatedUser = User(firstname, lastname, email, address, user.username)
-                                //updateUserViewModel.updateUserDetails(userId, updatedUser) { success, message ->
-                            }
-
+                          },
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text("Update")
                         }
 
                         Button(
-                            onClick = { navController.navigate("register") },
+                            onClick = { navController.navigate("main") },
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             shape = MaterialTheme.shapes.medium,
@@ -203,25 +183,55 @@ fun MyDataScreen(
 
                             ) {
                             Text(text = "Back")
-
                         }
-
                     }
                 }
             )
-
     }
 
-    Box {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+}
 
-
-
+@Composable
+fun ConfirmChange(
+    navController: NavController,
+    loginViewModel: LoginViewModel
+) {
+    AlertDialog(
+        onDismissRequest = { navController.navigateUp() },
+        icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = "warning") },
+        title = { Text("Do you want to ") },
+        text = { Text("Are you sure you want to delete your data?\nThis will remove all register and user data.") },
+        confirmButton = {
+            Button(
+                onClick = {
+                    loginViewModel.deleteUser()
+                    navController.navigate("home")
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                ),
+                modifier = Modifier
+                    .padding(end = 25.dp)
+            ) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = {
+                    navController.navigate("main")
+                },
+                modifier = Modifier
+                    .padding(end = 20.dp)
+            ) {
+                Text("Cancel")
+            }
         }
-    }
-
- }
-
-
+    )
+}
+/*                        OutlinedTextField(
+                            value = email ,
+                            onValueChange = {email = it },
+                            label = { Text("Email address")
+                            })
+* */
