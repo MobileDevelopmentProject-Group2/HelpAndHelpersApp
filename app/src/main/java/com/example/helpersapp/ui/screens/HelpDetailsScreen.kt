@@ -25,6 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.HelpDetailsItem
+import com.example.helpersapp.ui.components.MapActivity
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
@@ -43,6 +47,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
     val helpDetails by helpViewModel.newHelpNeeded.collectAsState()
     val userID by loginViewModel.userID.collectAsState()
     val context = LocalContext.current
+    var showMap by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -64,6 +69,26 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
 
             HelpDetailsItem(helpDetails)
 
+            Button(
+                onClick = { showMap = true},
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier
+                    .padding(bottom = 10.dp)
+            ) {
+                Text(text = "Show approximate location on map")
+            }
+
+            if (showMap) {
+                Column(
+                    modifier = Modifier
+                        .height(400.dp)
+                ) {
+                    MapActivity(helpDetails.postalCode ?: "")
+                }
+            }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
@@ -75,6 +100,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                             helpViewModel.emptyNewHelpNeeded()
                         }
                         helpViewModel.setHelpDetailsScreenState("")
+                        showMap = false
                         navController.navigateUp()
                     },
                     colors = ButtonDefaults.buttonColors(

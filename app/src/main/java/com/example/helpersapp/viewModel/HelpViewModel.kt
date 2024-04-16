@@ -1,6 +1,7 @@
 package com.example.helpersapp.viewModel
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.HelpNeeded
@@ -78,7 +79,15 @@ class HelpViewModel: ViewModel() {
                             )
                         )
                         .addOnSuccessListener {
-                            Log.d("HelpViewModel", "Help added successfully") }
+                            Log.d("HelpViewModel", "Help added successfully")
+                            Toast.makeText(
+                                null,
+                                "Help request added successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        }
+
                         .addOnFailureListener {
                             Log.e("HelpViewModel", it.message.toString())
                         }
