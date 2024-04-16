@@ -117,7 +117,6 @@ fun AppLayout(
         }
         composable("postHelper") {
             PostNewHelperDetailsScreen(
-                usersViewModel,
                 navController,
                 helperViewModel,
                 loginViewModel
