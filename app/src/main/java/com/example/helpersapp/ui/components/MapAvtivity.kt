@@ -22,7 +22,7 @@ import org.checkerframework.checker.units.qual.Area
 
 @Composable
 fun MapActivity(postalCode: String) {
-
+    
     val oulu = com.google.android.gms.maps.model.LatLng(65.01236, 25.46816)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(oulu, 13f)

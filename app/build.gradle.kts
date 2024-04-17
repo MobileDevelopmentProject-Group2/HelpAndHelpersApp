@@ -22,18 +22,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-    /*
-        // Get API keys from local.properties
-        val properties = Properties()
-        val localPropertiesFile = project.rootProject.file("local.properties")
-        localPropertiesFile.inputStream().use { inputStream ->
-            properties.load(inputStream)
-        }
-        // Set API keys in BuildConfig
-        buildConfigField("String", "MAP_API_KEY", "\"${properties.getProperty("MAP_API_KEY")}\"")
-    */
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
