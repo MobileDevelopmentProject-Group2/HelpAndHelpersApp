@@ -16,8 +16,6 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Warning
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -47,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.model.User
+import com.example.helpersapp.ui.components.ConfirmDeleteDialog
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.ui.components.createUsername
@@ -113,6 +112,12 @@ fun MyDataScreen(
                         unselectedTextColor = Color.Red,
                         unselectedIconColor = Color.Red
                     ))
+                if (openAlertDialog.value) {
+                    ConfirmDeleteDialog(
+                        loginViewModel = loginViewModel,
+                        navController = navController
+                    )
+                }
             }
         }) {
              ShowBottomImage()
@@ -166,7 +171,6 @@ fun MyDataScreen(
                               val updateUser = User(
                                   firstname = firstname,
                                   lastname = lastname,
-                                  //email = email,
                                   address = address
                             )
                               updateUserViewModel.updateUserDetail(userId, updateUser) {
@@ -180,8 +184,6 @@ fun MyDataScreen(
                                       Toast.makeText(context, "Fail to update user profile, check again", Toast.LENGTH_LONG).show()
                                   }
                               }
-
-
 
                           },
                             modifier = Modifier.fillMaxWidth(),
@@ -208,10 +210,3 @@ fun MyDataScreen(
     }
 
 }
-
-/*                        OutlinedTextField(
-                            value = email ,
-                            onValueChange = {email = it },
-                            label = { Text("Email address")
-                            })
-* */
