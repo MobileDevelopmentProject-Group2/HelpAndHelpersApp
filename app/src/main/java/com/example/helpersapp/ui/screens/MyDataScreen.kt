@@ -1,17 +1,19 @@
 package com.example.helpersapp.ui.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
@@ -23,8 +25,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,22 +36,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.helpersapp.R
 import com.example.helpersapp.model.User
+import com.example.helpersapp.ui.components.ConfirmDeleteDialog
 import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
+import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
-import com.example.helpersapp.viewModel.UsersViewModel
-import androidx.compose.material3.Text as Text
 
 
 @Composable
@@ -67,9 +71,12 @@ fun MyDataScreen(
     var lastname by remember { mutableStateOf(user.lastname) }
     var email by remember { mutableStateOf(user.email) }
     var address by remember { mutableStateOf(user.address) }
-    var password by remember { mutableStateOf("") }
-    var currentPassword by remember { mutableStateOf("") }
-    var message by remember { mutableStateOf("") }
+    val userId = createUsername(email)
+    //delete user
+    val openAlertDialog = rememberSaveable { mutableStateOf(false) }
+    // update message notify
+    val context = LocalContext.current
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -95,6 +102,22 @@ fun MyDataScreen(
                     selected = false,
                     onClick = { navController.navigate("about") }
                 )
+                Divider()
+                NavigationDrawerItem(
+                    icon = { Icon(imageVector = Icons.Outlined.Delete, contentDescription = null) },
+                    label = { Text(text = "Delete my user account") },
+                    selected = false,
+                    onClick = { openAlertDialog.value = true },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedTextColor = Color.Red,
+                        unselectedIconColor = Color.Red
+                    ))
+                if (openAlertDialog.value) {
+                    ConfirmDeleteDialog(
+                        loginViewModel = loginViewModel,
+                        navController = navController
+                    )
+                }
             }
         }) {
              ShowBottomImage()
@@ -136,63 +159,40 @@ fun MyDataScreen(
                             onValueChange = {lastname = it },
                             label = { Text("Last Name")
                             } )
-                        OutlinedTextField(
-                            value = email ,
-                            onValueChange = {email = it },
-                            label = { Text("Email address")
-                            })
+
                         OutlinedTextField(
                             value = address,
                             onValueChange = {address = it },
                             label = { Text("Address")
                             })
-                        OutlinedTextField(
-                            value = password,
-                            onValueChange = {password = it },
-                            label = { Text("New password")
-                            })
-                        OutlinedTextField(
-                            value = currentPassword,
-                            onValueChange = {currentPassword = it },
-                            label = { Text("Current Password (Required for Change)")
-                            })
+
                         Spacer(modifier = Modifier.height(8.dp))
-                        Button(
+                        Button(onClick = {
+                              val updateUser = User(
+                                  firstname = firstname,
+                                  lastname = lastname,
+                                  address = address
+                            )
+                              updateUserViewModel.updateUserDetail(userId, updateUser) {
+                                      success, message ->
+                                     message
+                                  if (success) {
+                                      //Log.e("FirebaseStorage", "update user data")
+                                      Toast.makeText(context, "User profile updated", Toast.LENGTH_LONG).show()
+                                  }else {
+                                      Log.e("FirebaseStorage", "faile",)
+                                      Toast.makeText(context, "Fail to update user profile, check again", Toast.LENGTH_LONG).show()
+                                  }
+                              }
 
-                            onClick = {
-                                //try new code
-                                updateUserViewModel.verifyPwd(user.email, currentPassword) {
-                                        isPwdCorrect ->
-                                    if(isPwdCorrect) {
-                                        val updateUser = User(firstname, lastname, email, address)
-                                        updateUserViewModel.updateUserDetail(user.uid, updateUser){
-                                                isSuccess, updateMessage ->
-                                            message = updateMessage
-                                            if(isSuccess && password.isNotBlank()) {
-                                                updateUserViewModel.updateUserEmailAndPwd(email, password) {
-                                                        isPwdUpdateSuccess, pwdUpdateMessage ->
-                                                    message = pwdUpdateMessage
-
-                                                }
-                                            }
-                                        }
-                                    }else {
-                                        message = "Current password is incorrect"
-                                    }
-
-                                }
-                                //old code
-                                //val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@Button
-                                //val updatedUser = User(firstname, lastname, email, address, user.username)
-                                //updateUserViewModel.updateUserDetails(userId, updatedUser) { success, message ->
-                            }
-
+                          },
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text("Update")
                         }
 
                         Button(
-                            onClick = { navController.navigate("register") },
+                            onClick = { navController.navigate("main") },
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             shape = MaterialTheme.shapes.medium,
@@ -203,25 +203,10 @@ fun MyDataScreen(
 
                             ) {
                             Text(text = "Back")
-
                         }
-
                     }
                 }
             )
-
     }
 
-    Box {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-
-
-
-        }
-    }
-
- }
-
-
+}
