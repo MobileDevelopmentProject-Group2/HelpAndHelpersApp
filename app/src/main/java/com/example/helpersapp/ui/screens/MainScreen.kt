@@ -1,5 +1,6 @@
 package com.example.helpersapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,6 +72,7 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val user by loginViewModel.userDetails.collectAsState()
     val openAlertDialog = rememberSaveable { mutableStateOf(false) }
+    Log.d("MainScreen", "User: ${user.firstname}")
 
     ModalNavigationDrawer(
         drawerState = drawerState,

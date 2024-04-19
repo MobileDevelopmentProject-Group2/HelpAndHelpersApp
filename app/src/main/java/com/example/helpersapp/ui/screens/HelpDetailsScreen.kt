@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -38,6 +38,7 @@ import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.HelpDetailsItem
 import com.example.helpersapp.ui.components.MapActivity
 import com.example.helpersapp.ui.components.ShowBottomImage
+import com.example.helpersapp.ui.components.getLocationByPostalCode
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 
@@ -48,6 +49,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
     val userID by loginViewModel.userID.collectAsState()
     val context = LocalContext.current
     var showMap by rememberSaveable { mutableStateOf(false) }
+    val coordinates = getLocationByPostalCode(context, helpDetails.postalCode)
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -69,24 +71,27 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
 
             HelpDetailsItem(helpDetails)
 
-            Button(
-                onClick = { showMap = true},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-            ) {
-                Text(text = "Show approximate location on map")
-            }
-
-            if (showMap) {
-                Column(
+            if (screenState != "confirm" && coordinates != null) {
+                Button(
+                    onClick = { showMap = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
                     modifier = Modifier
-                        .height(400.dp)
+                        .padding(bottom = 10.dp)
                 ) {
-                    MapActivity(helpDetails.postalCode ?: "")
+                    Text(text = "Show approximate location on map")
+                }
+
+            }
+            if (showMap) {
+                Column(modifier = Modifier.height(400.dp)) {
+                    MapActivity(
+                        coordinates?.areaName ?: "",
+                        coordinates?.latitude ?: 0.0,
+                        coordinates?.longitude ?: 0.0
+                    )
                 }
             }
             Row(
@@ -113,7 +118,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                         .width(150.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
@@ -123,8 +128,6 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                     Button(
                         onClick = {
                             userID?.let { helpViewModel.addNewHelpToCollection(it) }
-                            helpViewModel.emptyNewHelpNeeded()
-                            helpViewModel.setHelpDetailsScreenState("")
                             navController.navigate("main")
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -142,7 +145,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                     Button(
                         onClick = {
                             context.sendMail(
-                                to = helpDetails.userEmail ?: "",
+                                to = helpDetails.userEmail,
                                 subject = "Contact request from CareConnect"
                             ) {
                                 navController.navigate("main")
