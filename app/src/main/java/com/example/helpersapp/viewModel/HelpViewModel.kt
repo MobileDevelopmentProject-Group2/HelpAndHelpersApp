@@ -29,6 +29,10 @@ class HelpViewModel: ViewModel() {
     private val _helpDetailsScreenState = MutableStateFlow("")
     var helpDetailsScreenState: StateFlow<String> = _helpDetailsScreenState.asStateFlow()
 
+    //get user post
+    private val _userHelpPost = MutableStateFlow<List<HelpNeeded>>(emptyList())
+    var userHelpPost: StateFlow<List<HelpNeeded>> = _userHelpPost.asStateFlow()
+
     fun setNewHelpNeeded(helpNeeded: HelpNeeded) {
         _newHelpNeeded.value = helpNeeded
     }
@@ -133,6 +137,60 @@ class HelpViewModel: ViewModel() {
             }
         }
     }
+    /*
+    //add to get help post from login user
+    fun getCurrentUserPost(userID: String){
+        //val userID = Firebase.auth.currentUser
+        viewModelScope.launch {
+            db.collection("helpDetails")
+                .whereEqualTo("userID", userID)
+                .get()
+                .addOnSuccessListener{
+                    querySnapshot ->
+                    val posts = querySnapshot.documents.mapNotNull {
+                        it.toObject(HelpNeeded::class.java)
+                    }
+                    _userHelpPost.value = posts
+                }
+                .addOnFailureListener{
+                    e->
+                    Log.e("HelpViewModel", "We can not find your post", e)
+                }
+        }
+    }
+     */
+
+    /*
+    //delete users post
+    fun deleteUserHelpPost(postId: String, userId: String) {
+        //double check if correct login user
+        val currentUserEmail = Firebase.auth.currentUser?.email
+        if (currentUserEmail != null )
+        {
+            db.collection("helpDetails").document(postId).get()
+                .addOnSuccessListener {documentSnapshot ->
+                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
+                    //make sure it is login user
+                    if(helpPost != null && helpPost.userId == userId){
+                        documentSnapshot.reference.delete().addOnSuccessListener {
+                            Log.e("HelpViewModel", "Post delete successfully.")
+                                getCurrentUserPost(currentUserEmail)
+                        }
+                            .addOnFailureListener{e ->
+                                Log.w("HelpViewModel", "Error deleting post", e)
+                            }
+                    }else  {
+                        Log.w("HelpViewModel", "The post is not yours")
+                    }
+                }.addOnFailureListener{
+                    Log.w("helpViewModel", "User need to log in or no correct email", it)
+                }
+        }else {
+            Log.w("HelpViewModel", "User is not logged in or email error.")
+        }
+}
+*/
+
 }
 
 
