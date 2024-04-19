@@ -79,12 +79,9 @@ class HelpViewModel: ViewModel() {
                             )
                         )
                         .addOnSuccessListener {
-                            Log.d("HelpViewModel", "Help added successfully")
-                            Toast.makeText(
-                                null,
-                                "Help request added successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            val documentId = it.id
+                            Log.d("HelpViewModel", "Help added successfully, document id: $documentId")
+                            // get document id for the help posted
 
                         }
 
@@ -139,6 +136,26 @@ class HelpViewModel: ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e("HelpCatchError", e.message.toString())
+            }
+        }
+    }
+    fun deleteHelpRequest(id: String) {
+        val user = Firebase.auth.currentUser
+        viewModelScope.launch {
+            try {
+                user?.let {
+                    db.collection("helpDetails")
+                        .document(id)
+                        .delete()
+                        .addOnSuccessListener {
+                            Log.d("HelpViewModel", "Help request deleted successfully")
+                        }
+                        .addOnFailureListener {
+                            Log.e("HelpViewModel", it.message.toString())
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e("HelpViewModel", e.message.toString())
             }
         }
     }

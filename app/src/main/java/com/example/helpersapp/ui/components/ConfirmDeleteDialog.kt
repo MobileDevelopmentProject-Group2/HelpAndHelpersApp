@@ -10,10 +10,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
@@ -21,6 +24,9 @@ fun ConfirmDeleteDialog(
     navController: NavController,
     loginViewModel: LoginViewModel
 ) {
+    val userId by loginViewModel.userID.collectAsState()
+    val helpViewModel = HelpViewModel()
+
     AlertDialog(
         onDismissRequest = { navController.navigateUp() },
         icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = "warning") },
@@ -30,6 +36,7 @@ fun ConfirmDeleteDialog(
             Button(
                 onClick = {
                     loginViewModel.deleteUser()
+                    helpViewModel.deleteHelpRequest(userId.toString())
                     navController.navigate("home")
                 },
                 colors = ButtonDefaults.buttonColors(

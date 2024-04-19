@@ -7,12 +7,12 @@ import com.example.helpersapp.model.User
 import com.example.helpersapp.ui.components.createUsername
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-
 
 class LoginViewModel : ViewModel() {
     private val firebaseAuth:FirebaseAuth = FirebaseAuth.getInstance()
@@ -23,6 +23,10 @@ class LoginViewModel : ViewModel() {
 
     private val _userDetails = MutableStateFlow(User())
     val userDetails: StateFlow<User> = _userDetails.asStateFlow()
+
+    fun setUserId(userId: String) {
+        _userID.value = userId
+    }
 
     fun loginUser(email: String, password: String, onResult:  (Boolean, String?) -> Unit) {
         viewModelScope.launch {
@@ -40,11 +44,12 @@ class LoginViewModel : ViewModel() {
                 }
 
             }catch (e:Exception) {
+                Log.d("LoginViewModel2", "Failed to log in user", e)
                 onResult(false, e.message ?: "An error occurred")
             }
         }
     }
-    private fun getUserDetails(userName: String) {
+    fun getUserDetails(userName: String) {
         viewModelScope.launch {
             try {
                 val user = db.collection("users")
@@ -62,12 +67,9 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
-
     fun getUsername(): String {
         return _userDetails.value.username
     }
-
-
     fun deleteUser() {
         viewModelScope.launch {
             try {
@@ -105,12 +107,17 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
-
     fun logoutUser() {
         viewModelScope.launch {
-            _userID.value = ""
-            _userDetails.value = User()
-            firebaseAuth.signOut()
+            try {
+                _userID.value = ""
+                _userDetails.value = User()
+                firebaseAuth.signOut()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (e is CancellationException) throw e
+                Log.e("LoginViewModel", "Failed to log out user", e)
+            }
         }
     }
 }
