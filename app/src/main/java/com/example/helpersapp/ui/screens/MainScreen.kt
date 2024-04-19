@@ -166,7 +166,8 @@ fun MainScreen(
                             }
                             Spacer(modifier = Modifier.padding(10.dp))
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = {  /*TODO*/
+                                    navController.navigate("helperListingScreen") },
                                 modifier = Modifier
                                     .width(150.dp),
                                 colors = ButtonDefaults.buttonColors(

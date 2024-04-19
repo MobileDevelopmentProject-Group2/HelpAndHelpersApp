@@ -51,7 +51,7 @@ fun HelperDetailsScreen(
     helperViewModel: HelperViewModel,
     loginViewModel: LoginViewModel,
 ) {
-    val helperInfo = remember { mutableStateOf(HelperInfo("", "", "", "", "")) }
+    val helperInfo = remember { mutableStateOf(HelperInfo("", "", "", "", "","")) }
     val user by loginViewModel.userDetails.collectAsState()
 
     LaunchedEffect(Unit) {
