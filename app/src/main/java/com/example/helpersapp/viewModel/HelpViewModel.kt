@@ -142,22 +142,40 @@ class HelpViewModel: ViewModel() {
     fun getCurrentUserPost(userID: String){
         //val userID = Firebase.auth.currentUser
         viewModelScope.launch {
+            try {
             db.collection("helpDetails")
                 .whereEqualTo("userID", userID)
                 .get()
                 .addOnSuccessListener{
                     querySnapshot ->
+                    Log.d("HelpViewModel", "Successfully fetched posts, count: ${querySnapshot.size()}")
+                    val posts = mutableListOf<HelpNeeded>()
+                    for(document in querySnapshot.documents) {
+                        document.toObject(HelpNeeded::class.java)?.let {
+                            it.id = document.id
+                            posts.add(it)
+                        }?: Log.e("HelpViewModel", "Error parsing document: ${document.id}")
+                    /*
                     val posts = querySnapshot.documents.mapNotNull {
-                        
-                        it.toObject(HelpNeeded::class.java)
+                        document ->
+                        document.toObject(HelpNeeded::class.java)?.apply {
+                            id = document.id
+                        }
+
+                     */
+
+                        //it.toObject(HelpNeeded::class.java)
                     }
                     _userHelpPost.value = posts
                 }
                 .addOnFailureListener{
                     e->
                     Log.e("HelpViewModel", "We can not find your post", e)
+                    _userHelpPost.value = emptyList()
                 }
-        }
+        }catch(e: Exception) {
+                Log.e("HelpViewModel", "unhandle exception in fetch user post", e)
+            }
     }
 
 
@@ -190,7 +208,10 @@ class HelpViewModel: ViewModel() {
             Log.w("HelpViewModel", "User is not logged in or email error.")
         }
 }
+    }
+
 
 }
+
 
 

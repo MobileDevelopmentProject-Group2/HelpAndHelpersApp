@@ -32,11 +32,10 @@ fun ConfirmDeletePost(
         confirmButton = {
             Button(
                 onClick = {
-                   helpViewModel.deleteUserHelpPost(helpPost.id, helpPost.userId)
+                    //helpViewModel.deleteUserHelpPost(helpPost.id, helpPost.userId)
                     onConfirm()
                     //after the screen for post done, it will stay at post
-                    navController.navigateUp()
-                    //navController.navigate("main")
+                    navController.navigate("main")
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error

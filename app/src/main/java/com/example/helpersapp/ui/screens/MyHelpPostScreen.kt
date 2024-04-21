@@ -37,14 +37,20 @@ fun MyHelpPostScreen (
     )
 {
     val userHelpPost by helpViewModel.userHelpPost.collectAsState()
-    val userEmail = Firebase.auth.currentUser?.email ?:""
+    val userID = Firebase.auth.currentUser?.uid?:""
+    //val userEmail = Firebase.auth.currentUser?.email ?:""
 
-    LaunchedEffect(userEmail ){
+    LaunchedEffect(userID ){
+        Log.d("MyHelpPostScreen", "Fetching posts for user ID: $userID")
+        if (userID.isNotEmpty()) {
         try {
-            helpViewModel.getCurrentUserPost(userEmail)
+            helpViewModel.getCurrentUserPost(userID)
         }catch (e : Exception) {
             Log.e("HelperDetailsScreen", "Unhandled exception", e)
 
+        }
+        }else {
+            Log.d("MyHelpPostScreen", "User ID is empty, not fetching posts")
         }
     }
     Box(
