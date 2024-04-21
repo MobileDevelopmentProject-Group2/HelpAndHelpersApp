@@ -65,7 +65,7 @@ fun HelperDetailsScreen(
                 },
                 onFailure = { e ->
                     Log.e("HelperDetailsScreen", "Error fetching helper details", e)
-                    // 这里可以处理错误，例如显示Toast通知用户
+                    // avoid crash
                 }
             )
         } catch (e: Exception) {

@@ -228,12 +228,13 @@ fun MyDataScreen(
                     ) {
                         Button(
                             onClick = { navController.navigate("helperDetailsScreen") },
-                            modifier = Modifier.weight(0.9f)
+                            modifier = Modifier.weight(1f)
                         ) {
                             Text("My helper data")
                         }
+                        Spacer(modifier = Modifier.width(8.dp))
                         Button(
-                            onClick = { /*helpViewModel.getCurrentUserPost(email) */},
+                            onClick = { navController.navigate("myHelpPostScreen")},
                             //modifier = Modifier.width(150.dp)
                             modifier = Modifier.weight(1f)
                         )
@@ -244,18 +245,14 @@ fun MyDataScreen(
                     }
                     //Spacer(modifier = Modifier.weight(1f))
                     Spacer(modifier = Modifier.height(20.dp))
-
                     Button(
                         onClick = { navController.navigate("main") },
                         modifier = Modifier.width(150.dp)
                     ) {
                         Text(text = "Back")
                     }
-
-
                 }
-            }
-                         )
+            })
 
         }
     }

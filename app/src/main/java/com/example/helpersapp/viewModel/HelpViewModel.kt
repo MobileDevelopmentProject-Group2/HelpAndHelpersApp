@@ -137,7 +137,7 @@ class HelpViewModel: ViewModel() {
             }
         }
     }
-    /*
+
     //add to get help post from login user
     fun getCurrentUserPost(userID: String){
         //val userID = Firebase.auth.currentUser
@@ -148,6 +148,7 @@ class HelpViewModel: ViewModel() {
                 .addOnSuccessListener{
                     querySnapshot ->
                     val posts = querySnapshot.documents.mapNotNull {
+                        
                         it.toObject(HelpNeeded::class.java)
                     }
                     _userHelpPost.value = posts
@@ -158,9 +159,9 @@ class HelpViewModel: ViewModel() {
                 }
         }
     }
-     */
 
-    /*
+
+
     //delete users post
     fun deleteUserHelpPost(postId: String, userId: String) {
         //double check if correct login user
@@ -189,7 +190,6 @@ class HelpViewModel: ViewModel() {
             Log.w("HelpViewModel", "User is not logged in or email error.")
         }
 }
-*/
 
 }
 

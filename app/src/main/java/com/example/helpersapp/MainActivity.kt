@@ -29,6 +29,7 @@ import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
+import com.example.helpersapp.ui.screens.MyHelpPostScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
 import com.google.firebase.auth.ktx.auth
@@ -153,6 +154,14 @@ fun AppLayout(
                 navController,
                 helperViewModel,
                 loginViewModel,
+            )
+        }
+        //get my help post
+        composable("myHelpPostScreen") {
+            MyHelpPostScreen(
+                navController,
+                helpViewModel,
+                loginViewModel
             )
         }
     }
