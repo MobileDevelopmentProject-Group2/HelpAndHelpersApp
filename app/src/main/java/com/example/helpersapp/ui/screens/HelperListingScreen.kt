@@ -10,17 +10,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,9 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.helpersapp.model.HelperInfo
-import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.ShowBottomImage
-import com.example.helpersapp.ui.components.LoadingScreen
 import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
@@ -53,7 +46,6 @@ fun HelperListingScreen(
     loginViewModel: LoginViewModel,
 ) {
     var nannies by remember { mutableStateOf(emptyList<HelperInfo>()) }
-    var helpers by remember { mutableStateOf(emptyList<HelperInfo>()) }
 
     LaunchedEffect(Unit) {
         helperViewModel.getNannies(
@@ -99,8 +91,7 @@ fun HelperListingScreen(
                 ) {
                     items(nannies) { nanny ->
                         NannyCard(nanny = nanny, loginViewModel = loginViewModel){
-                            // 例えば、ナビゲーションを行う場合は以下のようにする
-                            // navController.navigate("destination/${nanny.id}")
+                             navController.navigate("helperDetailsScreen")
                         }
                     }
                 }
