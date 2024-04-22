@@ -33,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,8 @@ import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 fun MainScreen(
@@ -72,7 +75,7 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val user by loginViewModel.userDetails.collectAsState()
     val openAlertDialog = rememberSaveable { mutableStateOf(false) }
-    Log.d("MainScreen", "User: ${user.firstname}")
+    Log.d("MainScreen", "User: ${user}")
 
     ModalNavigationDrawer(
         drawerState = drawerState,

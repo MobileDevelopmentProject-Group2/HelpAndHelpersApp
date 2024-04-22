@@ -46,7 +46,6 @@ import com.example.helpersapp.viewModel.LoginViewModel
 fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel, loginViewModel: LoginViewModel) {
     val screenState by helpViewModel.helpDetailsScreenState.collectAsState()
     val helpDetails by helpViewModel.newHelpNeeded.collectAsState()
-    val userID by loginViewModel.userID.collectAsState()
     val context = LocalContext.current
     var showMap by rememberSaveable { mutableStateOf(false) }
     val coordinates = getLocationByPostalCode(context, helpDetails.postalCode)
@@ -83,7 +82,6 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                 ) {
                     Text(text = "Show approximate location on map")
                 }
-
             }
             if (showMap) {
                 Column(modifier = Modifier.height(400.dp)) {
@@ -127,7 +125,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                 if (screenState == "confirm") {
                     Button(
                         onClick = {
-                            userID?.let { helpViewModel.addNewHelpToCollection(it) }
+                            helpViewModel.addNewHelpToCollection()
                             navController.navigate("main")
                         },
                         colors = ButtonDefaults.buttonColors(

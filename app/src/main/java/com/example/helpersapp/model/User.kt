@@ -6,6 +6,5 @@ data class User(
     var address: String = "",
     var username: String = "",
     //add user uid to slove fetch uid
-    var uid: String ="",
-    var postStringArray: ArrayList<String> = ArrayList()
+    var uid: String =""
 )

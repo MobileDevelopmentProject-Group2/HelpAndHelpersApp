@@ -1,5 +1,6 @@
 package com.example.helpersapp.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
@@ -27,6 +28,8 @@ fun ConfirmDeleteDialog(
     val userId by loginViewModel.userID.collectAsState()
     val helpViewModel = HelpViewModel()
 
+    Log.d("ConfirmDeleteDialog", "userId: $userId")
+
     AlertDialog(
         onDismissRequest = { navController.navigateUp() },
         icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = "warning") },
@@ -35,8 +38,8 @@ fun ConfirmDeleteDialog(
         confirmButton = {
             Button(
                 onClick = {
+                    helpViewModel.deleteHelpRequest(userId)
                     loginViewModel.deleteUser()
-                    helpViewModel.deleteHelpRequest(userId.toString())
                     navController.navigate("home")
                 },
                 colors = ButtonDefaults.buttonColors(

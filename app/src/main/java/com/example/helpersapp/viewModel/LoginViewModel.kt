@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.User
 import com.example.helpersapp.ui.components.createUsername
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,13 +22,14 @@ class LoginViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
 
     private var _userID = MutableStateFlow<String>("")
-    var userID: StateFlow<String?> = _userID.asStateFlow()
+    var userID: StateFlow<String> = _userID.asStateFlow()
 
     private val _userDetails = MutableStateFlow(User())
     val userDetails: StateFlow<User> = _userDetails.asStateFlow()
 
     fun setUserId(userId: String) {
         _userID.value = userId
+        Log.d("LoginViewModel", "User ID set: ${_userID.value}")
     }
 
     fun loginUser(email: String, password: String, onResult:  (Boolean, String?) -> Unit) {
@@ -71,12 +75,15 @@ class LoginViewModel : ViewModel() {
         return _userDetails.value.username
     }
     fun deleteUser() {
+        val username = firebaseAuth.currentUser?.email?.let { createUsername(it) }
         viewModelScope.launch {
             try {
                 val user = firebaseAuth.currentUser
                 user?.delete()
                     ?.addOnSuccessListener {
-                        deleteUserData()
+                        if (username != null) {
+                            deleteUserData(username)
+                        }
                         Log.d("LoginViewModel", "User deleted successfully")
                     }
                     ?.addOnFailureListener { e ->
@@ -87,11 +94,11 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
-    private fun deleteUserData() {
+    private fun deleteUserData(username: String) {
         viewModelScope.launch {
             try {
                 db.collection("users")
-                    .document(_userDetails.value.username)
+                    .document(username)
                     .delete()
                     .addOnSuccessListener {
                         _userDetails.value = User()
@@ -113,6 +120,7 @@ class LoginViewModel : ViewModel() {
                 _userID.value = ""
                 _userDetails.value = User()
                 firebaseAuth.signOut()
+                Firebase.auth.signOut()
             } catch (e: Exception) {
                 e.printStackTrace()
                 if (e is CancellationException) throw e
