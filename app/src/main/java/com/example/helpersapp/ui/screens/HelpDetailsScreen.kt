@@ -126,6 +126,9 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                     Button(
                         onClick = {
                             helpViewModel.addNewHelpToCollection()
+                            helpViewModel.emptyNewHelpNeeded()
+                            helpViewModel.emptyHelpList()
+                            helpViewModel.setHelpDetailsScreenState("")
                             navController.navigate("main")
                         },
                         colors = ButtonDefaults.buttonColors(

@@ -1,7 +1,7 @@
 package com.example.helpersapp.viewModel
 
+import android.annotation.SuppressLint
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.HelpNeeded
@@ -144,6 +144,7 @@ class HelpViewModel: ViewModel() {
             }
         }
     }
+    @SuppressLint("SuspiciousIndentation")
     fun deleteHelpRequest(id: String) {
         Log.d("HelpViewModel", "Deleting help request for user: ${id}")
         viewModelScope.launch {
@@ -152,7 +153,11 @@ class HelpViewModel: ViewModel() {
                     .whereEqualTo("userId", id)
                     .get()
                     .addOnSuccessListener {
-                        Log.d("HelpViewModel", "Help request list fetched successfully: ${it.documents.size}")
+                        Log.d("HelpViewModel", "Help request found for user: ${it.documents.size}")
+                        if (it.documents.isEmpty()) {
+                            Log.d("HelpViewModel", "No help request found for user")
+                            return@addOnSuccessListener
+                        }
                         val batch = db.batch()
                         it.documents.forEach { doc ->
                             batch.delete(db.collection("helpDetails").document(doc.id))
@@ -169,7 +174,7 @@ class HelpViewModel: ViewModel() {
                         Log.e("HelpViewModel", it.message.toString())
                     }
             } catch (e: Exception) {
-                Log.e("HelpViewModel", e.message.toString())
+                Log.d("HelpViewModel", e.message.toString())
             }
         }
     }

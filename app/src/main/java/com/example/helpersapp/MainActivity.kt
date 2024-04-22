@@ -12,12 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.helpersapp.model.Geocode
 import com.example.helpersapp.ui.screens.AboutAndContactScreen
 import com.example.helpersapp.ui.screens.AddNewHelpScreen
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.ui.screens.HelpDetailsScreen
 import com.example.helpersapp.ui.screens.HelperDetailsScreen
+import com.example.helpersapp.ui.screens.HelperListingScreen
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
@@ -27,13 +27,8 @@ import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.ui.theme.HelpersAppTheme
 import com.example.helpersapp.viewModel.HelpViewModel
-import com.example.helpersapp.viewModel.LoginViewModel
-import com.example.helpersapp.viewModel.MapViewModel
-import com.example.helpersapp.viewModel.MapViewModelFactory
-import com.example.helpersapp.ui.components.createUsername
-import com.example.helpersapp.ui.screens.HelpByCategoryScreen
-import com.example.helpersapp.ui.screens.HelperListingScreen
 import com.example.helpersapp.viewModel.HelperViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
 
@@ -41,12 +36,6 @@ import com.example.helpersapp.viewModel.UsersViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val geocode = Geocode.create()
-
-        val factory = MapViewModelFactory(geocode)
-
-        val mapViewModel = ViewModelProvider(this, factory)[MapViewModel::class.java]
 
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
