@@ -53,17 +53,15 @@ fun HelperListingScreen(
     loginViewModel: LoginViewModel,
 ) {
     var nannies by remember { mutableStateOf(emptyList<HelperInfo>()) }
-    var loading by remember { mutableStateOf(true) }
+    var helpers by remember { mutableStateOf(emptyList<HelperInfo>()) }
 
     LaunchedEffect(Unit) {
         helperViewModel.getNannies(
             onSuccess = { nannyList ->
                 nannies = nannyList
-                loading = false
             },
             onFailure = { e ->
                 Log.e("***", "Error fetching nanny list: ${e.message}")
-                loading = false
             }
         )
     }
@@ -90,11 +88,7 @@ fun HelperListingScreen(
             }
         }
     )
-    if (loading) {
-        LoadingScreen()
-    } else {
         Box(modifier = Modifier.fillMaxSize()) {
-
             ShowBottomImage()
             Column {
                 Spacer(modifier = Modifier.height(140.dp))
@@ -103,12 +97,8 @@ fun HelperListingScreen(
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                 ) {
-
-
                     items(nannies) { nanny ->
                         NannyCard(nanny = nanny, loginViewModel = loginViewModel){
-                            // ナニーがクリックされたときの処理
-                            // ここで選択されたナニーに関する操作を実行する
                             // 例えば、ナビゲーションを行う場合は以下のようにする
                             // navController.navigate("destination/${nanny.id}")
                         }
@@ -117,7 +107,6 @@ fun HelperListingScreen(
             }
         }
     }
-}
 
 @Composable
 fun NannyCard(nanny: HelperInfo, loginViewModel: LoginViewModel,onClick: () -> Unit) {
