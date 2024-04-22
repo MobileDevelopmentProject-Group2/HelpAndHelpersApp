@@ -39,6 +39,7 @@ import com.example.helpersapp.viewModel.LoginViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
+
 @Composable
 fun HelperListingScreen(
     navController: NavController,
@@ -91,7 +92,18 @@ fun HelperListingScreen(
                 ) {
                     items(nannies) { nanny ->
                         NannyCard(nanny = nanny, loginViewModel = loginViewModel){
-                             navController.navigate("helperDetailsScreen")
+                            val currentUser = loginViewModel.getUsername()
+                            val clickedUsername = nanny.username
+                            val navigateToDetailsScreen = {
+                                if (currentUser == clickedUsername) {
+                                    navController.navigate("helperDetailsScreen")
+                                } else {
+                                    navController.navigate("helperDetailsScreenAnotherUsername")
+                                }
+                                helperViewModel.saveClickedUsername(clickedUsername)
+                                Log.e("***", " ${clickedUsername}")
+                            }
+                                navigateToDetailsScreen()
                         }
                     }
                 }

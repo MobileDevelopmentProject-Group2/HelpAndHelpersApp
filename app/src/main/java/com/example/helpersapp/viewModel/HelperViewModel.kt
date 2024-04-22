@@ -2,6 +2,8 @@ package com.example.helpersapp.viewModel
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.helpersapp.model.HelperInfo
 import com.example.helpersapp.ui.components.createUsername
@@ -9,12 +11,38 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
 class HelperViewModel: ViewModel()  {
 
     private val db = FirebaseFirestore.getInstance()
 
+    private val _clickedUsername = MutableStateFlow("")
+    val clickedUsername: StateFlow<String> = _clickedUsername.asStateFlow()
+    fun saveClickedUsername(username: String) {
+        _clickedUsername.value = username
+    }
+
+    fun getFullUserName(username: String, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("users").document(username)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val firstName = documentSnapshot.getString("firstname") ?: ""
+                    val lastName = documentSnapshot.getString("lastname") ?: ""
+                    val fullName = "$firstName $lastName"
+                    onSuccess(fullName)
+                } else {
+                    onFailure(Exception("User document does not exist"))
+                }
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
     fun saveUserData(
         about: String,
         category: String,
@@ -143,3 +171,4 @@ class HelperViewModel: ViewModel()  {
         }
     }
 }
+

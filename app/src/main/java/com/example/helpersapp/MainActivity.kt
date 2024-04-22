@@ -24,6 +24,7 @@ import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.ui.screens.AboutAndContactScreen
 import com.example.helpersapp.ui.screens.MyDataScreen
 import com.example.helpersapp.ui.screens.HelperDetailsScreen
+import com.example.helpersapp.ui.screens.HelperDetailsScreenAnotherUsername
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -64,6 +65,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun AppLayout(
     usersViewModel: UsersViewModel,
@@ -151,6 +153,13 @@ fun AppLayout(
         }
         composable("helperDetailsScreen") {
             HelperDetailsScreen(
+                navController,
+                helperViewModel,
+                loginViewModel,
+            )
+        }
+        composable("helperDetailsScreenAnotherUsername") {
+            HelperDetailsScreenAnotherUsername(
                 navController,
                 helperViewModel,
                 loginViewModel,
