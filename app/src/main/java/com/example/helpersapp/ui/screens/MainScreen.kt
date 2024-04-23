@@ -173,7 +173,7 @@ fun MainScreen(
                             }
                             Spacer(modifier = Modifier.padding(10.dp))
                             Button(
-                                onClick = { navController.navigate("helperListingScreen") },
+                                onClick = { navController.navigate("helperListingScreenTutors") },
                                 modifier = Modifier
                                     .width(150.dp),
                                 colors = ButtonDefaults.buttonColors(

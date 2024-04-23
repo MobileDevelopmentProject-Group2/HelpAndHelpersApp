@@ -18,6 +18,7 @@ import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.ui.screens.HelpDetailsScreen
 import com.example.helpersapp.ui.screens.HelperDetailsScreen
 import com.example.helpersapp.ui.screens.HelperListingScreen
+import com.example.helpersapp.ui.screens.HelperListingScreenTutors
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
@@ -166,6 +167,13 @@ fun AppLayout(
         }
         composable("helperListingScreen") {
             HelperListingScreen(
+                navController,
+                helperViewModel,
+                loginViewModel,
+            )
+        }
+        composable("helperListingScreenTutors") {
+            HelperListingScreenTutors(
                 navController,
                 helperViewModel,
                 loginViewModel,

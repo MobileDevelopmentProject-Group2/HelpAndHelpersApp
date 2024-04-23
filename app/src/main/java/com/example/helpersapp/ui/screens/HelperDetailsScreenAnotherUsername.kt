@@ -1,12 +1,17 @@
 package com.example.helpersapp.ui.screens
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,9 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.helpersapp.R
 import com.example.helpersapp.model.HelperInfo
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.ui.components.HelperDetail
@@ -34,7 +42,8 @@ import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.flow.MutableStateFlow
+
+
 
 @Composable
 fun HelperDetailsScreenAnotherUsername(
@@ -137,11 +146,14 @@ fun HelperDetailsScreenAnotherUsername(
 
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 Button(
-                    onClick = { navController.navigateUp() },
-                    shape = MaterialTheme.shapes.extraLarge,
+                    onClick = {
+
+                        navController.navigateUp()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -152,27 +164,66 @@ fun HelperDetailsScreenAnotherUsername(
                         .width(150.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    Text(text = "Modify")
+                    Text(text = stringResource(R.string.back_))
                 }
-                Button(
-                    onClick = { navController.navigate("main") },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .height(52.dp)
-                        .width(150.dp)
-                ) {
-                    Text(text = "Confirm")
+
+                    Button(
+                        onClick = {/*
+                            helperViewModel.getEmailForClickedUser(
+                                onSuccess = { email ->
+                                    context.sendMail2(
+                                    //LocalContext.current.sendMail2(
+                                        to = email,
+                                        subject = "Contact request from CareConnect"
+                                    ) {
+                                        navController.navigate("main")
+                                        Toast.makeText(Context, "Email sending successful", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                onFailure = { e ->
+                                    Log.e("***", "Error fetching email: ${e.message}")
+                                    Toast.makeText(Context, "Failed to fetch email", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                            */
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier
+                            .padding(top = 35.dp)
+                            .height(52.dp)
+                            .width(150.dp)
+                    ) {
+                        Text(text = "Send mail")
+                    }
                 }
             }
         }
+    }
+@Composable
+fun Context.sendMail2(
+    to: String?,
+    subject: String,
+    onSuccess: () -> Unit
+) {
+    try {
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.type = "vnd.android.cursor.item/email"
+        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        startActivity(intent)
+        onSuccess.invoke()
+    } catch (e: ActivityNotFoundException) {
+        // Handle case where no email app is available
+        Toast.makeText(this, "You need to have an emailing application available", Toast.LENGTH_SHORT).show()
+    } catch (t: Throwable) {
+        // Handle potential other type of exceptions
+        Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show()
     }
 }
