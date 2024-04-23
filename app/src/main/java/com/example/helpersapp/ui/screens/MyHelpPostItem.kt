@@ -32,6 +32,7 @@ fun MyHelpPostItem (
                 .fillMaxWidth()
                 .padding(16.dp)
         ){
+
             Text(
                 text = "Date: ${helpNeeded.date}",
                 style = MaterialTheme.typography.bodyLarge
@@ -46,6 +47,10 @@ fun MyHelpPostItem (
             )
             Text(
                 text = "Posted Date:  ${formatDateValue(helpNeeded.requestPostDate)}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "Contact email:  ${formatDateValue(helpNeeded.userEmail)}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

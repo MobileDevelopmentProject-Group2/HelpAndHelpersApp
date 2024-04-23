@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,8 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MyHelpPostScreen (
@@ -36,15 +36,23 @@ fun MyHelpPostScreen (
     loginViewModel: LoginViewModel
     )
 {
-    val userHelpPost by helpViewModel.userHelpPost.collectAsState()
-    val userID = Firebase.auth.currentUser?.uid?:""
-    //val userEmail = Firebase.auth.currentUser?.email ?:""
+    //old code
+    //val userHelpPost by helpViewModel.userHelpPost.collectAsState()
+    //follow the filter by catergory
 
-    LaunchedEffect(userID ){
+    //val allHelpPost by helpViewModel.helpList.collectAsState()
+    //val userID = Firebase.auth.currentUser?.uid?:""
+    val userID = FirebaseAuth.getInstance().currentUser?.uid?:""
+    // This will be updated by the ViewModel
+    val userHelpPosts by helpViewModel.filteredUserHelpPost.collectAsState()
+    //val userEmail = Firebase.auth.currentUser?.email ?:""
+    //val userHelpPosts = allHelpPost.filter { it.userId == userID }
+
+    LaunchedEffect(Unit){
         Log.d("MyHelpPostScreen", "Fetching posts for user ID: $userID")
         if (userID.isNotEmpty()) {
         try {
-            helpViewModel.getCurrentUserPost(userID)
+            helpViewModel.filterUserHelpPosts(userID)
         }catch (e : Exception) {
             Log.e("HelperDetailsScreen", "Unhandled exception", e)
 
@@ -54,14 +62,16 @@ fun MyHelpPostScreen (
         }
     }
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(16.dp)
 
     ){
         Column (
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                //.fillMaxWidth()
+                .fillMaxWidth()
+                .fillMaxHeight()
                 .verticalScroll(rememberScrollState()),
                 //.padding(16.dp),
             verticalArrangement =  Arrangement.spacedBy(16.dp)
@@ -74,7 +84,7 @@ fun MyHelpPostScreen (
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            if(userHelpPost.isEmpty()) {
+            if(userHelpPosts.isEmpty()) {
                 Text(
                     text = "You have no post",
                     modifier = Modifier.padding(16.dp)
@@ -82,10 +92,12 @@ fun MyHelpPostScreen (
                 //Spacer(modifier =Modifier.weight(1f) )
             }else {
                 LazyColumn(
-                    modifier = Modifier.padding(16.dp),
+                //Column(
+                    modifier = Modifier.padding(16.dp)
+                        .height(500.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                     ){
-                    items(userHelpPost) {
+                    items(userHelpPosts) {
                             helpPost->
                         MyHelpPostItem(helpNeeded = helpPost )
                     }

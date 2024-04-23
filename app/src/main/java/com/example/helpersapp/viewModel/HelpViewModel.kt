@@ -20,6 +20,7 @@ class HelpViewModel: ViewModel() {
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
     var newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
 
+    // try to use this helplist to currenthelp post
     private val _helpList = MutableStateFlow<List<HelpNeeded>>(emptyList())
     var helpList: StateFlow<List<HelpNeeded>> = _helpList.asStateFlow()
 
@@ -32,6 +33,9 @@ class HelpViewModel: ViewModel() {
     //get user post
     private val _userHelpPost = MutableStateFlow<List<HelpNeeded>>(emptyList())
     var userHelpPost: StateFlow<List<HelpNeeded>> = _userHelpPost.asStateFlow()
+
+    private val _filteredUserHelpPost = MutableStateFlow<List<HelpNeeded>>(emptyList())
+    val filteredUserHelpPost: StateFlow<List<HelpNeeded>> = _filteredUserHelpPost
 
     fun setNewHelpNeeded(helpNeeded: HelpNeeded) {
         _newHelpNeeded.value = helpNeeded
@@ -137,50 +141,63 @@ class HelpViewModel: ViewModel() {
             }
         }
     }
-
-    //add to get help post from login user
-    fun getCurrentUserPost(userID: String){
-        //val userID = Firebase.auth.currentUser
+    fun filterUserHelpPosts(userID: String) {
         viewModelScope.launch {
             try {
-            db.collection("helpDetails")
-                .whereEqualTo("userID", userID)
-                .get()
-                .addOnSuccessListener{
-                    querySnapshot ->
-                    Log.d("HelpViewModel", "Successfully fetched posts, count: ${querySnapshot.size()}")
-                    val posts = mutableListOf<HelpNeeded>()
-                    for(document in querySnapshot.documents) {
-                        document.toObject(HelpNeeded::class.java)?.let {
-                            it.id = document.id
-                            posts.add(it)
-                        }?: Log.e("HelpViewModel", "Error parsing document: ${document.id}")
-                    /*
-                    val posts = querySnapshot.documents.mapNotNull {
-                        document ->
-                        document.toObject(HelpNeeded::class.java)?.apply {
-                            id = document.id
-                        }
-
-                     */
-
-                        //it.toObject(HelpNeeded::class.java)
-                    }
-                    _userHelpPost.value = posts
+                // Make sure to fetch all posts if not already done
+                if (_helpList.value.isEmpty()) {
+                    getAllHelpRequests()
                 }
-                .addOnFailureListener{
-                    e->
-                    Log.e("HelpViewModel", "We can not find your post", e)
-                    _userHelpPost.value = emptyList()
+                val filteredPosts = _helpList.value.filter { it.userId == userID }
+                if (filteredPosts.isEmpty()) {
+                    Log.d("HelpViewModel", "no post found for this userID: $userID")
+                }else {
+                    _filteredUserHelpPost.value = filteredPosts
+                    _userHelpPost.value = filteredPosts
+                    Log.d("HelpViewModel", "Filtered posts for user ID: $userID")
                 }
-        }catch(e: Exception) {
-                Log.e("HelpViewModel", "unhandle exception in fetch user post", e)
+            }catch (e: Exception) {
+                Log.e("HelpViewModel", "Error filtering posts for user ID: $userID", e)
+                // Handle the error by updating a UI state or notifying the user
             }
+
+            //_userHelpPost.value = _helpList.value.filter { it.userId == userID }
+            Log.d("HelpViewModel", "Filtered posts for user ID: $userID")
+        }
     }
+    fun deleteUserHelpPost(postId: String, userId: String) {
+        //double check if correct login user
+        val currentUserEmail = Firebase.auth.currentUser?.email
+        if (currentUserEmail != null )
+        {
+            db.collection("helpDetails").document(postId).get()
+                .addOnSuccessListener {documentSnapshot ->
+                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
+                    //make sure it is login user
+                    if(helpPost != null && helpPost.userId == userId){
+                        documentSnapshot.reference.delete().addOnSuccessListener {
+                            Log.e("HelpViewModel", "Post delete successfully.")
+                            filterUserHelpPosts(userId)
+                        }
+                            .addOnFailureListener{e ->
+                                Log.w("HelpViewModel", "Error deleting post", e)
+                            }
+                    }else  {
+                        Log.w("HelpViewModel", "The post is not yours")
+                    }
+                }.addOnFailureListener{
+                    Log.w("helpViewModel", "User need to log in or no correct email", it)
+                }
+        }else {
+            Log.w("HelpViewModel", "User is not logged in or email error.")
+        }
+    }
+}
 
 
 
     //delete users post
+    /*
     fun deleteUserHelpPost(postId: String, userId: String) {
         //double check if correct login user
         val currentUserEmail = Firebase.auth.currentUser?.email
@@ -208,10 +225,10 @@ class HelpViewModel: ViewModel() {
             Log.w("HelpViewModel", "User is not logged in or email error.")
         }
 }
-    }
+
+*/
 
 
-}
 
 
 
