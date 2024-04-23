@@ -177,39 +177,9 @@ class HelpViewModel: ViewModel() {
             Log.d("HelpViewModel", "Filtered posts for user ID: $userID")
         }
     }
-    fun deleteUserHelpPost(postId: String, userId: String) {
-        //double check if correct login user
-        val currentUserEmail = Firebase.auth.currentUser?.email
-        if (currentUserEmail != null )
-        {
-            db.collection("helpDetails").document(postId).get()
-                .addOnSuccessListener {documentSnapshot ->
-                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
-                    //make sure it is login user
-                    if(helpPost != null && helpPost.userId == userId){
-                        documentSnapshot.reference.delete().addOnSuccessListener {
-                            Log.e("HelpViewModel", "Post delete successfully.")
-                            filterUserHelpPosts(userId)
-                        }
-                            .addOnFailureListener{e ->
-                                Log.w("HelpViewModel", "Error deleting post", e)
-                            }
-                    }else  {
-                        Log.w("HelpViewModel", "The post is not yours")
-                    }
-                }.addOnFailureListener{
-                    Log.w("helpViewModel", "User need to log in or no correct email", it)
-                }
-        }else {
-            Log.w("HelpViewModel", "User is not logged in or email error.")
 
 
-        }}
-}
-
-//delete fun has bug
-/*
-*     @SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation")
     fun deleteHelpRequest(id: String) {
         Log.d("HelpViewModel", "Deleting help request for user: ${id}")
         viewModelScope.launch {
@@ -243,10 +213,41 @@ class HelpViewModel: ViewModel() {
             }
 
         }
-    }*/
 
+    }
+}
     //delete users post
     /*
+        fun deleteUserHelpPost(postId: String, userId: String) {
+        //double check if correct login user
+        val currentUserEmail = Firebase.auth.currentUser?.email
+        if (currentUserEmail != null )
+        {
+            db.collection("helpDetails").document(postId).get()
+                .addOnSuccessListener {documentSnapshot ->
+                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
+                    //make sure it is login user
+                    if(helpPost != null && helpPost.userId == userId){
+                        documentSnapshot.reference.delete().addOnSuccessListener {
+                            Log.e("HelpViewModel", "Post delete successfully.")
+                            filterUserHelpPosts(userId)
+                        }
+                            .addOnFailureListener{e ->
+                                Log.w("HelpViewModel", "Error deleting post", e)
+                            }
+                    }else  {
+                        Log.w("HelpViewModel", "The post is not yours")
+                    }
+                }.addOnFailureListener{
+                    Log.w("helpViewModel", "User need to log in or no correct email", it)
+                }
+        }else {
+            Log.w("HelpViewModel", "User is not logged in or email error.")
+
+
+        }}
+
+
     fun deleteUserHelpPost(postId: String, userId: String) {
         //double check if correct login user
         val currentUserEmail = Firebase.auth.currentUser?.email

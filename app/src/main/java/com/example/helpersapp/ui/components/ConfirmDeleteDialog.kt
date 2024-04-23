@@ -37,7 +37,7 @@ fun ConfirmDeleteDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    //helpViewModel.deleteHelpRequest(userId)
+                    helpViewModel.deleteHelpRequest(userId)
                     loginViewModel.deleteUser()
                     navController.navigate("home")
                 },
