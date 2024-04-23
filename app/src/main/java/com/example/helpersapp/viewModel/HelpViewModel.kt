@@ -1,10 +1,12 @@
 package com.example.helpersapp.viewModel
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.HelpNeeded
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,13 +58,15 @@ class HelpViewModel: ViewModel() {
     fun setHelpDetailsScreenState(screenState: String) {
         _helpDetailsScreenState.value = screenState
     }
-    fun addNewHelpToCollection(userID: String) {
+    fun addNewHelpToCollection() {
         val user = Firebase.auth.currentUser
         val userEmail = Firebase.auth.currentUser?.email
-        Log.d("HelpViewModel", "Adding new help: ${userID}")
+        val userID = Firebase.auth.currentUser?.uid
+        Log.d("HelpViewModel", "UserId: ${userID}")
         viewModelScope.launch {
             try {
-                user?.let { user ->
+                user?.let {
+                    val dateNowUTC = Timestamp.now()
                     db.collection("helpDetails")
                         .add(
                             mapOf(
@@ -73,12 +77,18 @@ class HelpViewModel: ViewModel() {
                                 "priceRange" to _newHelpNeeded.value.priceRange,
                                 "postalCode" to _newHelpNeeded.value.postalCode,
                                 "userId" to userID,
+                                //"requestPostDate" to dateNowUTC,
                                 "requestPostDate" to dateNow,
                                 "userEmail" to userEmail
                             )
                         )
                         .addOnSuccessListener {
-                            Log.d("HelpViewModel", "Help added successfully") }
+                            val documentId = it.id
+                            Log.d("HelpViewModel", "Help added successfully, document id: $documentId")
+                            // get document id for the help posted
+
+                        }
+
                         .addOnFailureListener {
                             Log.e("HelpViewModel", it.message.toString())
                         }
@@ -89,6 +99,7 @@ class HelpViewModel: ViewModel() {
         }
     }
     fun getAllHelpRequests() {
+        Log.d("HelpViewModel", "Fetching help request list: ${Firebase.auth.currentUser?.uid}")
         val user = Firebase.auth.currentUser
         viewModelScope.launch {
             try {
@@ -119,10 +130,10 @@ class HelpViewModel: ViewModel() {
                             // Sort the list by requestPostDate
                             helpListTemporary.sortByDescending { helpNeeded -> helpNeeded.requestPostDate}
                             _helpList.value = helpListTemporary
-                            Log.d(
-                                "HelpViewModel",
-                                "Help request list fetched successfully: ${_helpList.value}"
-                            )
+                            //Log.d(
+                                //"HelpViewModel",
+                                //"Help request list fetched successfully: ${_helpList.value}"
+                            //)
                         }
                         .addOnFailureListener {
                             Log.e("HelpFailure", it.message.toString())
@@ -130,6 +141,40 @@ class HelpViewModel: ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e("HelpCatchError", e.message.toString())
+            }
+        }
+    }
+    @SuppressLint("SuspiciousIndentation")
+    fun deleteHelpRequest(id: String) {
+        Log.d("HelpViewModel", "Deleting help request for user: ${id}")
+        viewModelScope.launch {
+            try {
+                db.collection("helpDetails")
+                    .whereEqualTo("userId", id)
+                    .get()
+                    .addOnSuccessListener {
+                        Log.d("HelpViewModel", "Help request found for user: ${it.documents.size}")
+                        if (it.documents.isEmpty()) {
+                            Log.d("HelpViewModel", "No help request found for user")
+                            return@addOnSuccessListener
+                        }
+                        val batch = db.batch()
+                        it.documents.forEach { doc ->
+                            batch.delete(db.collection("helpDetails").document(doc.id))
+                        }
+                        batch.commit()
+                            .addOnSuccessListener {
+                                Log.d("HelpViewModel", "Help request deleted successfully for user")
+                            }
+                            .addOnFailureListener {
+                                Log.e("HelpViewModel", it.message.toString())
+                            }
+                    }
+                    .addOnFailureListener {
+                        Log.e("HelpViewModel", it.message.toString())
+                    }
+            } catch (e: Exception) {
+                Log.d("HelpViewModel", e.message.toString())
             }
         }
     }

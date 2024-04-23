@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.UsersViewModel
@@ -118,8 +119,8 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
             label = { Text(text = "Password") },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() })
-
+            keyboardActions = KeyboardActions(onNext = { localFocusManager.clearFocus() }),
+            visualTransformation = PasswordVisualTransformation()
         )
         OutlinedTextField(
             value = address,
