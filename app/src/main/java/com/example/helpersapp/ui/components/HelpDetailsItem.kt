@@ -25,7 +25,7 @@ fun HelpDetailsItem(helpDetails: HelpNeeded) {
         "Time" to helpDetails.time,
         "Price Range" to helpDetails.priceRange.toString(),
         "Postal Code" to helpDetails.postalCode,
-        if (helpDetails.requestPostDate.isNotEmpty()) "Request posted" to formatDateValue(helpDetails.requestPostDate.toString()) else "Request posted" to formatDateValue(dateNow),
+        if (helpDetails.requestPostDate.isNotEmpty()) "Request posted" to formatDateValue(helpDetails.requestPostDate) else "Request posted" to formatDateValue(dateNow),
 
     )
     Column(

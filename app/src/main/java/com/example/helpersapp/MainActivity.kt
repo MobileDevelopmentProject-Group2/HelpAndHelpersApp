@@ -8,37 +8,40 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.helpersapp.ui.theme.HelpersAppTheme
-import com.example.helpersapp.viewModel.UsersViewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.helpersapp.ui.screens.AboutAndContactScreen
 import com.example.helpersapp.ui.screens.AddNewHelpScreen
+import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.ui.screens.HelpDetailsScreen
+import com.example.helpersapp.ui.screens.HelperDetailsScreen
+import com.example.helpersapp.ui.screens.HelperListingScreen
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
-import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
-import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
-import com.example.helpersapp.ui.screens.RegisterScreen
-import com.example.helpersapp.ui.screens.AboutAndContactScreen
 import com.example.helpersapp.ui.screens.MyDataScreen
-import com.example.helpersapp.ui.screens.HelperDetailsScreen
+import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
+import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
+import com.example.helpersapp.ui.screens.RegisterScreen
+import com.example.helpersapp.ui.theme.HelpersAppTheme
 import com.example.helpersapp.viewModel.HelpViewModel
+
 import com.example.helpersapp.viewModel.LoginViewModel
-import androidx.lifecycle.ViewModelProvider
+
 import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.ui.screens.MyHelpPostScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.example.helpersapp.viewModel.UsersViewModel
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val usersViewModel = ViewModelProvider(this)[UsersViewModel::class.java]
         val helpViewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         val helperViewModel = ViewModelProvider(this)[HelperViewModel::class.java]
@@ -156,12 +159,21 @@ fun AppLayout(
                 loginViewModel,
             )
         }
+
         //get my help post
         composable("myHelpPostScreen") {
             MyHelpPostScreen(
                 navController,
                 helpViewModel,
                 loginViewModel
+            )
+        }
+        composable("helperListingScreen") {
+            HelperListingScreen(
+                navController,
+                helperViewModel,
+                loginViewModel,
+
             )
         }
     }

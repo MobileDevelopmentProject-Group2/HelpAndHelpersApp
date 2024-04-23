@@ -1,5 +1,4 @@
 package com.example.helpersapp.model
-
 data class User(
     var firstname: String = "",
     var lastname: String = "",

@@ -87,7 +87,8 @@ class HelperViewModel: ViewModel()  {
                         about,
                         category,
                         helpDetails,
-                        experience
+                        experience,
+                        username
                     )
                     onSuccess(helperInfo)
                 } else {
@@ -97,5 +98,48 @@ class HelperViewModel: ViewModel()  {
             .addOnFailureListener { e ->
                 onFailure(e)
             }
+    }
+
+    fun getNannies(
+        onSuccess: (List<HelperInfo>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { userDocuments ->
+                val userMap = mutableMapOf<String, Pair<String, String>>()
+
+                for (userDocument in userDocuments) {
+                    val username = userDocument.id
+                    val firstName = userDocument.getString("firstname") ?: ""
+                    val lastName = userDocument.getString("lastname") ?: ""
+                    userMap[username] = Pair(firstName, lastName)
+                }
+        db.collection("helpers")
+            .get()
+            .addOnSuccessListener { documents ->
+                val nannyList = mutableListOf<HelperInfo>()
+                for (document in documents) {
+                    val data = document.data
+                    val category = data["category"] as? String ?: ""
+                    if (category.contains("Nanny")) {
+                        val username = data["username"] as? String ?: ""
+                        val about = data["about"] as? String ?: ""
+                        val helpDetails = data["helpDetails"] as? String ?: ""
+                        val experience = data["experience"] as? String ?: ""
+
+                        val (firstName, lastName) = userMap[username] ?: Pair("", "")
+                        val fullName = "$firstName $lastName"
+
+                        val helperInfo = HelperInfo(fullName, about, category, helpDetails, experience,username)
+                        nannyList.add(helperInfo)
+                    }
+                }
+                onSuccess(nannyList)
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+        }
     }
 }
