@@ -33,9 +33,6 @@ import com.example.helpersapp.viewModel.LoginViewModel
 fun AboutAndContactScreen(
     navController: NavController,
 ) {
-    val helpViewModel = HelpViewModel()
-    val loginViewModel = LoginViewModel()
-
     Box {
         ShowBottomImage()
         Scaffold(

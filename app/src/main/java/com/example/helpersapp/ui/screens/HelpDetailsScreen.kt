@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -25,6 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.HelpDetailsItem
+import com.example.helpersapp.ui.components.MapActivity
 import com.example.helpersapp.ui.components.ShowBottomImage
+import com.example.helpersapp.ui.components.getLocationByPostalCode
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 
@@ -41,8 +46,9 @@ import com.example.helpersapp.viewModel.LoginViewModel
 fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel, loginViewModel: LoginViewModel) {
     val screenState by helpViewModel.helpDetailsScreenState.collectAsState()
     val helpDetails by helpViewModel.newHelpNeeded.collectAsState()
-    val userID by loginViewModel.userID.collectAsState()
     val context = LocalContext.current
+    var showMap by rememberSaveable { mutableStateOf(false) }
+    val coordinates = getLocationByPostalCode(context, helpDetails.postalCode)
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -64,6 +70,28 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
 
             HelpDetailsItem(helpDetails)
 
+            if (screenState != "confirm" && coordinates != null) {
+                Button(
+                    onClick = { showMap = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(bottom = 10.dp)
+                ) {
+                    Text(text = "Show approximate location on map")
+                }
+            }
+            if (showMap) {
+                Column(modifier = Modifier.height(400.dp)) {
+                    MapActivity(
+                        coordinates?.areaName ?: "",
+                        coordinates?.latitude ?: 0.0,
+                        coordinates?.longitude ?: 0.0
+                    )
+                }
+            }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier
@@ -75,6 +103,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                             helpViewModel.emptyNewHelpNeeded()
                         }
                         helpViewModel.setHelpDetailsScreenState("")
+                        showMap = false
                         navController.navigateUp()
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -87,7 +116,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                         .width(150.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
@@ -96,8 +125,9 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                 if (screenState == "confirm") {
                     Button(
                         onClick = {
-                            userID?.let { helpViewModel.addNewHelpToCollection(it) }
+                            helpViewModel.addNewHelpToCollection()
                             helpViewModel.emptyNewHelpNeeded()
+                            helpViewModel.emptyHelpList()
                             helpViewModel.setHelpDetailsScreenState("")
                             navController.navigate("main")
                         },
@@ -116,7 +146,7 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                     Button(
                         onClick = {
                             context.sendMail(
-                                to = helpDetails.userEmail ?: "",
+                                to = helpDetails.userEmail,
                                 subject = "Contact request from CareConnect"
                             ) {
                                 navController.navigate("main")

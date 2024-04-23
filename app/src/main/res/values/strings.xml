@@ -1,4 +1,5 @@
 <resources>
+    <string name="web_client_id">243699060489-gl07b6d49t5k55p5stolnplo69tvf28d.apps.googleusercontent.com</string>
     <string name="app_name">HelpersApp</string>
     <string name="post_a_new_help_request">Post a new help request</string>
     <string name="category">"Category: "</string>
