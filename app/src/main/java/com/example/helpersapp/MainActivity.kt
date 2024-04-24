@@ -173,8 +173,7 @@ fun AppLayout(
         composable("myHelpPostScreen") {
             MyHelpPostScreen(
                 navController,
-                helpViewModel,
-                loginViewModel
+                helpViewModel
             )
         }
         composable("helperListingScreen") {

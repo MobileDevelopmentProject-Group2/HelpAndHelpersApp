@@ -28,7 +28,6 @@ class HelpViewModel: ViewModel() {
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
     var newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
 
-    // try to use this helplist to currenthelp post
     private val _helpList = MutableStateFlow<List<HelpNeeded>>(emptyList())
     var helpList: StateFlow<List<HelpNeeded>> = _helpList.asStateFlow()
 
@@ -38,12 +37,8 @@ class HelpViewModel: ViewModel() {
     private val _helpDetailsScreenState = MutableStateFlow("")
     var helpDetailsScreenState: StateFlow<String> = _helpDetailsScreenState.asStateFlow()
 
-    //get user post
-    private val _userHelpPost = MutableStateFlow<List<HelpNeeded>>(emptyList())
-    var userHelpPost: StateFlow<List<HelpNeeded>> = _userHelpPost.asStateFlow()
-
     private val _filteredUserHelpPost = MutableStateFlow<List<HelpNeeded>>(emptyList())
-    val filteredUserHelpPost: StateFlow<List<HelpNeeded>> = _filteredUserHelpPost
+    val filteredUserHelpPost: StateFlow<List<HelpNeeded>> = _filteredUserHelpPost.asStateFlow()
 
     fun setNewHelpNeeded(helpNeeded: HelpNeeded) {
         _newHelpNeeded.value = helpNeeded
@@ -72,13 +67,18 @@ class HelpViewModel: ViewModel() {
     fun setHelpDetailsScreenState(screenState: String) {
         _helpDetailsScreenState.value = screenState
     }
+    fun emptyFilteredUserHelpPost() {
+        _filteredUserHelpPost.value= emptyList()
+        Log.d("HelpViewModel", "Filtered posts emptied: ${_filteredUserHelpPost.value}")
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun addNewHelpToCollection() {
         val timeUTC = OffsetDateTime.now(ZoneOffset.UTC)
         val user = Firebase.auth.currentUser
         val userEmail = Firebase.auth.currentUser?.email
         val userID = Firebase.auth.currentUser?.uid
-        Log.d("HelpViewModel", "UserId: ${userID}")
+
         viewModelScope.launch {
             try {
                 user?.let {
@@ -99,8 +99,6 @@ class HelpViewModel: ViewModel() {
                         .addOnSuccessListener {
                             val documentId = it.id
                             Log.d("HelpViewModel", "Help added successfully, document id: $documentId")
-                            // get document id for the help posted
-
                         }
 
                         .addOnFailureListener {
@@ -114,13 +112,6 @@ class HelpViewModel: ViewModel() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun getAllHelpRequests() {
-
-        val dateNow = Calendar.getInstance().timeInMillis
-        val timeUTC = OffsetDateTime.now(ZoneOffset.UTC)
-        Log.d("HelpViewModel", "TimeUTC time: ${formatDateValue(timeUTC.toString())} ")
-        Log.d("HelpViewModel", "DateNow time: ${dateNow} ")
-        Log.d("HelpViewModel", "TimeZone time: ${TimeZone.getDefault()} ")
-        Log.d("HelpViewModel", "Fetching help request list: ${Firebase.auth.currentUser?.uid}")
         val user = Firebase.auth.currentUser
         viewModelScope.launch {
             try {
@@ -146,17 +137,15 @@ class HelpViewModel: ViewModel() {
                                         postalCode = doc.get("postalCode").toString(),
                                         userId = doc.get("userId").toString(),
                                         requestPostDate = doc.get("requestPostDate").toString(),
-                                        userEmail = doc.get("userEmail").toString()
+                                        userEmail = doc.get("userEmail").toString(),
+                                        helpPostId = doc.id
                                     )
                                 )
                             }
                             // Sort the list by requestPostDate
                             helpListTemporary.sortByDescending { helpNeeded -> helpNeeded.requestPostDate}
                             _helpList.value = helpListTemporary
-                            //Log.d(
-                                //"HelpViewModel",
-                                //"Help request list fetched successfully: ${_helpList.value}"
-                            //)
+                            Log.d("HelpViewModel", "Help list fetched successfully")
                         }
                         .addOnFailureListener {
                             Log.e("HelpFailure", it.message.toString())
@@ -167,22 +156,21 @@ class HelpViewModel: ViewModel() {
             }
         }
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun filterUserHelpPosts(userID: String) {
         viewModelScope.launch {
             try {
                 // Make sure to fetch all posts if not already done
-                if (_helpList.value.isEmpty()) {
-                    getAllHelpRequests()
-                }
+                getAllHelpRequests()
+
                 val filteredPosts = _helpList.value.filter { it.userId == userID }
                 if (filteredPosts.isEmpty()) {
                     Log.d("HelpViewModel", "no post found for this userID: $userID")
                 }else {
                     _filteredUserHelpPost.value = filteredPosts
-                    _userHelpPost.value = filteredPosts
+                    //_userHelpPost.value = filteredPosts
                     Log.d("HelpViewModel", "Filtered posts for user ID: $userID")
+                    Log.d("HelpViewModel", "Filtered posts: ${_filteredUserHelpPost.value}")
                 }
             }catch (e: Exception) {
                 Log.e("HelpViewModel", "Error filtering posts for user ID: $userID", e)
@@ -193,11 +181,8 @@ class HelpViewModel: ViewModel() {
             Log.d("HelpViewModel", "Filtered posts for user ID: $userID")
         }
     }
-
-
 @SuppressLint("SuspiciousIndentation")
-    fun deleteHelpRequest(id: String) {
-        Log.d("HelpViewModel", "Deleting help request for user: ${id}")
+    fun deleteHelpRequests(id: String) {
         viewModelScope.launch {
             try {
                 db.collection("helpDetails")
@@ -227,74 +212,24 @@ class HelpViewModel: ViewModel() {
             } catch (e: Exception) {
                 Log.d("HelpViewModel", e.message.toString())
             }
-
         }
-
+    }
+    fun deleteUserHelpPost(postId: String) {
+        viewModelScope.launch() {
+            try {
+                db.collection("helpDetails")
+                    .document(postId)
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.d("HelpViewModel", "Help request deleted successfully")
+                    }
+                    .addOnFailureListener {
+                        Log.e("HelpViewModel", it.message.toString())
+                    }
+            } catch (e: Exception) {
+                Log.d("HelpViewModel", e.message.toString())
+            }
+        }
     }
 }
-    //delete users post
-    /*
-        fun deleteUserHelpPost(postId: String, userId: String) {
-        //double check if correct login user
-        val currentUserEmail = Firebase.auth.currentUser?.email
-        if (currentUserEmail != null )
-        {
-            db.collection("helpDetails").document(postId).get()
-                .addOnSuccessListener {documentSnapshot ->
-                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
-                    //make sure it is login user
-                    if(helpPost != null && helpPost.userId == userId){
-                        documentSnapshot.reference.delete().addOnSuccessListener {
-                            Log.e("HelpViewModel", "Post delete successfully.")
-                            filterUserHelpPosts(userId)
-                        }
-                            .addOnFailureListener{e ->
-                                Log.w("HelpViewModel", "Error deleting post", e)
-                            }
-                    }else  {
-                        Log.w("HelpViewModel", "The post is not yours")
-                    }
-                }.addOnFailureListener{
-                    Log.w("helpViewModel", "User need to log in or no correct email", it)
-                }
-        }else {
-            Log.w("HelpViewModel", "User is not logged in or email error.")
-
-
-        }}
-
-
-    fun deleteUserHelpPost(postId: String, userId: String) {
-        //double check if correct login user
-        val currentUserEmail = Firebase.auth.currentUser?.email
-        if (currentUserEmail != null )
-        {
-            db.collection("helpDetails").document(postId).get()
-                .addOnSuccessListener {documentSnapshot ->
-                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
-                    //make sure it is login user
-                    if(helpPost != null && helpPost.userId == userId){
-                        documentSnapshot.reference.delete().addOnSuccessListener {
-                            Log.e("HelpViewModel", "Post delete successfully.")
-                                getCurrentUserPost(currentUserEmail)
-                        }
-                            .addOnFailureListener{e ->
-                                Log.w("HelpViewModel", "Error deleting post", e)
-                            }
-                    }else  {
-                        Log.w("HelpViewModel", "The post is not yours")
-                    }
-                }.addOnFailureListener{
-                    Log.w("helpViewModel", "User need to log in or no correct email", it)
-                }
-        }else {
-            Log.w("HelpViewModel", "User is not logged in or email error.")
-        }
-}
-
-*/
-
-
-
-
 

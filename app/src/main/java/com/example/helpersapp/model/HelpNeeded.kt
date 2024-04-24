@@ -12,6 +12,5 @@ data class HelpNeeded(
     var userId: String = "",
     var requestPostDate: String = "",
     var userEmail: String = "",
-    //add post id
-    var id: String = ""
+    var helpPostId: String = ""
 )

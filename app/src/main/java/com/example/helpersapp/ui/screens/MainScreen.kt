@@ -1,6 +1,8 @@
 package com.example.helpersapp.ui.screens
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,6 +57,7 @@ import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
     navController: NavController,
@@ -254,43 +257,12 @@ fun MainScreen(
                         )
                         if (helpList.isNotEmpty()) {
                             ListAllHelpNeeded(helpList, helpViewModel, navController)
-                        }
-
-                        Button(
-                            onClick = { openAlertDialog.value = true },
-                        ) {
-                            Text(text = "Delete User")
-                        }
-                        if (openAlertDialog.value) {
-                            ConfirmDeleteDialog(
-                                loginViewModel = loginViewModel,
-                                navController = navController
+                        } else {
+                            Text(
+                                text = "No help requests found",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 10.dp)
                             )
-                        }
-
-                        Spacer(modifier = Modifier.padding(50.dp))
-
-                        //here are the buttons to navigate to other screens; we can remove these later
-                        Button(onClick = { navController.navigate("helperDetailsScreen") }) {
-                            Text(text = "to helper details screen")
-                        }
-                        Button(onClick = { navController.navigate("home") }) {
-                            Text(text = "to landing screen")
-                        }
-                        Button(onClick = { navController.navigate("login") }) {
-                            Text(text = "To Login Screen")
-                        }
-                        Button(onClick = { navController.navigate("register") }) {
-                            Text(text = "To Register Screen")
-                        }
-                        Button(onClick = { navController.navigate("addHelp") }) {
-                            Text(text = "To Add New Help Screen")
-                        }
-                        Button(onClick = { navController.navigate("helpDetails") }) {
-                            Text(text = "To Help Details Screen")
-                        }
-                        Button(onClick = { navController.navigate("postHelper") }) {
-                            Text(text = "To Post New Helper Details Screen")
                         }
                     }
                 }
