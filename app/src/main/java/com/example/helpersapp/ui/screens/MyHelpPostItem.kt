@@ -1,5 +1,7 @@
 package com.example.helpersapp.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.helpersapp.model.HelpNeeded
 import com.example.helpersapp.ui.components.formatDateValue
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MyHelpPostItem (
     helpNeeded: HelpNeeded
@@ -46,11 +49,11 @@ fun MyHelpPostItem (
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Posted Date:  ${formatDateValue(helpNeeded.requestPostDate)}",
+                text = "Posted Date: ${formatDateValue(helpNeeded.requestPostDate)}",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Contact email:  ${formatDateValue(helpNeeded.userEmail)}",
+                text = "Contact email:  ${(helpNeeded.userEmail)}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

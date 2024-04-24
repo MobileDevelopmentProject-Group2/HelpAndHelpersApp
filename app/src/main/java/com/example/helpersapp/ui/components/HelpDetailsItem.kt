@@ -1,5 +1,8 @@
 package com.example.helpersapp.ui.components
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +17,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.helpersapp.model.HelpNeeded
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.TimeZone
 
+@SuppressLint("SimpleDateFormat")
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HelpDetailsItem(helpDetails: HelpNeeded) {
-    val dateNow = System.currentTimeMillis().toString()
+    val dateTimeNow = SimpleDateFormat("yyyy-MM-dd HH:mm").apply {
+        timeZone = TimeZone.getDefault()
+    }.format(Date(System.currentTimeMillis()))
     val properties = arrayOf(
         "Category" to helpDetails.category,
         "Work Details" to helpDetails.workDetails,
@@ -25,7 +35,7 @@ fun HelpDetailsItem(helpDetails: HelpNeeded) {
         "Time" to helpDetails.time,
         "Price Range" to helpDetails.priceRange.toString(),
         "Postal Code" to helpDetails.postalCode,
-        if (helpDetails.requestPostDate.isNotEmpty()) "Request posted" to formatDateValue(helpDetails.requestPostDate) else "Request posted" to formatDateValue(dateNow),
+        if (helpDetails.requestPostDate.isNotEmpty()) "Request posted" to formatDateValue(helpDetails.requestPostDate) else "Request posted" to dateTimeNow,
 
     )
     Column(

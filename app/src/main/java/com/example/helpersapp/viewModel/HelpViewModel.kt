@@ -1,10 +1,13 @@
 package com.example.helpersapp.viewModel
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.HelpNeeded
+import com.example.helpersapp.ui.components.formatDateValue
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
@@ -13,11 +16,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.Calendar
+import java.util.TimeZone
 
 class HelpViewModel: ViewModel() {
 
     val db = Firebase.firestore
-    val dateNow = System.currentTimeMillis()
 
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
     var newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
@@ -66,7 +72,9 @@ class HelpViewModel: ViewModel() {
     fun setHelpDetailsScreenState(screenState: String) {
         _helpDetailsScreenState.value = screenState
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     fun addNewHelpToCollection() {
+        val timeUTC = OffsetDateTime.now(ZoneOffset.UTC)
         val user = Firebase.auth.currentUser
         val userEmail = Firebase.auth.currentUser?.email
         val userID = Firebase.auth.currentUser?.uid
@@ -74,7 +82,6 @@ class HelpViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 user?.let {
-                    val dateNowUTC = Timestamp.now()
                     db.collection("helpDetails")
                         .add(
                             mapOf(
@@ -85,8 +92,7 @@ class HelpViewModel: ViewModel() {
                                 "priceRange" to _newHelpNeeded.value.priceRange,
                                 "postalCode" to _newHelpNeeded.value.postalCode,
                                 "userId" to userID,
-                                //"requestPostDate" to dateNowUTC,
-                                "requestPostDate" to dateNow,
+                                "requestPostDate" to timeUTC.toString(),
                                 "userEmail" to userEmail
                             )
                         )
@@ -106,7 +112,14 @@ class HelpViewModel: ViewModel() {
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getAllHelpRequests() {
+
+        val dateNow = Calendar.getInstance().timeInMillis
+        val timeUTC = OffsetDateTime.now(ZoneOffset.UTC)
+        Log.d("HelpViewModel", "TimeUTC time: ${formatDateValue(timeUTC.toString())} ")
+        Log.d("HelpViewModel", "DateNow time: ${dateNow} ")
+        Log.d("HelpViewModel", "TimeZone time: ${TimeZone.getDefault()} ")
         Log.d("HelpViewModel", "Fetching help request list: ${Firebase.auth.currentUser?.uid}")
         val user = Firebase.auth.currentUser
         viewModelScope.launch {
@@ -116,6 +129,8 @@ class HelpViewModel: ViewModel() {
                         .get()
                         .addOnSuccessListener {
                             val helpListTemporary = mutableListOf<HelpNeeded>()
+                            val timeNow = System.currentTimeMillis()
+                            println("Time now: $timeNow")
                             it.documents.forEach { doc ->
                                 val priceRangeMap = doc.get("priceRange") as? Map<String, Any>
                                 val endInclusive =
@@ -153,6 +168,7 @@ class HelpViewModel: ViewModel() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun filterUserHelpPosts(userID: String) {
         viewModelScope.launch {
             try {

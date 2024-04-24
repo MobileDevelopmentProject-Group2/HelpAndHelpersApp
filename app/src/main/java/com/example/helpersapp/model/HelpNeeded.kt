@@ -1,5 +1,7 @@
 package com.example.helpersapp.model
 
+import java.time.OffsetDateTime
+
 data class HelpNeeded(
     var category: String = "",
     var workDetails: String = "",
