@@ -9,5 +9,7 @@ data class HelpNeeded(
     var postalCode: String = "",
     var userId: String = "",
     var requestPostDate: String = "",
-    var userEmail: String = ""
+    var userEmail: String = "",
+    //add post id
+    var id: String = ""
 )

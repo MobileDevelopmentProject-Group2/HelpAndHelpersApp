@@ -1,6 +1,5 @@
 package com.example.helpersapp.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
@@ -11,35 +10,32 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.helpersapp.model.HelpNeeded
 import com.example.helpersapp.viewModel.HelpViewModel
-import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
-fun ConfirmDeleteDialog(
+fun ConfirmDeletePost(
+    helpPost: HelpNeeded,
+    helpViewModel: HelpViewModel,
+    onDismiss:() ->Unit,
+    onConfirm: () -> Unit,
     navController: NavController,
-    loginViewModel: LoginViewModel
 ) {
-    val userId by loginViewModel.userID.collectAsState()
-    val helpViewModel = HelpViewModel()
-
-    Log.d("ConfirmDeleteDialog", "userId: $userId")
-
     AlertDialog(
-        onDismissRequest = { navController.navigateUp() },
+        onDismissRequest = onDismiss,
         icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = "warning") },
-        title = { Text("Delete user?") },
-        text = { Text("Are you sure you want to delete your data?\nThis will remove all register and user data.") },
+        title = { Text("Delete Post?") },
+        text = { Text("Are you sure you want to delete your help post") },
         confirmButton = {
             Button(
                 onClick = {
-                    helpViewModel.deleteHelpRequest(userId)
-                    loginViewModel.deleteUser()
-                    navController.navigate("home")
+                    //helpViewModel.deleteUserHelpPost(helpPost.id, helpPost.userId)
+                    onConfirm()
+                    //after the screen for post done, it will stay at post
+                    navController.navigate("main")
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error
@@ -52,14 +48,12 @@ fun ConfirmDeleteDialog(
         },
         dismissButton = {
             Button(
-                onClick = {
-                    navController.navigate("main")
-                },
+                onClick = onDismiss,
                 modifier = Modifier
                     .padding(end = 20.dp)
             ) {
                 Text("Cancel")
             }
         }
-    )
-}
+    )}
+

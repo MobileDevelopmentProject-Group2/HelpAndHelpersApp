@@ -30,8 +30,13 @@ import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.ui.theme.HelpersAppTheme
 import com.example.helpersapp.viewModel.HelpViewModel
-import com.example.helpersapp.viewModel.HelperViewModel
+
 import com.example.helpersapp.viewModel.LoginViewModel
+
+import com.example.helpersapp.ui.components.createUsername
+import com.example.helpersapp.ui.screens.HelpByCategoryScreen
+import com.example.helpersapp.ui.screens.MyHelpPostScreen
+import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
 
@@ -165,6 +170,13 @@ fun AppLayout(
                 loginViewModel,
             )
         }
+        composable("myHelpPostScreen") {
+            MyHelpPostScreen(
+                navController,
+                helpViewModel,
+                loginViewModel
+            )
+        }
         composable("helperListingScreen") {
             HelperListingScreen(
                 navController,
@@ -181,6 +193,7 @@ fun AppLayout(
         }
     }
 }
+
 
 
 
