@@ -1,4 +1,3 @@
-# HelpAndHelpersApp
 # CareConnect App
 Our group project is about creating a Android application for users finding their neededs.
 
