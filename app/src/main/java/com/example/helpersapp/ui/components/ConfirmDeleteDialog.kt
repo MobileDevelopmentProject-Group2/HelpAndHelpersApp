@@ -39,6 +39,7 @@ fun ConfirmDeleteDialog(
                 onClick = {
                     helpViewModel.deleteHelpRequest(userId)
                     loginViewModel.deleteUser()
+                    loginViewModel.logoutUser()
                     navController.navigate("home")
                 },
                 colors = ButtonDefaults.buttonColors(

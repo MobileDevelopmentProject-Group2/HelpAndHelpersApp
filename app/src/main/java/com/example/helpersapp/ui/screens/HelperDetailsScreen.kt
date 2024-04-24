@@ -70,7 +70,6 @@ fun HelperDetailsScreen(
             )
         } catch (e: Exception) {
             Log.e("HelperDetailsScreen", "Unhandled exception", e)
-            // 处理异常，避免应用崩溃
         }
     }
     /*
