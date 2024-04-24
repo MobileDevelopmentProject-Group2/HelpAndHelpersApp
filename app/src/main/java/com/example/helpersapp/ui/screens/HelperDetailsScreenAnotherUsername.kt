@@ -170,7 +170,6 @@ fun HelperDetailsScreenAnotherUsername(
                             helperViewModel.getEmailForClickedUser(
                                 onSuccess = { email ->
                                     sendMail(
-                                    //LocalContext.current.sendMail2(
                                         context = context,
                                         to = email,
                                         subject = "Contact request from CareConnect"
