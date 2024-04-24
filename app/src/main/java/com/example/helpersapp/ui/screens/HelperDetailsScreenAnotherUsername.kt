@@ -42,23 +42,17 @@ import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-
-
-
 @Composable
 fun HelperDetailsScreenAnotherUsername(
     navController: NavController,
     helperViewModel: HelperViewModel,
     loginViewModel: LoginViewModel,
-
-    //clickedUsername: String
 ) {
     val helperInfo = remember { mutableStateOf(HelperInfo("", "", "", "", "","")) }
-
     val clickedUsername  by helperViewModel.clickedUsername.collectAsState()
     Log.d("***", "${clickedUsername}")
-    //val user by loginViewModel.userDetails.collectAsState(clickedUsername)
     val userfullnameState = remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(clickedUsername) {
         helperViewModel.getFullUserName(
@@ -172,24 +166,24 @@ fun HelperDetailsScreenAnotherUsername(
                 }
 
                     Button(
-                        onClick = {/*
+                        onClick = {
                             helperViewModel.getEmailForClickedUser(
                                 onSuccess = { email ->
-                                    context.sendMail2(
+                                    sendMail(
                                     //LocalContext.current.sendMail2(
+                                        context = context,
                                         to = email,
                                         subject = "Contact request from CareConnect"
                                     ) {
                                         navController.navigate("main")
-                                        Toast.makeText(Context, "Email sending successful", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Email sending successful", Toast.LENGTH_SHORT).show()
                                     }
                                 },
                                 onFailure = { e ->
                                     Log.e("***", "Error fetching email: ${e.message}")
-                                    Toast.makeText(Context, "Failed to fetch email", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Failed to fetch email", Toast.LENGTH_SHORT).show()
                                 }
                             )
-                            */
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -206,8 +200,9 @@ fun HelperDetailsScreenAnotherUsername(
             }
         }
     }
-@Composable
-fun Context.sendMail2(
+
+fun sendMail(
+    context: Context,
     to: String?,
     subject: String,
     onSuccess: () -> Unit
@@ -217,13 +212,13 @@ fun Context.sendMail2(
         intent.type = "vnd.android.cursor.item/email"
         intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
         intent.putExtra(Intent.EXTRA_SUBJECT, subject)
-        startActivity(intent)
+        context.startActivity(intent)
         onSuccess.invoke()
     } catch (e: ActivityNotFoundException) {
         // Handle case where no email app is available
-        Toast.makeText(this, "You need to have an emailing application available", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "You need to have an emailing application available", Toast.LENGTH_SHORT).show()
     } catch (t: Throwable) {
         // Handle potential other type of exceptions
-        Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
     }
 }
