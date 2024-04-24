@@ -1,5 +1,6 @@
 package com.example.helpersapp.ui.screens
 
+
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -41,20 +42,20 @@ import com.google.firebase.storage.ktx.storage
 
 
 @Composable
-fun HelperListingScreen(
+fun HelperListingScreenTutors(
     navController: NavController,
     helperViewModel: HelperViewModel,
     loginViewModel: LoginViewModel,
 ) {
-    var nannies by remember { mutableStateOf(emptyList<HelperInfo>()) }
+    var tutors by remember { mutableStateOf(emptyList<HelperInfo>()) }
 
     LaunchedEffect(Unit) {
-        helperViewModel.getNannies(
-            onSuccess = { nannyList ->
-                nannies = nannyList
+        helperViewModel.getTutors(
+            onSuccess = { tutorList ->
+                tutors = tutorList
             },
             onFailure = { e ->
-                Log.e("***", "Error fetching nanny list: ${e.message}")
+                Log.e("***", "Error fetching tutor list: ${e.message}")
             }
         )
     }
@@ -74,56 +75,56 @@ fun HelperListingScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "All nannies",
+                    text = "All tutors",
                     modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
         }
     )
-        Box(modifier = Modifier.fillMaxSize()) {
-            ShowBottomImage()
-            Column {
-                Spacer(modifier = Modifier.height(140.dp))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    items(nannies) { nanny ->
-                        NannyCard(nanny = nanny, loginViewModel = loginViewModel){
-                            val currentUser = loginViewModel.getUsername()
-                            val clickedUsername = nanny.username
-                            val navigateToDetailsScreen = {
-                                if (currentUser == clickedUsername) {
-                                    navController.navigate("helperDetailsScreen")
-                                } else {
-                                    navController.navigate("helperDetailsScreenAnotherUsername")
-                                }
-                                helperViewModel.saveClickedUsername(clickedUsername)
-                                Log.e("***", " ${clickedUsername}")
+    Box(modifier = Modifier.fillMaxSize()) {
+        ShowBottomImage()
+        Column {
+            Spacer(modifier = Modifier.height(140.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(tutors) { tutor ->
+                    TutorCard(tutor = tutor, loginViewModel = loginViewModel){
+                        val currentUser = loginViewModel.getUsername()
+                        val clickedUsername = tutor.username
+                        val navigateToDetailsScreen = {
+                            if (currentUser == clickedUsername) {
+                                navController.navigate("helperDetailsScreen")
+                            } else {
+                                navController.navigate("helperDetailsScreenAnotherUsername")
                             }
-                                navigateToDetailsScreen()
+                            helperViewModel.saveClickedUsername(clickedUsername)
+                            Log.e("***", " ${clickedUsername}")
                         }
+                        navigateToDetailsScreen()
                     }
                 }
             }
         }
     }
+}
 
 @Composable
-fun NannyCard(nanny: HelperInfo, loginViewModel: LoginViewModel,onClick: () -> Unit) {
-    Log.d("from NannyCard",nanny.username.toString()+"/profile_picture.jpg")
+fun TutorCard(tutor: HelperInfo, loginViewModel: LoginViewModel,onClick: () -> Unit) {
+    Log.d("from TutorCard",tutor.username.toString()+"/profile_picture.jpg")
     var byteArray by remember {
         mutableStateOf<ByteArray?>(null)
     }
     var painter = rememberAsyncImagePainter(model = byteArray)
-    val imagePath = nanny.username.toString()+"/profile_picture.jpg"
+    val imagePath = tutor.username.toString()+"/profile_picture.jpg"
 
-    Log.d("from NannyCard2",nanny.username)
+    Log.d("from NannyCard2",tutor.username)
 
-    LaunchedEffect(nanny) {
-        getNannyProfilePictureByteArray(nanny, loginViewModel) { fetchedBytes ->
+    LaunchedEffect(tutor) {
+        getTutorProfilePictureByteArray(tutor, loginViewModel) { fetchedBytes ->
             byteArray = fetchedBytes
         }
     }
@@ -165,7 +166,7 @@ fun NannyCard(nanny: HelperInfo, loginViewModel: LoginViewModel,onClick: () -> U
                 }
 
                 Text(
-                    text = nanny.fullName.ifEmpty { "Unknown" },
+                    text = tutor.fullName.ifEmpty { "Unknown" },
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
@@ -173,7 +174,7 @@ fun NannyCard(nanny: HelperInfo, loginViewModel: LoginViewModel,onClick: () -> U
     }
 }
 
-fun getNannyProfilePictureByteArray(nanny: HelperInfo, loginViewModel: LoginViewModel, onFetchComplete: (ByteArray) -> Unit) {
+fun getTutorProfilePictureByteArray(nanny: HelperInfo, loginViewModel: LoginViewModel, onFetchComplete: (ByteArray) -> Unit) {
     val username = nanny.username
     val url = "gs://careconnect-65e41.appspot.com/"
     val imagePath = "$username/profile_picture.jpg"

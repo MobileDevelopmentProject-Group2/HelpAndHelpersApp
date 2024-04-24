@@ -1,23 +1,17 @@
 package com.example.helpersapp.ui.screens
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,9 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.helpersapp.R
 import com.example.helpersapp.model.HelperInfo
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.ui.components.HelperDetail
@@ -45,35 +42,33 @@ import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-
 @Composable
-fun HelperDetailsScreen(
+fun HelperDetailsScreenAnotherUsername(
     navController: NavController,
     helperViewModel: HelperViewModel,
     loginViewModel: LoginViewModel,
 ) {
     val helperInfo = remember { mutableStateOf(HelperInfo("", "", "", "", "","")) }
-    val user by loginViewModel.userDetails.collectAsState()
+    val clickedUsername  by helperViewModel.clickedUsername.collectAsState()
+    Log.d("***", "${clickedUsername}")
+    val userfullnameState = remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    LaunchedEffect(clickedUsername) {
+        helperViewModel.getFullUserName(
+            clickedUsername,
+            onSuccess = { fullName ->
+                userfullnameState.value = fullName
+            },
+            onFailure = { e ->
+                Log.e("***", "Error fetching user full name: ${e.message}")
+            }
+        )
+    }
 
     LaunchedEffect(Unit) {
-        try {
-            helperViewModel.getHelperDetails(
-                username = loginViewModel.getUsername(),
-                onSuccess = { info ->
-                    helperInfo.value = info
-                },
-                onFailure = { e ->
-                    Log.e("HelperDetailsScreen", "Error fetching helper details", e)
-                }
-            )
-        } catch (e: Exception) {
-            Log.e("HelperDetailsScreen", "Unhandled exception", e)
-        }
-    }
-    /*
-    LaunchedEffect(Unit) {
         helperViewModel.getHelperDetails(
-            username = loginViewModel.getUsername(),
+            username = clickedUsername,
             onSuccess = { info ->
                 helperInfo.value = info
             },
@@ -83,9 +78,8 @@ fun HelperDetailsScreen(
             }
         )
     }
-*/
 
-    val username = loginViewModel.getUsername()
+    val username = clickedUsername
     val url = "gs://careconnect-65e41.appspot.com/"
     var byteArray by remember { mutableStateOf<ByteArray?>(null) }
 
@@ -132,7 +126,7 @@ fun HelperDetailsScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "${user.firstname} ${user.lastname}",
+                text = userfullnameState.value,
                 style = MaterialTheme.typography.titleLarge,
             )
 
@@ -146,11 +140,14 @@ fun HelperDetailsScreen(
 
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 Button(
-                    onClick = { navController.navigateUp() },
-                    shape = MaterialTheme.shapes.extraLarge,
+                    onClick = {
+
+                        navController.navigateUp()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -161,27 +158,66 @@ fun HelperDetailsScreen(
                         .width(150.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    Text(text = "Modify")
+                    Text(text = stringResource(R.string.back_))
                 }
-                Button(
-                    onClick = { navController.navigate("main") },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .height(52.dp)
-                        .width(150.dp)
-                ) {
-                    Text(text = "Confirm")
+
+                    Button(
+                        onClick = {
+                            helperViewModel.getEmailForClickedUser(
+                                onSuccess = { email ->
+                                    sendMail(
+                                        context = context,
+                                        to = email,
+                                        subject = "Contact request from CareConnect"
+                                    ) {
+                                        navController.navigate("main")
+                                        Toast.makeText(context, "Email sending successful", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                onFailure = { e ->
+                                    Log.e("***", "Error fetching email: ${e.message}")
+                                    Toast.makeText(context, "Failed to fetch email", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier
+                            .padding(top = 35.dp)
+                            .height(52.dp)
+                            .width(150.dp)
+                    ) {
+                        Text(text = "Send mail")
+                    }
                 }
             }
         }
+    }
+
+fun sendMail(
+    context: Context,
+    to: String?,
+    subject: String,
+    onSuccess: () -> Unit
+) {
+    try {
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.type = "vnd.android.cursor.item/email"
+        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        context.startActivity(intent)
+        onSuccess.invoke()
+    } catch (e: ActivityNotFoundException) {
+        // Handle case where no email app is available
+        Toast.makeText(context, "You need to have an emailing application available", Toast.LENGTH_SHORT).show()
+    } catch (t: Throwable) {
+        // Handle potential other type of exceptions
+        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
     }
 }
