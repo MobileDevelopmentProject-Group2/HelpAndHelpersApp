@@ -1,12 +1,18 @@
 package com.example.helpersapp.ui.screens
 
-import android.content.ContentValues
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -14,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,18 +33,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.helpersapp.model.HelperInfo
 import com.example.helpersapp.ui.components.ShowBottomImage
-import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
@@ -54,6 +55,25 @@ fun HelperDetailsScreen(
     val helperInfo = remember { mutableStateOf(HelperInfo("", "", "", "", "","")) }
     val user by loginViewModel.userDetails.collectAsState()
 
+    //error handling
+    LaunchedEffect(Unit) {
+        try {
+            helperViewModel.getHelperDetails(
+                username = loginViewModel.getUsername(),
+                onSuccess = { info ->
+                    helperInfo.value = info
+                },
+                onFailure = { e ->
+                    Log.e("HelperDetailsScreen", "Error fetching helper details", e)
+                    // avoid crash
+                }
+            )
+        } catch (e: Exception) {
+            Log.e("HelperDetailsScreen", "Unhandled exception", e)
+            // 处理异常，避免应用崩溃
+        }
+    }
+    /*
     LaunchedEffect(Unit) {
         helperViewModel.getHelperDetails(
             username = loginViewModel.getUsername(),
@@ -66,6 +86,7 @@ fun HelperDetailsScreen(
             }
         )
     }
+*/
 
     val username = loginViewModel.getUsername()
     val url = "gs://careconnect-65e41.appspot.com/"

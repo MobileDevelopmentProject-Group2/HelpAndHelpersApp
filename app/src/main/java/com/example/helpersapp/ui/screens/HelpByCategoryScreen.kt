@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
-import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
@@ -38,7 +37,7 @@ fun HelpByCategoryScreen(navController: NavController, helpViewModel: HelpViewMo
     val category by helpViewModel.category.collectAsState()
 
     val filteredList = helpList.filter { it.category == category }
-
+    // val userPostsHelpList = helpList
     Box(modifier = Modifier.fillMaxSize()) {
         ShowBottomImage()
         Scaffold(

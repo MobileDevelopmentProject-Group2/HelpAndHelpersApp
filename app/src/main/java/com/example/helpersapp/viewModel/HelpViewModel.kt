@@ -22,6 +22,7 @@ class HelpViewModel: ViewModel() {
     private val _newHelpNeeded = MutableStateFlow(HelpNeeded())
     var newHelpNeeded: StateFlow<HelpNeeded> = _newHelpNeeded.asStateFlow()
 
+    // try to use this helplist to currenthelp post
     private val _helpList = MutableStateFlow<List<HelpNeeded>>(emptyList())
     var helpList: StateFlow<List<HelpNeeded>> = _helpList.asStateFlow()
 
@@ -30,6 +31,13 @@ class HelpViewModel: ViewModel() {
 
     private val _helpDetailsScreenState = MutableStateFlow("")
     var helpDetailsScreenState: StateFlow<String> = _helpDetailsScreenState.asStateFlow()
+
+    //get user post
+    private val _userHelpPost = MutableStateFlow<List<HelpNeeded>>(emptyList())
+    var userHelpPost: StateFlow<List<HelpNeeded>> = _userHelpPost.asStateFlow()
+
+    private val _filteredUserHelpPost = MutableStateFlow<List<HelpNeeded>>(emptyList())
+    val filteredUserHelpPost: StateFlow<List<HelpNeeded>> = _filteredUserHelpPost
 
     fun setNewHelpNeeded(helpNeeded: HelpNeeded) {
         _newHelpNeeded.value = helpNeeded
@@ -144,7 +152,34 @@ class HelpViewModel: ViewModel() {
             }
         }
     }
-    @SuppressLint("SuspiciousIndentation")
+
+    fun filterUserHelpPosts(userID: String) {
+        viewModelScope.launch {
+            try {
+                // Make sure to fetch all posts if not already done
+                if (_helpList.value.isEmpty()) {
+                    getAllHelpRequests()
+                }
+                val filteredPosts = _helpList.value.filter { it.userId == userID }
+                if (filteredPosts.isEmpty()) {
+                    Log.d("HelpViewModel", "no post found for this userID: $userID")
+                }else {
+                    _filteredUserHelpPost.value = filteredPosts
+                    _userHelpPost.value = filteredPosts
+                    Log.d("HelpViewModel", "Filtered posts for user ID: $userID")
+                }
+            }catch (e: Exception) {
+                Log.e("HelpViewModel", "Error filtering posts for user ID: $userID", e)
+                // Handle the error by updating a UI state or notifying the user
+            }
+
+            //_userHelpPost.value = _helpList.value.filter { it.userId == userID }
+            Log.d("HelpViewModel", "Filtered posts for user ID: $userID")
+        }
+    }
+
+
+@SuppressLint("SuspiciousIndentation")
     fun deleteHelpRequest(id: String) {
         Log.d("HelpViewModel", "Deleting help request for user: ${id}")
         viewModelScope.launch {
@@ -176,8 +211,74 @@ class HelpViewModel: ViewModel() {
             } catch (e: Exception) {
                 Log.d("HelpViewModel", e.message.toString())
             }
+
         }
+
     }
 }
+    //delete users post
+    /*
+        fun deleteUserHelpPost(postId: String, userId: String) {
+        //double check if correct login user
+        val currentUserEmail = Firebase.auth.currentUser?.email
+        if (currentUserEmail != null )
+        {
+            db.collection("helpDetails").document(postId).get()
+                .addOnSuccessListener {documentSnapshot ->
+                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
+                    //make sure it is login user
+                    if(helpPost != null && helpPost.userId == userId){
+                        documentSnapshot.reference.delete().addOnSuccessListener {
+                            Log.e("HelpViewModel", "Post delete successfully.")
+                            filterUserHelpPosts(userId)
+                        }
+                            .addOnFailureListener{e ->
+                                Log.w("HelpViewModel", "Error deleting post", e)
+                            }
+                    }else  {
+                        Log.w("HelpViewModel", "The post is not yours")
+                    }
+                }.addOnFailureListener{
+                    Log.w("helpViewModel", "User need to log in or no correct email", it)
+                }
+        }else {
+            Log.w("HelpViewModel", "User is not logged in or email error.")
+
+
+        }}
+
+
+    fun deleteUserHelpPost(postId: String, userId: String) {
+        //double check if correct login user
+        val currentUserEmail = Firebase.auth.currentUser?.email
+        if (currentUserEmail != null )
+        {
+            db.collection("helpDetails").document(postId).get()
+                .addOnSuccessListener {documentSnapshot ->
+                    val helpPost = documentSnapshot.toObject(HelpNeeded::class.java)
+                    //make sure it is login user
+                    if(helpPost != null && helpPost.userId == userId){
+                        documentSnapshot.reference.delete().addOnSuccessListener {
+                            Log.e("HelpViewModel", "Post delete successfully.")
+                                getCurrentUserPost(currentUserEmail)
+                        }
+                            .addOnFailureListener{e ->
+                                Log.w("HelpViewModel", "Error deleting post", e)
+                            }
+                    }else  {
+                        Log.w("HelpViewModel", "The post is not yours")
+                    }
+                }.addOnFailureListener{
+                    Log.w("helpViewModel", "User need to log in or no correct email", it)
+                }
+        }else {
+            Log.w("HelpViewModel", "User is not logged in or email error.")
+        }
+}
+
+*/
+
+
+
 
 
