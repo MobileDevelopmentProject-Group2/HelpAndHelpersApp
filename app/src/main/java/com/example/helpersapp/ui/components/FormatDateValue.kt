@@ -1,36 +1,22 @@
 package com.example.helpersapp.ui.components
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun formatDateValue(date: String): String {
     Log.d("FormatDateValue", "Date: $date")
+    val timeZone = TimeZone.getDefault()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-    val dateValue = date.toLongOrNull()?.let { Date(it) }
-    val formattedDateTime = dateValue?.let { dateFormat.format(it) } ?: "N/A"
+    dateFormat.timeZone = timeZone
+    val formattedDateTime = dateFormat.format(Date.from(OffsetDateTime.parse(date).toInstant()))
     Log.d("FormatDateValue", "Formatted date: $formattedDateTime")
 
     return formattedDateTime
 }
-/*
-
-import java.text.SimpleDateFormat
-import java.util.*
-
-fun formatDateValue(timestamp: com.google.firebase.Timestamp): String {
-    // Convert the Firebase Timestamp to a Java Date
-    val date = timestamp.toDate()
-
-    // Get the user's default time zone
-    val timeZone = TimeZone.getDefault()
-
-    // Create a SimpleDateFormat object with the desired format and time zone
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-    dateFormat.timeZone = timeZone
-
-    // Format the Date object to a String in the local time zone
-    return dateFormat.format(date)
-}
-* */

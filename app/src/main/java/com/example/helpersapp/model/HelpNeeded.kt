@@ -1,5 +1,7 @@
 package com.example.helpersapp.model
 
+import java.time.OffsetDateTime
+
 data class HelpNeeded(
     var category: String = "",
     var workDetails: String = "",
@@ -10,6 +12,5 @@ data class HelpNeeded(
     var userId: String = "",
     var requestPostDate: String = "",
     var userEmail: String = "",
-    //add post id
-    var id: String = ""
+    var helpPostId: String = ""
 )

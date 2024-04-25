@@ -116,92 +116,92 @@ fun MyDataScreen(
                 )
             }
         }){
-                 ShowBottomImage()
-                 Scaffold (
-                     topBar = {
-                         MainTopBar(
-                             navController,
-                             drawerState,
-                             scope,
-                             loginViewModel,
-                             helpViewModel
-                         ) },
-                     containerColor = Color.Transparent,
-                     content = { paddingValues ->
-                         Column(
-                             modifier = Modifier
-                                 .fillMaxSize()
-                                 .padding(paddingValues)
-                                 .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 10.dp)
-                                 .verticalScroll(rememberScrollState()),
-                             verticalArrangement = Arrangement.Center,
-                             horizontalAlignment = Alignment.CenterHorizontally
-                         ) {
-                             Text(
-                                 modifier = Modifier
-                                     .padding(bottom = 30.dp)
-                                     .align(Alignment.CenterHorizontally),
-                                 style = MaterialTheme.typography.titleLarge,
-                                 text = "User Profile",
-                             )
-                             OutlinedTextField(
-                                 value = firstname ,
-                                 onValueChange = {firstname = it },
-                                 label = { Text("First Name")
-                                 } )
+         ShowBottomImage()
+         Scaffold (
+             topBar = {
+                 MainTopBar(
+                     navController,
+                     drawerState,
+                     scope,
+                     loginViewModel,
+                     helpViewModel
+                 ) },
+             containerColor = Color.Transparent,
+             content = { paddingValues ->
+                 Column(
+                     modifier = Modifier
+                         .fillMaxSize()
+                         .padding(paddingValues)
+                         .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 10.dp)
+                         .verticalScroll(rememberScrollState()),
+                     verticalArrangement = Arrangement.Center,
+                     horizontalAlignment = Alignment.CenterHorizontally
+                 ) {
+                     Text(
+                         modifier = Modifier
+                             .padding(bottom = 30.dp)
+                             .align(Alignment.CenterHorizontally),
+                         style = MaterialTheme.typography.titleLarge,
+                         text = "User Profile",
+                     )
+                     OutlinedTextField(
+                         value = firstname ,
+                         onValueChange = {firstname = it },
+                         label = { Text("First Name")
+                         } )
 
-                             OutlinedTextField(
-                                 value = lastname ,
-                                 onValueChange = {lastname = it },
-                                 label = { Text("Last Name")
-                                 } )
+                     OutlinedTextField(
+                         value = lastname ,
+                         onValueChange = {lastname = it },
+                         label = { Text("Last Name")
+                         } )
 
-                             OutlinedTextField(
-                                 value = address,
-                                 onValueChange = {address = it },
-                                 label = { Text("Address")
-                                 })
+                     OutlinedTextField(
+                         value = address,
+                         onValueChange = {address = it },
+                         label = { Text("Address")
+                         })
 
-                             Spacer(modifier = Modifier.height(8.dp))
+                     Spacer(modifier = Modifier.height(8.dp))
 
-                             Spacer(modifier = Modifier.height(16.dp))
-                             Row(
-                                 modifier = Modifier
-                                     .fillMaxWidth()
-                                     .padding(horizontal = 16.dp),
-                                 horizontalArrangement = Arrangement.SpaceAround
-                                 //horizontalArrangement = Arrangement.SpaceBetween
-                             ) {
-                             Button(onClick = {
-                                 val updateUser = User(
-                                     firstname = firstname,
-                                     lastname = lastname,
-                                     //email = email,
-                                     address = address
-                                 )
-                                 updateUserViewModel.updateUserDetail(userId, updateUser) {
-                                         success, message ->
-                                     if (success) {
-                                         Toast.makeText(
-                                             context,
-                                             "User profile updated",
-                                             Toast.LENGTH_LONG
-                                         ).show()
-                                         Log.e("FirebaseStorage", "update user data")
-                                     }else {
-                                         Toast.makeText(
-                                             context,
-                                             "Fail to update user profile, check again",
-                                             Toast.LENGTH_LONG
-                                         ).show()
-                                         Log.e("FirebaseStorage", "faile",)
-                                     }
-                                 }
-                             },
-                                 modifier = Modifier.width(150.dp),
-                             ) {
-                                 Text("Update")
+                     Spacer(modifier = Modifier.height(16.dp))
+                     Row(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .padding(horizontal = 16.dp),
+                         horizontalArrangement = Arrangement.SpaceAround
+                         //horizontalArrangement = Arrangement.SpaceBetween
+                     ) {
+                     Button(onClick = {
+                         val updateUser = User(
+                             firstname = firstname,
+                             lastname = lastname,
+                             //email = email,
+                             address = address
+                         )
+                         updateUserViewModel.updateUserDetail(userId, updateUser) {
+                                 success, message ->
+                             if (success) {
+                                 Toast.makeText(
+                                     context,
+                                     "User profile updated",
+                                     Toast.LENGTH_LONG
+                                 ).show()
+                                 Log.e("FirebaseStorage", "update user data")
+                             }else {
+                                 Toast.makeText(
+                                     context,
+                                     "Fail to update user profile, check again",
+                                     Toast.LENGTH_LONG
+                                 ).show()
+                                 Log.e("FirebaseStorage", "faile",)
                              }
+                         }
+                     },
+                         modifier = Modifier.width(150.dp),
+                     ) {
+                         Text("Update")
+                     }
                     //Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = { openAlertDialog.value = true },

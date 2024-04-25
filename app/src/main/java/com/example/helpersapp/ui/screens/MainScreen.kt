@@ -1,6 +1,8 @@
 package com.example.helpersapp.ui.screens
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,19 +29,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,14 +52,12 @@ import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.ConfirmDeleteDialog
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
 import com.example.helpersapp.ui.components.MainTopBar
-import com.example.helpersapp.ui.components.MapActivity
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
     navController: NavController,
@@ -260,43 +257,12 @@ fun MainScreen(
                         )
                         if (helpList.isNotEmpty()) {
                             ListAllHelpNeeded(helpList, helpViewModel, navController)
-                        }
-
-                        Button(
-                            onClick = { openAlertDialog.value = true },
-                        ) {
-                            Text(text = "Delete User")
-                        }
-                        if (openAlertDialog.value) {
-                            ConfirmDeleteDialog(
-                                loginViewModel = loginViewModel,
-                                navController = navController
+                        } else {
+                            Text(
+                                text = "No help requests found",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 10.dp)
                             )
-                        }
-
-                        Spacer(modifier = Modifier.padding(50.dp))
-
-                        //here are the buttons to navigate to other screens; we can remove these later
-                        Button(onClick = { navController.navigate("helperDetailsScreen") }) {
-                            Text(text = "to helper details screen")
-                        }
-                        Button(onClick = { navController.navigate("home") }) {
-                            Text(text = "to landing screen")
-                        }
-                        Button(onClick = { navController.navigate("login") }) {
-                            Text(text = "To Login Screen")
-                        }
-                        Button(onClick = { navController.navigate("register") }) {
-                            Text(text = "To Register Screen")
-                        }
-                        Button(onClick = { navController.navigate("addHelp") }) {
-                            Text(text = "To Add New Help Screen")
-                        }
-                        Button(onClick = { navController.navigate("helpDetails") }) {
-                            Text(text = "To Help Details Screen")
-                        }
-                        Button(onClick = { navController.navigate("postHelper") }) {
-                            Text(text = "To Post New Helper Details Screen")
                         }
                     }
                 }
