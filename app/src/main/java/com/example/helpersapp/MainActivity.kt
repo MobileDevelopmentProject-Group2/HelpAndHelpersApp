@@ -18,10 +18,13 @@ import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.ui.screens.HelpDetailsScreen
 import com.example.helpersapp.ui.screens.HelperDetailsScreen
 import com.example.helpersapp.ui.screens.HelperListingScreen
+import com.example.helpersapp.ui.screens.HelperListingScreenTutors
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
 import com.example.helpersapp.ui.screens.MyDataScreen
+import com.example.helpersapp.ui.screens.HelperDetailsScreen
+import com.example.helpersapp.ui.screens.HelperDetailsScreenAnotherUsername
 import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
@@ -67,6 +70,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun AppLayout(
     usersViewModel: UsersViewModel,
@@ -159,8 +163,13 @@ fun AppLayout(
                 loginViewModel,
             )
         }
-
-        //get my help post
+        composable("helperDetailsScreenAnotherUsername") {
+            HelperDetailsScreenAnotherUsername(
+                navController,
+                helperViewModel,
+                loginViewModel,
+            )
+        }
         composable("myHelpPostScreen") {
             MyHelpPostScreen(
                 navController,
@@ -173,11 +182,18 @@ fun AppLayout(
                 navController,
                 helperViewModel,
                 loginViewModel,
-
+            )
+        }
+        composable("helperListingScreenTutors") {
+            HelperListingScreenTutors(
+                navController,
+                helperViewModel,
+                loginViewModel,
             )
         }
     }
 }
+
 
 
 

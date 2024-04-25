@@ -9,11 +9,62 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
 class HelperViewModel: ViewModel()  {
 
     private val db = FirebaseFirestore.getInstance()
+
+    private val _clickedUsername = MutableStateFlow("")
+    val clickedUsername: StateFlow<String> = _clickedUsername.asStateFlow()
+
+
+
+    fun saveClickedUsername(username: String) {
+        _clickedUsername.value = username
+    }
+
+    fun getFullUserName(username: String, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("users").document(username)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val firstName = documentSnapshot.getString("firstname") ?: ""
+                    val lastName = documentSnapshot.getString("lastname") ?: ""
+                    val fullName = "$firstName $lastName"
+                    onSuccess(fullName)
+                } else {
+                    onFailure(Exception("User document does not exist"))
+                }
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
+
+    fun getEmailForClickedUser(onSuccess: (String?) -> Unit, onFailure: (Exception) -> Unit) {
+        val clickedUsername = _clickedUsername.value
+        if (clickedUsername.isNotBlank()) {
+            db.collection("users").document(clickedUsername)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val email = documentSnapshot.getString("email")
+                        onSuccess(email)
+                    } else {
+                        onFailure(Exception("User document does not exist"))
+                    }
+                }
+                .addOnFailureListener { e ->
+                    onFailure(e)
+                }
+        } else {
+            onFailure(Exception("Clicked username is blank or empty"))
+        }
+    }
 
     fun saveUserData(
         about: String,
@@ -142,4 +193,48 @@ class HelperViewModel: ViewModel()  {
             }
         }
     }
+
+    fun getTutors(
+        onSuccess: (List<HelperInfo>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { userDocuments ->
+                val userMap = mutableMapOf<String, Pair<String, String>>()
+
+                for (userDocument in userDocuments) {
+                    val username = userDocument.id
+                    val firstName = userDocument.getString("firstname") ?: ""
+                    val lastName = userDocument.getString("lastname") ?: ""
+                    userMap[username] = Pair(firstName, lastName)
+                }
+                db.collection("helpers")
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        val tutorList = mutableListOf<HelperInfo>()
+                        for (document in documents) {
+                            val data = document.data
+                            val category = data["category"] as? String ?: ""
+                            if (category.contains("Tutor")) {
+                                val username = data["username"] as? String ?: ""
+                                val about = data["about"] as? String ?: ""
+                                val helpDetails = data["helpDetails"] as? String ?: ""
+                                val experience = data["experience"] as? String ?: ""
+
+                                val (firstName, lastName) = userMap[username] ?: Pair("", "")
+                                val fullName = "$firstName $lastName"
+
+                                val helperInfo = HelperInfo(fullName, about, category, helpDetails, experience,username)
+                                tutorList.add(helperInfo)
+                            }
+                        }
+                        onSuccess(tutorList)
+                    }
+                    .addOnFailureListener { e ->
+                        onFailure(e)
+                    }
+            }
+    }
 }
+
