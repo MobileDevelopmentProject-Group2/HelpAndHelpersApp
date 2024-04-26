@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -38,10 +37,13 @@ import com.example.helpersapp.R
 import com.example.helpersapp.model.HelperInfo
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.ui.components.HelperDetail
+import com.example.helpersapp.ui.components.ShowHelperRating
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+
+
 @Composable
 fun HelperDetailsScreenAnotherUsername(
     navController: NavController,
@@ -65,7 +67,6 @@ fun HelperDetailsScreenAnotherUsername(
             }
         )
     }
-
     LaunchedEffect(Unit) {
         helperViewModel.getHelperDetails(
             username = clickedUsername,
@@ -78,7 +79,6 @@ fun HelperDetailsScreenAnotherUsername(
             }
         )
     }
-
     val username = clickedUsername
     val url = "gs://careconnect-65e41.appspot.com/"
     var byteArray by remember { mutableStateOf<ByteArray?>(null) }
@@ -89,6 +89,7 @@ fun HelperDetailsScreenAnotherUsername(
             .getBytes(1024 * 1024)
             .addOnSuccessListener { fetchedBytes ->
                 byteArray = fetchedBytes
+                Log.d("HelperDetails", "ByteArray: $fetchedBytes")
                 Log.d("***", "Image successfully fetched. Image byte array size: ${fetchedBytes.size}.Fetching image from URL: $url")
             }
             .addOnFailureListener { exception ->
@@ -96,6 +97,11 @@ fun HelperDetailsScreenAnotherUsername(
                 byteArray = null
             }
     }
+    LaunchedEffect(username) {
+        helperViewModel.getHelperRating(username)
+    }
+    val rating by helperViewModel.helperRating.collectAsState()
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         ShowBottomImage()
@@ -132,6 +138,28 @@ fun HelperDetailsScreenAnotherUsername(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            ShowHelperRating(rating)
+            if (rating == 0f) {
+                Text(
+                    text = "No ratings yet for this helper",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            // To helper rating
+            val fullName = userfullnameState.value
+            Button(
+                onClick = { navController.navigate("helperRating/$fullName/$username") },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier
+                    .padding(top = 35.dp)
+            ) {
+                Text(text = "Give me your stars and rate me here!")
+            }
+
             HelperDetail(helperInfo.value)
 
             Text(
@@ -145,7 +173,7 @@ fun HelperDetailsScreenAnotherUsername(
             ) {
                 Button(
                     onClick = {
-
+                        helperViewModel.setHelperRating()
                         navController.navigateUp()
                     },
                     colors = ButtonDefaults.buttonColors(

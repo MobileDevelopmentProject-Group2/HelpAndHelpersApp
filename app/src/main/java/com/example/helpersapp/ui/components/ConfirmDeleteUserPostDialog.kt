@@ -25,10 +25,9 @@ import com.example.helpersapp.viewModel.LoginViewModel
 @Composable
 fun ConfirmDeleteUserPostDialog(
     navController: NavController,
-    postId: String
+    postId: String,
+    helpViewModel: HelpViewModel
 ) {
-    val helpViewModel = HelpViewModel()
-
     AlertDialog(
         onDismissRequest = { navController.navigateUp() },
         icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = "warning") },
@@ -40,6 +39,8 @@ fun ConfirmDeleteUserPostDialog(
                     helpViewModel.emptyFilteredUserHelpPost()
                     navController.navigate("myHelpPostScreen")
                 },
+                modifier = Modifier
+                    .padding(end = 20.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error
                 )
@@ -53,7 +54,7 @@ fun ConfirmDeleteUserPostDialog(
                     navController.navigate("myHelpPostScreen")
                 },
                 modifier = Modifier
-                    .padding(end = 20.dp)
+                    .padding(end = 10.dp)
             ) {
                 Text("Cancel")
             }

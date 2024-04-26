@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
@@ -35,6 +36,7 @@ import com.example.helpersapp.viewModel.LoginViewModel
 
 import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
+import com.example.helpersapp.ui.screens.HelperRatingScreen
 import com.example.helpersapp.ui.screens.MyHelpPostScreen
 import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
@@ -153,7 +155,8 @@ fun AppLayout(
                 navController,
                 updateUserViewModel,
                 loginViewModel,
-                helpViewModel
+                helpViewModel,
+                helperViewModel
             )
         }
         composable("helperDetailsScreen") {
@@ -188,6 +191,14 @@ fun AppLayout(
                 navController,
                 helperViewModel,
                 loginViewModel,
+            )
+        }
+        composable("helperRating/{fullName}/{username}") {backStackEntry ->
+            HelperRatingScreen(
+                navController,
+                helperViewModel,
+                backStackEntry.arguments?.getString("fullName") ?: "",
+                backStackEntry.arguments?.getString("username") ?: ""
             )
         }
     }

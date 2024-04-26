@@ -165,6 +165,7 @@ class HelpViewModel: ViewModel() {
 
                 val filteredPosts = _helpList.value.filter { it.userId == userID }
                 if (filteredPosts.isEmpty()) {
+                    _filteredUserHelpPost.value = emptyList()
                     Log.d("HelpViewModel", "no post found for this userID: $userID")
                 }else {
                     _filteredUserHelpPost.value = filteredPosts
