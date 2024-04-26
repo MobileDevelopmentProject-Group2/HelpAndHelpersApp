@@ -23,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -37,6 +40,7 @@ import androidx.navigation.Navigation
 import com.example.helpersapp.viewModel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.HelperViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.log
 
@@ -47,8 +51,14 @@ fun MainTopBar(
     drawerState: DrawerState,
     scope: kotlinx.coroutines.CoroutineScope,
     loginViewModel: LoginViewModel,
-    helpViewModel: HelpViewModel
+    helpViewModel: HelpViewModel,
+    helperViewModel: HelperViewModel
 ) {
+    LaunchedEffect(Unit) {
+        helperViewModel.checkIfHelper()
+    }
+    val isUserAHelper by helperViewModel.isUserAHelper.collectAsState()
+
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(
@@ -72,15 +82,27 @@ fun MainTopBar(
                         .padding(15.dp)
                         .width(80.dp)
                 )
-                ClickableText(
-                    text = AnnotatedString("Register as new helper"),
-                    style = TextStyle(textAlign = TextAlign.Center, fontWeight = FontWeight.Bold),
-                    onClick = {navController.navigate("postHelper")},
-                    softWrap = true,
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .width(80.dp)
-                )
+                if (!isUserAHelper) {
+                    ClickableText(
+                        text = AnnotatedString("Register as new helper"),
+                        style = TextStyle(textAlign = TextAlign.Center, fontWeight = FontWeight.Bold),
+                        onClick = {navController.navigate("postHelper")},
+                        softWrap = true,
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .width(80.dp)
+                    )
+                } else {
+                    ClickableText(
+                        text = AnnotatedString("Registered as helper"),
+                        style = TextStyle(textAlign = TextAlign.Center, fontWeight = FontWeight.Bold),
+                        onClick = {navController.navigate("helperDetailsScreen")},
+                        softWrap = true,
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .width(80.dp)
+                        )
+                }
             }
         },
         actions = {
@@ -92,6 +114,7 @@ fun MainTopBar(
             ) {
                 IconButton(
                     onClick = {
+                        helperViewModel.setIsUserAHelper()
                         helpViewModel.emptyHelpList()
                         helpViewModel.emptyNewHelpNeeded()
                         helpViewModel.setCategory("")
@@ -108,7 +131,6 @@ fun MainTopBar(
                 )
             }
         },
-
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         )

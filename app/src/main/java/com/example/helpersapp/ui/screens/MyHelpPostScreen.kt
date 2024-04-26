@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.HelperViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -40,21 +41,6 @@ fun MyHelpPostScreen (
 {
     val userID = FirebaseAuth.getInstance().currentUser?.uid?:""
     helpViewModel.filterUserHelpPosts(userID)
-    /*
-    * LaunchedEffect(Unit){
-        Log.d("MyHelpPostScreen", "Fetching posts for user ID: $userID")
-        if (userID.isNotEmpty()) {
-            try {
-
-            }catch (e : Exception) {
-                Log.e("HelperDetailsScreen", "Unhandled exception", e)
-            }
-        }else {
-            Log.d("MyHelpPostScreen", "User ID is empty, not fetching posts")
-        }
-    }
-    *
-    * */
     val userHelpPosts by helpViewModel.filteredUserHelpPost.collectAsState()
 
     Box(
@@ -84,7 +70,7 @@ fun MyHelpPostScreen (
                     modifier = Modifier.padding(16.dp)
                 )
             } else {
-                MyHelpPostItem(userHelpPosts, navController)
+                MyHelpPostItem(userHelpPosts, navController, helpViewModel)
             }
         }
         Spacer(modifier = Modifier.height(20.dp))

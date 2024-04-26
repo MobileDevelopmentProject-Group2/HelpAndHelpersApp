@@ -3,7 +3,9 @@ package com.example.helpersapp.ui.screens
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,11 +40,13 @@ import androidx.navigation.NavController
 import com.example.helpersapp.R
 import com.example.helpersapp.ui.components.HelpDetailsItem
 import com.example.helpersapp.ui.components.MapActivity
+import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.ui.components.getLocationByPostalCode
 import com.example.helpersapp.viewModel.HelpViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel, loginViewModel: LoginViewModel) {
     val screenState by helpViewModel.helpDetailsScreenState.collectAsState()
@@ -54,119 +59,128 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
         modifier = Modifier.fillMaxSize()
     ) {
         ShowBottomImage()
-        Column(
-            modifier = Modifier
-                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.details_of_help_needed),
-                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                style = MaterialTheme.typography.titleLarge,
-            )
-
-            HelpDetailsItem(helpDetails)
-
-            if (screenState != "confirm" && coordinates != null) {
-                Button(
-                    onClick = { showMap = true },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
+        Scaffold(
+            topBar = {
+                SecondTopBar(navController)
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            content = { paddingValues ->
+                Column(
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(paddingValues)
+                        .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Show approximate location on map")
-                }
-            }
-            if (showMap) {
-                Column(modifier = Modifier.height(400.dp)) {
-                    MapActivity(
-                        coordinates?.areaName ?: "",
-                        coordinates?.latitude ?: 0.0,
-                        coordinates?.longitude ?: 0.0
+                    Text(
+                        text = stringResource(R.string.details_of_help_needed),
+                        modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                        style = MaterialTheme.typography.titleLarge,
                     )
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Button(
-                    onClick = {
-                        if (screenState == "contact") {
-                            helpViewModel.emptyNewHelpNeeded()
+
+                    HelpDetailsItem(helpDetails)
+
+                    if (screenState != "confirm" && coordinates != null) {
+                        Button(
+                            onClick = { showMap = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                        ) {
+                            Text(text = "Show approximate location on map")
                         }
-                        helpViewModel.setHelpDetailsScreenState("")
-                        showMap = false
-                        navController.navigateUp()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .height(52.dp)
-                        .width(150.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(text = stringResource(R.string.back_))
-                }
-                if (screenState == "confirm") {
-                    Button(
-                        onClick = {
-                            helpViewModel.addNewHelpToCollection()
-                            helpViewModel.emptyNewHelpNeeded()
-                            helpViewModel.emptyHelpList()
-                            helpViewModel.setHelpDetailsScreenState("")
-                            navController.navigate("main")
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
-                        modifier = Modifier
-                            .padding(top = 35.dp)
-                            .height(52.dp)
-                            .width(150.dp)
-                    ) {
-                        Text(text = stringResource(R.string.confirm))
                     }
-                } else {
-                    Button(
-                        onClick = {
-                            context.sendMail(
-                                to = helpDetails.userEmail,
-                                subject = "Contact request from CareConnect"
-                            ) {
-                                navController.navigate("main")
-                                Toast.makeText(context, "Email sending successful", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
+                    if (showMap) {
+                        Column(modifier = Modifier.height(400.dp)) {
+                            MapActivity(
+                                coordinates?.areaName ?: "",
+                                coordinates?.latitude ?: 0.0,
+                                coordinates?.longitude ?: 0.0
+                            )
+                        }
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
                         modifier = Modifier
-                            .padding(top = 35.dp)
-                            .height(52.dp)
-                            .width(150.dp)
+                            .fillMaxWidth()
                     ) {
-                        Text(text = "Send mail")
+                        Button(
+                            onClick = {
+                                if (screenState == "contact") {
+                                    helpViewModel.emptyNewHelpNeeded()
+                                }
+                                helpViewModel.setHelpDetailsScreenState("")
+                                showMap = false
+                                navController.navigateUp()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            modifier = Modifier
+                                .padding(top = 35.dp)
+                                .height(52.dp)
+                                .width(150.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(text = stringResource(R.string.back_))
+                        }
+                        if (screenState == "confirm") {
+                            Button(
+                                onClick = {
+                                    helpViewModel.addNewHelpToCollection()
+                                    helpViewModel.emptyNewHelpNeeded()
+                                    helpViewModel.emptyHelpList()
+                                    helpViewModel.setHelpDetailsScreenState("")
+                                    navController.navigate("main")
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ),
+                                modifier = Modifier
+                                    .padding(top = 35.dp)
+                                    .height(52.dp)
+                                    .width(150.dp)
+                            ) {
+                                Text(text = stringResource(R.string.confirm))
+                            }
+                        } else {
+                            Button(
+                                onClick = {
+                                    context.sendMail(
+                                        to = helpDetails.userEmail,
+                                        subject = "Contact request from CareConnect"
+                                    ) {
+                                        navController.navigate("main")
+                                        Toast.makeText(context, "Email sending successful", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ),
+                                modifier = Modifier
+                                    .padding(top = 35.dp)
+                                    .height(52.dp)
+                                    .width(150.dp)
+                            ) {
+                                Text(text = "Send mail")
+                            }
+                        }
                     }
                 }
             }
-        }
+        )
     }
 }
 fun Context.sendMail(

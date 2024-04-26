@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,6 +43,7 @@ import com.example.helpersapp.R
 import com.example.helpersapp.model.HelpNeeded
 import com.example.helpersapp.ui.components.CategoryRadioButtons
 import com.example.helpersapp.ui.components.DatePicker
+import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.viewModel.HelpViewModel
 
@@ -60,228 +62,236 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
         modifier = Modifier.fillMaxSize()
     ) {
         ShowBottomImage()
-        Column(
-            modifier = Modifier
-                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = stringResource(R.string.post_a_new_help_request),
-                modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Row(
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = stringResource(R.string.category))
-
-
-                CategoryRadioButtons(
-                    radioButtonOptions = radioButtonOptions,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = onCategorySelected
-                )
-                newHelp.category = selectedCategory
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.work_details))
-                OutlinedTextField(
+        Scaffold(
+            topBar = {
+                SecondTopBar(navController)
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            content = { paddingValues ->
+                Column(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .width(210.dp),
-                    value = newHelp.workDetails,
-                    onValueChange = { helpViewModel.changeWorkDetails(it) },
-                    label = { Text(stringResource(R.string.add_work_details))},
-                    shape = MaterialTheme.shapes.medium
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.date_of_work))
-                Column {
-                    Button(
-                        onClick = { showDatePicker = true },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
-                        border = BorderStroke(1.dp, color = Color.DarkGray),
-                        modifier = Modifier
-                            .padding(20.dp)
-                            .width(210.dp)
-                            .height(52.dp)
+                        .padding(paddingValues)
+                        .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = stringResource(R.string.post_a_new_help_request),
+                        modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    Row(
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row {
-                            Text(stringResource(R.string.select_date))
-                            Icon(
-                                imageVector = Icons.Outlined.DateRange,
-                                contentDescription = null,
-                                modifier = Modifier.padding(start = 40.dp)
+                        Text(text = stringResource(R.string.category))
+
+
+                        CategoryRadioButtons(
+                            radioButtonOptions = radioButtonOptions,
+                            selectedCategory = selectedCategory,
+                            onCategorySelected = onCategorySelected
+                        )
+                        newHelp.category = selectedCategory
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.work_details))
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .width(210.dp),
+                            value = newHelp.workDetails,
+                            onValueChange = { helpViewModel.changeWorkDetails(it) },
+                            label = { Text(stringResource(R.string.add_work_details))},
+                            shape = MaterialTheme.shapes.medium
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.date_of_work))
+                        Column {
+                            Button(
+                                onClick = { showDatePicker = true },
+                                shape = MaterialTheme.shapes.medium,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ),
+                                border = BorderStroke(1.dp, color = Color.DarkGray),
+                                modifier = Modifier
+                                    .padding(20.dp)
+                                    .width(210.dp)
+                                    .height(52.dp)
+                            ) {
+                                Row {
+                                    Text(stringResource(R.string.select_date))
+                                    Icon(
+                                        imageVector = Icons.Outlined.DateRange,
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(start = 40.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    if (showDatePicker) {
+                        DatePicker { date ->
+                            selectedDate = date
+                            Toast.makeText(
+                                context,
+                                "Date selected: $date",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            showDatePicker = false
+                        }
+                    }
+                    newHelp.date = selectedDate
+
+                    if (newHelp.date != "") {
+                        Text(
+                            text = stringResource(R.string.selected_date, newHelp.date),
+                            modifier = Modifier
+                                .padding(top = 2.dp, start = 45.dp, end = 16.dp)
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.time))
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .width(210.dp),
+                            value = newHelp.time,
+                            onValueChange = { helpViewModel.changeTime(it) },
+                            label = { Text(stringResource(R.string.add_time_of_work))},
+                            shape = MaterialTheme.shapes.medium
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.price_range))
+                        Column {
+                            RangeSlider(
+                                value = sliderPosition,
+                                steps = 100,
+                                onValueChange = { range -> sliderPosition = range },
+                                valueRange = 0f..100f,
+                                onValueChangeFinished = {
+                                    helpViewModel.changePriceRange(sliderPosition)
+                                },
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .width(210.dp)
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 25.dp),
+                                text = stringResource(
+                                    R.string.range,
+                                    sliderPosition.start.toInt(),
+                                    sliderPosition.endInclusive.toInt()
+                                )
                             )
                         }
                     }
-                }
-            }
-            if (showDatePicker) {
-                DatePicker { date ->
-                    selectedDate = date
-                    Toast.makeText(
-                        context,
-                        "Date selected: $date",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    showDatePicker = false
-                }
-            }
-            newHelp.date = selectedDate
-
-            if (newHelp.date != "") {
-                Text(
-                    text = stringResource(R.string.selected_date, newHelp.date),
-                    modifier = Modifier
-                        .padding(top = 2.dp, start = 45.dp, end = 16.dp)
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.time))
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .width(210.dp),
-                    value = newHelp.time,
-                    onValueChange = { helpViewModel.changeTime(it) },
-                    label = { Text(stringResource(R.string.add_time_of_work))},
-                    shape = MaterialTheme.shapes.medium
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.price_range))
-                Column {
-                    RangeSlider(
-                        value = sliderPosition,
-                        steps = 100,
-                        onValueChange = { range -> sliderPosition = range },
-                        valueRange = 0f..100f,
-                        onValueChangeFinished = {
-                            helpViewModel.changePriceRange(sliderPosition)
-                        },
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .width(210.dp)
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 25.dp),
-                        text = stringResource(
-                        R.string.range,
-                        sliderPosition.start.toInt(),
-                        sliderPosition.endInclusive.toInt()
-                        )
-                    )
-                }
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(R.string.postal_code))
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .width(210.dp),
-                    value = newHelp.postalCode.toString(),
-                    onValueChange = { helpViewModel.changePostalCode(it.toString()) },
-                    label = { Text(stringResource(R.string.add_postal_code))},
-                    shape = MaterialTheme.shapes.medium,
-                    //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigateUp()
-                        helpViewModel.setNewHelpNeeded(HelpNeeded())
-                        selectedDate = ""
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .height(52.dp)
-                        .width(150.dp)
-                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly
-
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
-                            contentDescription = null,
-                            modifier = Modifier.padding(end = 8.dp)
+                        Text(text = stringResource(R.string.postal_code))
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .width(210.dp),
+                            value = newHelp.postalCode.toString(),
+                            onValueChange = { helpViewModel.changePostalCode(it.toString()) },
+                            label = { Text(stringResource(R.string.add_postal_code))},
+                            shape = MaterialTheme.shapes.medium,
+                            //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
-                        Text(text = stringResource(R.string.back))
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = {
+                                navController.navigateUp()
+                                helpViewModel.setNewHelpNeeded(HelpNeeded())
+                                selectedDate = ""
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            modifier = Modifier
+                                .padding(top = 35.dp)
+                                .height(52.dp)
+                                .width(150.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.ArrowBack,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                                Text(text = stringResource(R.string.back))
+                            }
+                        }
+                        Button(
+                            onClick = {
+                                if (newHelp.workDetails != "" && newHelp.date != "" && newHelp.time != "" && newHelp.priceRange != 0f..500f && newHelp.category != "" && newHelp.postalCode != null) {
+                                    newHelp.date = selectedDate
+                                    helpViewModel.setHelpDetailsScreenState("confirm")
+                                    navController.navigate("helpDetails")
+                                } else {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Please fill in all the fields",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            modifier = Modifier
+                                .padding(top = 35.dp)
+                                .height(52.dp)
+                                .width(150.dp)
+                        ) {
+                            Text(text = stringResource(R.string.post_to_confirm))
+                        }
                     }
                 }
-                Button(
-                    onClick = {
-                        if (newHelp.workDetails != "" && newHelp.date != "" && newHelp.time != "" && newHelp.priceRange != 0f..500f && newHelp.category != "" && newHelp.postalCode != null) {
-                            newHelp.date = selectedDate
-                            helpViewModel.setHelpDetailsScreenState("confirm")
-                            navController.navigate("helpDetails")
-                        } else {
-                            Toast.makeText(
-                                navController.context,
-                                "Please fill in all the fields",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .height(52.dp)
-                        .width(150.dp)
-                ) {
-                    Text(text = stringResource(R.string.post_to_confirm))
-                }
             }
-
-        }
+        )
     }
 }
 

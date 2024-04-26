@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,7 +67,9 @@ fun MainScreen(
     loginViewModel: LoginViewModel
 )
 {
-    helpViewModel.getAllHelpRequests()
+    LaunchedEffect(Unit) {
+        helpViewModel.getAllHelpRequests()
+    }
     val helpList by helpViewModel.helpList.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -120,7 +123,8 @@ fun MainScreen(
                         drawerState,
                         scope,
                         loginViewModel,
-                        helpViewModel
+                        helpViewModel,
+                        helperViewModel
                     ) },
                 containerColor = Color.Transparent,
                 content = { paddingValues ->

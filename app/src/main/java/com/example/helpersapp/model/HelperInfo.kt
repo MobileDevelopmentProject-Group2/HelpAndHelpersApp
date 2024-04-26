@@ -1,12 +1,13 @@
 package com.example.helpersapp.model
 
 data class HelperInfo(
-    val fullName: String,
-    val about: String,
-    val category: String,
-    val details: String,
-    val experience: String,
-    val username: String,
+    val fullName: String = "",
+    val about: String = "",
+    val category: String =  "" ,
+    val details: String = "",
+    val experience: String = "",
+    val username: String = "",
+    val rating: List<Int> = emptyList()
     //var profilePictureByteArray: ByteArray? = null
 ) {
     override fun equals(other: Any?): Boolean {

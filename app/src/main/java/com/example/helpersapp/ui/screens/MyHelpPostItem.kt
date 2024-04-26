@@ -33,7 +33,8 @@ import com.example.helpersapp.viewModel.HelpViewModel
 @Composable
 fun MyHelpPostItem (
     userHelpPosts: List<HelpNeeded>,
-    navController: NavController
+    navController: NavController,
+    helpViewModel: HelpViewModel
 ) {
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -104,7 +105,7 @@ fun MyHelpPostItem (
                         )
                     }
                     if (showDeleteDialog) {
-                        ConfirmDeleteUserPostDialog(navController, it.helpPostId)
+                        ConfirmDeleteUserPostDialog(navController, it.helpPostId, helpViewModel)
                     }
                 }
 

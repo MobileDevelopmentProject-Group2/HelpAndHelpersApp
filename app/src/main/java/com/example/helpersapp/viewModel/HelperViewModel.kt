@@ -2,18 +2,22 @@ package com.example.helpersapp.viewModel
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.helpersapp.model.HelperInfo
 import com.example.helpersapp.ui.components.createUsername
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class HelperViewModel: ViewModel()  {
@@ -23,12 +27,21 @@ class HelperViewModel: ViewModel()  {
     private val _clickedUsername = MutableStateFlow("")
     val clickedUsername: StateFlow<String> = _clickedUsername.asStateFlow()
 
+    private val _isUserAHelper = MutableStateFlow<Boolean>(false)
+    val isUserAHelper: StateFlow<Boolean> = _isUserAHelper.asStateFlow()
 
 
+    fun setIsUserAHelper() {
+        _isUserAHelper.value = false
+    }
+    private val _helperRating = MutableStateFlow(0f)
+    val helperRating: StateFlow<Float> = _helperRating.asStateFlow()
+    fun setHelperRating() {
+        _helperRating.value = 0f
+    }
     fun saveClickedUsername(username: String) {
         _clickedUsername.value = username
     }
-
     fun getFullUserName(username: String, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("users").document(username)
             .get()
@@ -144,6 +157,7 @@ class HelperViewModel: ViewModel()  {
                         username
                     )
                     onSuccess(helperInfo)
+                    _isUserAHelper.value = true
                 } else {
                     onFailure(Exception("Document does not exist or is null"))
                 }
@@ -237,6 +251,79 @@ class HelperViewModel: ViewModel()  {
                         onFailure(e)
                     }
             }
+    }
+    fun checkIfHelper() {
+        val userEmail = Firebase.auth.currentUser?.email
+        Log.d("HelperViewModel", "User email: $userEmail")
+        val username = userEmail?.let { createUsername(it) }
+        Log.d("HelperViewModel", "Checking if user is a helper: $username")
+        viewModelScope.launch {
+            try {
+                if (username != null) {
+                    db.collection("helpers")
+                        .document(username)
+                        .get()
+                        .addOnSuccessListener { document ->
+                            if (document != null && document.exists()) {
+                                _isUserAHelper.value = true
+                                Log.d("HelperViewModel", "User is a helper")
+                            } else {
+                                _isUserAHelper.value = false
+                                Log.d("HelperViewModel", "User is not a helper")
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("HelperViewModel", "Error checking if user is a helper", e)
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e("HelperViewModel", "Error checking helper", e)
+            }
+        }
+    }
+    fun saveHelperRating(rating: Int, username: String) {
+        viewModelScope.launch {
+            try {
+                db.collection("helpers")
+                    .document(username)
+                    .update("rating", FieldValue.arrayUnion(rating))
+                    .addOnSuccessListener {
+                        Log.d("HelperViewModel", "Rating saved successfully")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("HelperViewModel", "Error saving rating", e)
+                    }
+            } catch (e: Exception) {
+                Log.e("HelperViewModel", "Error saving rating", e)
+            }
+        }
+    }
+    fun getHelperRating(username: String) {
+        _helperRating.value = 0f
+        viewModelScope.launch {
+            try {
+                db.collection("helpers")
+                    .document(username)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists() && document.contains("rating")) {
+                            val rating = document.get("rating") as? List<Int> ?: emptyList()
+                            val averageRating = rating.average()
+                            _helperRating.value = averageRating.toFloat()
+
+                            Log.d("HelperViewModel", "User: $username, Rating: $averageRating")
+                        } else  {
+                            _helperRating.value = 0f
+                            Log.d("HelperViewModel", "Document does not exist")
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("HelperViewModel", "Error getting rating", e)
+                    }
+            } catch (e: Exception) {
+                Log.e("HelperViewModel", "Error getting rating", e)
+            }
+        }
     }
 }
 
