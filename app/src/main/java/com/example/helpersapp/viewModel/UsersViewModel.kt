@@ -29,11 +29,11 @@ class UsersViewModel: ViewModel()  {
         Log.d("UsersViewModel", "UserId resolved to: $userIdFromEmail")
         return userIdFromEmail
     }
-
+    //give the error handling
     suspend fun registerUserToDocumentStore(firstname: String, lastname: String, email: String, password: String, address: String): String
     {
         var returnCode = "Registration started."
-
+        try {
         if (firstname.isBlank() || lastname.isBlank() || email.isBlank() || password.isBlank() || address.isBlank() ) {
             Log.e("UsersViewModel", "All fields must be filled out.")
             return "All fields must be filled out."
@@ -76,7 +76,10 @@ class UsersViewModel: ViewModel()  {
         }.addOnFailureListener { e ->
             Log.w("UsersViewModel", "Transaction error." + e.message.toString())
         }.await()
-
+        }catch (e: Exception)  {
+            Log.w("UsersViewModel", "Fail to write user to doc.${e.message}")
+            returnCode = "An error occurred during registration."
+        }
         return returnCode
     }
 
