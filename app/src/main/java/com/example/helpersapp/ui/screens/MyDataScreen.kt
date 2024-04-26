@@ -50,6 +50,7 @@ import com.example.helpersapp.ui.components.MainTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
 import com.example.helpersapp.ui.components.createUsername
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.HelperViewModel
 import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
 
@@ -58,12 +59,12 @@ import com.example.helpersapp.viewModel.UpdateUserViewModel
 fun MyDataScreen(
     navController: NavController,
     updateUserViewModel: UpdateUserViewModel,
-    //usersViewModel: UsersViewModel,
     loginViewModel: LoginViewModel,
-    helpViewModel: HelpViewModel
+    helpViewModel: HelpViewModel,
+    helperViewModel: HelperViewModel
 )
 {
-    //add dwawerstate
+    helperViewModel.checkIfHelper()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val user by loginViewModel.userDetails.collectAsState()
@@ -72,22 +73,9 @@ fun MyDataScreen(
     var email by remember { mutableStateOf(user.email) }
     var address by remember { mutableStateOf(user.address) }
     val userId = createUsername(email)
-    //delete user
     val openAlertDialog = rememberSaveable { mutableStateOf(false) }
-    // update message notify
     val context = LocalContext.current
-    //get help post and delete
-    //val userEmail = Firebase.auth.currentUser?.email?:""
-    /*
-    LaunchedEffect(key1 = userEmail){
-        helpViewModel.getCurrentUserPost(userEmail)
-    }*/
-    //delete info has error, commend out first
-    //userpost screen
-    //val userHelpPost by helpViewModel.userHelpPost.collectAsState()
-    //control dialog
-    //val (showDeleteConfirmDialog, setShowDeleteConfirmDialog) = remember { mutableStateOf(false) }
-    //var postToDelete by remember { mutableStateOf<HelpNeeded?>(null) }
+    val isHelper by helperViewModel.isUserAHelper.collectAsState()
 
 
     ModalNavigationDrawer(
@@ -116,92 +104,97 @@ fun MyDataScreen(
                 )
             }
         }){
-                 ShowBottomImage()
-                 Scaffold (
-                     topBar = {
-                         MainTopBar(
-                             navController,
-                             drawerState,
-                             scope,
-                             loginViewModel,
-                             helpViewModel
-                         ) },
-                     containerColor = Color.Transparent,
-                     content = { paddingValues ->
-                         Column(
-                             modifier = Modifier
-                                 .fillMaxSize()
-                                 .padding(paddingValues)
-                                 .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 10.dp)
-                                 .verticalScroll(rememberScrollState()),
-                             verticalArrangement = Arrangement.Center,
-                             horizontalAlignment = Alignment.CenterHorizontally
-                         ) {
-                             Text(
-                                 modifier = Modifier
-                                     .padding(bottom = 30.dp)
-                                     .align(Alignment.CenterHorizontally),
-                                 style = MaterialTheme.typography.titleLarge,
-                                 text = "User Profile",
-                             )
-                             OutlinedTextField(
-                                 value = firstname ,
-                                 onValueChange = {firstname = it },
-                                 label = { Text("First Name")
-                                 } )
+         ShowBottomImage()
+         Scaffold (
+             topBar = {
+                 MainTopBar(
+                     navController,
+                     drawerState,
+                     scope,
+                     loginViewModel,
+                     helpViewModel,
+                     helperViewModel
+                 )},
+             containerColor = Color.Transparent,
+             content = { paddingValues ->
+                 Column(
+                     modifier = Modifier
+                         .fillMaxSize()
+                         .padding(paddingValues)
+                         .padding(bottom = 150.dp, start = 30.dp, end = 30.dp, top = 10.dp)
+                         .verticalScroll(rememberScrollState()),
+                     verticalArrangement = Arrangement.Center,
+                     horizontalAlignment = Alignment.CenterHorizontally
+                 ) {
+                     Text(
+                         modifier = Modifier
+                             .padding(bottom = 30.dp)
+                             .align(Alignment.CenterHorizontally),
+                         style = MaterialTheme.typography.titleLarge,
+                         text = "User Profile",
+                     )
+                     OutlinedTextField(
+                         value = firstname ,
+                         onValueChange = {firstname = it },
+                         label = { Text("First Name")
+                         } )
 
-                             OutlinedTextField(
-                                 value = lastname ,
-                                 onValueChange = {lastname = it },
-                                 label = { Text("Last Name")
-                                 } )
+                     OutlinedTextField(
+                         value = lastname ,
+                         onValueChange = {lastname = it },
+                         label = { Text("Last Name")
+                         } )
 
-                             OutlinedTextField(
-                                 value = address,
-                                 onValueChange = {address = it },
-                                 label = { Text("Address")
-                                 })
+                     OutlinedTextField(
+                         value = address,
+                         onValueChange = {address = it },
+                         label = { Text("Address")
+                         })
 
-                             Spacer(modifier = Modifier.height(8.dp))
+                     Spacer(modifier = Modifier.height(8.dp))
 
-                             Spacer(modifier = Modifier.height(16.dp))
-                             Row(
-                                 modifier = Modifier
-                                     .fillMaxWidth()
-                                     .padding(horizontal = 16.dp),
-                                 horizontalArrangement = Arrangement.SpaceAround
-                                 //horizontalArrangement = Arrangement.SpaceBetween
-                             ) {
-                             Button(onClick = {
-                                 val updateUser = User(
-                                     firstname = firstname,
-                                     lastname = lastname,
-                                     //email = email,
-                                     address = address
-                                 )
-                                 updateUserViewModel.updateUserDetail(userId, updateUser) {
-                                         success, message ->
-                                     if (success) {
-                                         Toast.makeText(
-                                             context,
-                                             "User profile updated",
-                                             Toast.LENGTH_LONG
-                                         ).show()
-                                         Log.e("FirebaseStorage", "update user data")
-                                     }else {
-                                         Toast.makeText(
-                                             context,
-                                             "Fail to update user profile, check again",
-                                             Toast.LENGTH_LONG
-                                         ).show()
-                                         Log.e("FirebaseStorage", "faile",)
-                                     }
-                                 }
-                             },
-                                 modifier = Modifier.width(150.dp),
-                             ) {
-                                 Text("Update")
+                     Spacer(modifier = Modifier.height(16.dp))
+                     Row(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .padding(horizontal = 16.dp),
+                         horizontalArrangement = Arrangement.SpaceAround
+                     ) {
+                     Button(
+                         onClick = {
+                         val updateUser = User(
+                             firstname = firstname,
+                             lastname = lastname,
+                             //email = email,
+                             address = address
+                         )
+                         updateUserViewModel.updateUserDetail(userId, updateUser) {
+                                 success, message ->
+                             if (success) {
+                                 Toast.makeText(
+                                     context,
+                                     "User profile updated",
+                                     Toast.LENGTH_LONG
+                                 ).show()
+                                 Log.e("FirebaseStorage", "update user data")
+                             }else {
+                                 Toast.makeText(
+                                     context,
+                                     "Fail to update user profile, check again",
+                                     Toast.LENGTH_LONG
+                                 ).show()
+                                 Log.e("FirebaseStorage", "faile",)
                              }
+                         }
+                     },
+                         modifier = Modifier.width(150.dp),
+                         colors = ButtonDefaults.buttonColors(
+                             containerColor = MaterialTheme.colorScheme.primaryContainer,
+                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                         )
+                     ) {
+                         Text("Update")
+                     }
                     //Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = { openAlertDialog.value = true },
@@ -218,42 +211,59 @@ fun MyDataScreen(
                         )
                     }}
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceAround
-                        //horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Button(
-                            onClick = { navController.navigate("helperDetailsScreen") },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("My helper data")
+                        if (isHelper) {
+                            Button(
+                                onClick = { navController.navigate("helperDetailsScreen") },
+                                modifier = Modifier.width(150.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+
+                            ) {
+                                Text("My helper data")
+                            }
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(
                             onClick = { navController.navigate("myHelpPostScreen")},
-                            //modifier = Modifier.width(150.dp)
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.width(150.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         )
                         {
                             Text("My help post")
                         }
-
                     }
-                    //Spacer(modifier = Modifier.weight(1f))
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Button(
-                        onClick = { navController.navigate("main") },
-                        modifier = Modifier.width(150.dp)
-                    ) {
-                        Text(text = "Back")
-                    }
+                    Spacer(modifier = Modifier.height(48.dp))
+                     Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.Start
+                     ) {
+                         Button(
+                             onClick = { navController.navigate("main") },
+                             modifier = Modifier.width(100.dp),
+                             colors = ButtonDefaults.buttonColors(
+                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                             )
+                         ) {
+                             Text(text = "Back")
+                         }
+                     }
                 }
             })
-
         }
     }
 

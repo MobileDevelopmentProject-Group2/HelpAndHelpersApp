@@ -1,5 +1,8 @@
 package com.example.helpersapp.ui.components
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
@@ -10,50 +13,51 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.helpersapp.model.HelpNeeded
 import com.example.helpersapp.viewModel.HelpViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ConfirmDeletePost(
-    helpPost: HelpNeeded,
-    helpViewModel: HelpViewModel,
-    onDismiss:() ->Unit,
-    onConfirm: () -> Unit,
+fun ConfirmDeleteUserPostDialog(
     navController: NavController,
+    postId: String,
+    helpViewModel: HelpViewModel
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { navController.navigateUp() },
         icon = { Icon(imageVector = Icons.Outlined.Warning, contentDescription = "warning") },
-        title = { Text("Delete Post?") },
-        text = { Text("Are you sure you want to delete your help post") },
+        title = { Text("Delete This post?") },
         confirmButton = {
             Button(
                 onClick = {
-                    //helpViewModel.deleteUserHelpPost(helpPost.id, helpPost.userId)
-                    onConfirm()
-                    //after the screen for post done, it will stay at post
-                    navController.navigate("main")
+                    helpViewModel.deleteUserHelpPost(postId)
+                    helpViewModel.emptyFilteredUserHelpPost()
+                    navController.navigate("myHelpPostScreen")
                 },
+                modifier = Modifier
+                    .padding(end = 20.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error
-                ),
-                modifier = Modifier
-                    .padding(end = 25.dp)
+                )
             ) {
                 Text("Delete")
             }
         },
         dismissButton = {
             Button(
-                onClick = onDismiss,
+                onClick = {
+                    navController.navigate("myHelpPostScreen")
+                },
                 modifier = Modifier
-                    .padding(end = 20.dp)
+                    .padding(end = 10.dp)
             ) {
                 Text("Cancel")
             }
         }
-    )}
-
+    )
+}

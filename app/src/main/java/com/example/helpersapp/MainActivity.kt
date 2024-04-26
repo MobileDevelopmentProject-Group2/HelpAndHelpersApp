@@ -17,26 +17,22 @@ import com.example.helpersapp.ui.screens.AddNewHelpScreen
 import com.example.helpersapp.ui.screens.HelpByCategoryScreen
 import com.example.helpersapp.ui.screens.HelpDetailsScreen
 import com.example.helpersapp.ui.screens.HelperDetailsScreen
+import com.example.helpersapp.ui.screens.HelperDetailsScreenAnotherUsername
 import com.example.helpersapp.ui.screens.HelperListingScreen
 import com.example.helpersapp.ui.screens.HelperListingScreenTutors
+import com.example.helpersapp.ui.screens.HelperRatingScreen
 import com.example.helpersapp.ui.screens.LandingScreen
 import com.example.helpersapp.ui.screens.LoginScreen
 import com.example.helpersapp.ui.screens.MainScreen
 import com.example.helpersapp.ui.screens.MyDataScreen
-import com.example.helpersapp.ui.screens.HelperDetailsScreen
-import com.example.helpersapp.ui.screens.HelperDetailsScreenAnotherUsername
+import com.example.helpersapp.ui.screens.MyHelpPostScreen
 import com.example.helpersapp.ui.screens.PostNewHelperDetailsScreen
 import com.example.helpersapp.ui.screens.PrivacyNTermsScreen
 import com.example.helpersapp.ui.screens.RegisterScreen
 import com.example.helpersapp.ui.theme.HelpersAppTheme
 import com.example.helpersapp.viewModel.HelpViewModel
-
-import com.example.helpersapp.viewModel.LoginViewModel
-
-import com.example.helpersapp.ui.components.createUsername
-import com.example.helpersapp.ui.screens.HelpByCategoryScreen
-import com.example.helpersapp.ui.screens.MyHelpPostScreen
 import com.example.helpersapp.viewModel.HelperViewModel
+import com.example.helpersapp.viewModel.LoginViewModel
 import com.example.helpersapp.viewModel.UpdateUserViewModel
 import com.example.helpersapp.viewModel.UsersViewModel
 
@@ -153,7 +149,8 @@ fun AppLayout(
                 navController,
                 updateUserViewModel,
                 loginViewModel,
-                helpViewModel
+                helpViewModel,
+                helperViewModel
             )
         }
         composable("helperDetailsScreen") {
@@ -173,8 +170,7 @@ fun AppLayout(
         composable("myHelpPostScreen") {
             MyHelpPostScreen(
                 navController,
-                helpViewModel,
-                loginViewModel
+                helpViewModel
             )
         }
         composable("helperListingScreen") {
@@ -189,6 +185,14 @@ fun AppLayout(
                 navController,
                 helperViewModel,
                 loginViewModel,
+            )
+        }
+        composable("helperRating/{fullName}/{username}") {backStackEntry ->
+            HelperRatingScreen(
+                navController,
+                helperViewModel,
+                backStackEntry.arguments?.getString("fullName") ?: "",
+                backStackEntry.arguments?.getString("username") ?: ""
             )
         }
     }
