@@ -162,7 +162,6 @@ fun HelpDetailsScreen(navController: NavController, helpViewModel: HelpViewModel
                                         subject = "Contact request from CareConnect"
                                     ) {
                                         navController.navigate("main")
-                                        Toast.makeText(context, "Email sending successful", Toast.LENGTH_SHORT).show()
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(

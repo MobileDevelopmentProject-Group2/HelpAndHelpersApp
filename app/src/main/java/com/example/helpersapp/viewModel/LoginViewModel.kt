@@ -3,6 +3,7 @@ package com.example.helpersapp.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.compose.AsyncImagePainter
 import com.example.helpersapp.model.User
 import com.example.helpersapp.ui.components.createUsername
 import com.google.firebase.Firebase
@@ -112,6 +113,19 @@ class LoginViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("LoginViewModel", "Failed to delete user data", e)
             }
+        }
+    }
+    fun sendPasswordResetEmail(email: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        viewModelScope.launch {
+            firebaseAuth.sendPasswordResetEmail(email)
+                .addOnSuccessListener {
+                    onSuccess()
+                    Log.d("LoginViewModel", "Password reset email sent successfully")
+                }
+                .addOnFailureListener { e ->
+                    onFailure(e)
+                    Log.e("LoginViewModel", "Failed to send password reset email", e)
+                }
         }
     }
     fun logoutUser() {

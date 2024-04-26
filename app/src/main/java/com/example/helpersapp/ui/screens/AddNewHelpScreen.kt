@@ -62,11 +62,12 @@ fun AddNewHelpScreen(navController: NavController, helpViewModel: HelpViewModel)
         modifier = Modifier.fillMaxSize()
     ) {
         ShowBottomImage()
+
         Scaffold(
             topBar = {
                 SecondTopBar(navController)
             },
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = Color.Transparent,
             content = { paddingValues ->
                 Column(
                     modifier = Modifier
