@@ -23,5 +23,4 @@ fun formatDateValue(date: String): String {
         Log.e("FormatDateValue", "Error formatting date: ${e.message}")
         return date
     }
-
 }

@@ -26,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.ui.components.SecondTopBar
 import com.example.helpersapp.ui.components.ShowBottomImage
-import com.example.helpersapp.viewModel.HelpViewModel
-import com.example.helpersapp.viewModel.LoginViewModel
 
 @Composable
 fun AboutAndContactScreen(
@@ -138,60 +136,3 @@ fun AboutAndContactScreen(
     }
 }
 
-/*
-
-@Composable
-fun PrivacyNTermsScreen(navController: NavController) {
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val bottomImageHeight = 300.dp
-
-        ShowBottomImage()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 150.dp, start = 16.dp, end = 16.dp, top = 16.dp)
-        ) {
-            Text(
-                text = "Privacy & Terms",
-                //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                modifier = Modifier.padding(bottom = 24.dp),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Text(
-                text = stringResource(R.string.privacy_policy_content),
-                style = MaterialTheme.typography.bodyLarge)
-            Column {
-                Text(
-                    text = "Data Usage",
-                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                    //modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 16.dp, end = 16.dp),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    text = stringResource(R.string.UsageData),
-                    style = MaterialTheme.typography.bodyLarge)
-
-            }
-
-            Button(
-                onClick = { navController.navigate("register") },
-                modifier = Modifier
-                    .padding(top = 24.dp),
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-
-                ) {
-                Text(text = "Back")
-
-            }
-        }
-        } }
-
-*/
