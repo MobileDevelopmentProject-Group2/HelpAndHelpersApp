@@ -61,16 +61,22 @@ fun HelperRatingScreen(
     var rating by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect("gs://careconnect-65e41.appspot.com") {
-        Firebase.storage.reference
-            .child("$username/profile_picture.jpg")
-            .getBytes(1024 * 1024)
-            .addOnSuccessListener { fetchedBytes ->
-                byteArray = fetchedBytes
-                Log.d("HelperDetails", "ByteArray: $fetchedBytes") }
-            .addOnFailureListener { exception ->
-                Log.e("***", "Error fetching image: ${exception.message}")
-                byteArray = null
-            }
+        try {
+            Firebase.storage.reference
+                .child("$username/profile_picture.jpg")
+                .getBytes(1024 * 1024)
+                .addOnSuccessListener { fetchedBytes ->
+                    byteArray = fetchedBytes
+                    Log.d("HelperRating", "ByteArray: $fetchedBytes") }
+                .addOnFailureListener { exception ->
+                    Log.e("HelperRating", "Error fetching image: ${exception.message}")
+                    byteArray = null
+                }
+        } catch (e: Exception) {
+            Log.e("HelperRating", "Error fetching image: ${e.message}")
+            byteArray = null
+        }
+
     }
     Box {
         ShowBottomImage()
