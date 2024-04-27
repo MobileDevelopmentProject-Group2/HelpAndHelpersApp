@@ -11,13 +11,17 @@ import java.util.TimeZone
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun formatDateValue(date: String): String {
-    Log.d("FormatDateValue", "Date: $date")
+    try {
+        Log.d("FormatDateValue", "Date: $date")
+        val timeZone = TimeZone.getDefault()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        dateFormat.timeZone = timeZone
+        val formattedDateTime = dateFormat.format(Date.from(OffsetDateTime.parse(date).toInstant()))
+        Log.d("FormatDateValue", "Formatted date: $formattedDateTime")
+        return formattedDateTime
+    } catch (e: Exception) {
+        Log.e("FormatDateValue", "Error formatting date: ${e.message}")
+        return date
+    }
 
-    val timeZone = TimeZone.getDefault()
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-    dateFormat.timeZone = timeZone
-    val formattedDateTime = dateFormat.format(Date.from(OffsetDateTime.parse(date).toInstant()))
-    Log.d("FormatDateValue", "Formatted date: $formattedDateTime")
-
-    return formattedDateTime
 }

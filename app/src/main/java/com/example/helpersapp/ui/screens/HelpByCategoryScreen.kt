@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.ui.components.ListAllHelpNeeded
@@ -37,14 +38,14 @@ fun HelpByCategoryScreen(navController: NavController, helpViewModel: HelpViewMo
     val category by helpViewModel.category.collectAsState()
 
     val filteredList = helpList.filter { it.category == category }
-    // val userPostsHelpList = helpList
+
     Box(modifier = Modifier.fillMaxSize()) {
         ShowBottomImage()
         Scaffold(
             topBar = {
                 SecondTopBar(navController)
             },
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = Color.Transparent,
             content = { paddingValues ->
                 Column(
                     modifier = Modifier

@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,9 +38,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ComponentActivity
 import androidx.navigation.NavController
 import com.example.helpersapp.R
@@ -68,6 +74,7 @@ fun LoginScreen(
     var errorMessage by remember { mutableStateOf<String>("") }
     var currentUser = Firebase.auth.currentUser
     val userLoggedIn = (currentUser != null)
+    var showEmailNotice by remember { mutableStateOf(false) }
 
     // for Google sign in:
     var user by remember { mutableStateOf(Firebase.auth.currentUser) }
@@ -130,6 +137,39 @@ fun LoginScreen(
                 style = MaterialTheme.typography.bodyLarge
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        TextButton(
+            onClick = {
+                loginViewModel.sendPasswordResetEmail(
+                    email,
+                    onSuccess = {
+                        showEmailNotice = true
+                    },
+                    onFailure = {
+                        Toast.makeText(context, "Failed to send password reset email", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        ) {
+            Text(
+                text = "Forgot password?\nPlease type in your email and click here to reset.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
+        if (showEmailNotice) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Password reset email sent!",
+                style = TextStyle(
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
+                    color = Color.Magenta
+                )
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
         Button(
             onClick = {
                 // Handle the sign-up logic here
