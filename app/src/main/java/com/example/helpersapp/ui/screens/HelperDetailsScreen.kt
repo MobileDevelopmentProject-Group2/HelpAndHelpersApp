@@ -70,20 +70,6 @@ fun HelperDetailsScreen(
             Log.e("HelperDetailsScreen", "Unhandled exception", e)
         }
     }
-    /*
-    LaunchedEffect(Unit) {
-        helperViewModel.getHelperDetails(
-            username = loginViewModel.getUsername(),
-            onSuccess = { info ->
-                helperInfo.value = info
-            },
-            onFailure = { e ->
-                // Handle failure
-                Log.e("***", "Error fetching helper details: ${e.message}")
-            }
-        )
-    }
-*/
 
     val username = loginViewModel.getUsername()
     val url = "gs://careconnect-65e41.appspot.com/"

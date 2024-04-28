@@ -33,50 +33,53 @@ class UsersViewModel: ViewModel()  {
     suspend fun registerUserToDocumentStore(firstname: String, lastname: String, email: String, password: String, address: String): String
     {
         var returnCode = "Registration started."
-
-        if (firstname.isBlank() || lastname.isBlank() || email.isBlank() || password.isBlank() || address.isBlank() ) {
-            Log.e("UsersViewModel", "All fields must be filled out.")
-            return "All fields must be filled out."
-        }
-
-        if (password.length < 6) {
-            return "Password must be at least 6 characters long."
-        }
-
-        var sanitizedEmail = email.replace(" ", "")
-        // Sanitize data for username
-        if (!sanitizedEmail.contains("@")) {
-            return "Invalid email address"
-        }
-
-        val username = createUsername(sanitizedEmail)
-        val newUser = hashMapOf(
-            "firstname" to firstname,
-            "lastname" to lastname,
-            "email" to sanitizedEmail,
-            "address" to address,
-            "username" to username
-        )
-
-        val userRef = db.collection("users").document(username)
-
-        db.runTransaction { transaction ->
-            var snapshot = transaction.get(userRef)
-
-            if (!snapshot.exists()) {
-                Log.d("UsersViewModel", "User does not exist, create entry")
-                db.collection("users").document(username).set(newUser)
-                returnCode = "User created successfully"
-            } else {
-                Log.d("UsersViewModel", "User exists")
-                returnCode = "User already exists"
+        try {
+            if (firstname.isBlank() || lastname.isBlank() || email.isBlank() || password.isBlank() || address.isBlank() ) {
+                Log.e("UsersViewModel", "All fields must be filled out.")
+                return "All fields must be filled out."
             }
-        }.addOnSuccessListener {
-            Log.d("UsersViewModel", "Transaction success.")
-        }.addOnFailureListener { e ->
-            Log.w("UsersViewModel", "Transaction error." + e.message.toString())
-        }.await()
 
+            if (password.length < 6) {
+                return "Password must be at least 6 characters long."
+            }
+
+            var sanitizedEmail = email.replace(" ", "")
+            // Sanitize data for username
+            if (!sanitizedEmail.contains("@")) {
+                return "Invalid email address"
+            }
+
+            val username = createUsername(sanitizedEmail)
+            val newUser = hashMapOf(
+                "firstname" to firstname,
+                "lastname" to lastname,
+                "email" to sanitizedEmail,
+                "address" to address,
+                "username" to username
+            )
+
+            val userRef = db.collection("users").document(username)
+
+            db.runTransaction { transaction ->
+                var snapshot = transaction.get(userRef)
+
+                if (!snapshot.exists()) {
+                    Log.d("UsersViewModel", "User does not exist, create entry")
+                    db.collection("users").document(username).set(newUser)
+                    returnCode = "User created successfully"
+                } else {
+                    Log.d("UsersViewModel", "User exists")
+                    returnCode = "User already exists"
+                }
+            }.addOnSuccessListener {
+                Log.d("UsersViewModel", "Transaction success.")
+            }.addOnFailureListener { e ->
+                Log.w("UsersViewModel", "Transaction error." + e.message.toString())
+            }.await()
+        }catch (e: Exception)  {
+            Log.w("UsersViewModel", "Fail to write user to doc.${e.message}")
+            returnCode = "An error occurred during registration."
+        }
         return returnCode
     }
 

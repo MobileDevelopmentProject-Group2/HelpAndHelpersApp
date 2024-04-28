@@ -44,6 +44,8 @@ fun MapActivity(areaName: String, latitude: Double, longitude: Double) {
             state = MarkerState(position = area),
             title = areaName,
             snippet = "Approximate location",
+            draggable = true
+
         )
         Circle(
             center = area,

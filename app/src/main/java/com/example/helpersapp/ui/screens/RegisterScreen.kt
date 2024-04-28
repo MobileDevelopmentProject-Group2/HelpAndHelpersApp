@@ -35,19 +35,10 @@ import com.example.helpersapp.R
 import com.example.helpersapp.viewModel.UsersViewModel
 import kotlinx.coroutines.launch
 
-
-//import sun.tools.jstat.Alignment
-
 @Composable
-// has error at first code, so try new one
-//fun RegisterScreen(navController: NavController, usersViewModel: ViewModel) {
-//new code of mine
 fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel) {
-    // below my code
-    //for viewmodel
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
     // Add this to handle keyboard actions like dismissing the keyboard
     val localFocusManager = LocalFocusManager.current
     var firstname by remember{ mutableStateOf("")}
@@ -81,7 +72,6 @@ fun RegisterScreen(navController: NavController, usersViewModel: UsersViewModel)
 
         Text(
             text = "Register",
-                    //below new code
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.displayMedium
         )
