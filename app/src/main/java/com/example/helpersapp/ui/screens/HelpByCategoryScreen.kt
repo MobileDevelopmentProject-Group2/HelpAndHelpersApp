@@ -36,7 +36,6 @@ import com.example.helpersapp.viewModel.HelpViewModel
 fun HelpByCategoryScreen(navController: NavController, helpViewModel: HelpViewModel) {
     val helpList by helpViewModel.helpList.collectAsState()
     val category by helpViewModel.category.collectAsState()
-
     val filteredList = helpList.filter { it.category == category }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -93,7 +92,6 @@ fun HelpByCategoryScreen(navController: NavController, helpViewModel: HelpViewMo
                             Text(text = "Back")
                         }
                     }
-
                 }
             }
         )

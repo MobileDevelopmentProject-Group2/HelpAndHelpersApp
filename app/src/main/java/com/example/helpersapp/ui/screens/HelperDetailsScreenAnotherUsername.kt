@@ -47,8 +47,7 @@ import com.google.firebase.storage.ktx.storage
 @Composable
 fun HelperDetailsScreenAnotherUsername(
     navController: NavController,
-    helperViewModel: HelperViewModel,
-    loginViewModel: LoginViewModel,
+    helperViewModel: HelperViewModel
 ) {
     val helperInfo = remember { mutableStateOf(HelperInfo("", "", "", "", "","")) }
     val clickedUsername  by helperViewModel.clickedUsername.collectAsState()

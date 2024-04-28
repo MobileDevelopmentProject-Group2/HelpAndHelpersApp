@@ -169,8 +169,7 @@ fun AppLayout(
         composable("helperDetailsScreenAnotherUsername") {
             HelperDetailsScreenAnotherUsername(
                 navController,
-                helperViewModel,
-                loginViewModel,
+                helperViewModel
             )
         }
         composable("myHelpPostScreen") {
