@@ -49,4 +49,4 @@ In this app, there are some pages for useage.
 ## Project Team Members
 - [Cheng Shufen](https://github.com/ofiscarlett) : Full-stack development ( register, sign-in and user authentication, fetch and filter data, UI design).
 - [Liisa Törmäkangas](https://github.com/liisatormakangas) : Full-stack development ( main screen, navigation, post help request, list help requests, delete user and user data, date and time format, google map api, google sign in, emailing functionality, helper rating ).
-- [Tomoko Takami](https://github.com/t2tato01) : Full-stack development ( Helper, upload image, post ).
+- [Tomoko Takami](https://github.com/t2tato01) : Full-stack development ( landing screen, Helper detail screen, Helper listing screen, image data handling, email functionality, UI design).
