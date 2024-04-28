@@ -20,18 +20,23 @@ class UpdateUserViewModel: ViewModel() {
             "lastname" to updateUser.lastname,
             "address" to updateUser.address
         )
-        db.collection("users").document(userId).update(userUpdate)
-          .addOnSuccessListener {
-              onComplete(true, "User data updated successfully.")
-              Log.e("FirebaseStorage", "update user data")
-                    }
-          .addOnFailureListener{
-                  exception->
-              Log.e("FirebaseStorage", "Error updating user data", exception)
-              onComplete(false, "Fail to change User data ${exception.message}.")
+        try {
+            db.collection("users").document(userId).update(userUpdate)
+                .addOnSuccessListener {
+                    onComplete(true, "User data updated successfully.")
+                    Log.e("FirebaseStorage", "update user data")
+                }
+                .addOnFailureListener{
+                        exception->
+                    Log.e("FirebaseStorage", "Error updating user data", exception)
+                    onComplete(false, "Fail to change User data ${exception.message}.")
 
-                    }
-            }
+                }
+        }catch (e:Exception) {
+            Log.e("UpdateUserViewModel", "Exception in updateUserDetail: ${e.message}", e)
+            onComplete(false, "Fail to change User data ${e.message}.")
         }
+    }
+}
 
 

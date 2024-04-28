@@ -26,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.helpersapp.R
 
-
-
 @Composable
 fun LandingScreen(navController: NavController) {
     LocalFocusManager.current
@@ -123,31 +121,3 @@ fun SodaLogo2() {
         }
     }
 }
-
-
-
-/*
-{
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Landing Screen"
-        )
-        Button(onClick = { navController.navigate("login") }) {
-            Text(text = "To Login Screen")
-        }
-        Button(onClick = { navController.navigate("register") }) {
-            Text(text = "To Register Screen")
-        }
-        Button(onClick = { navController.navigate("main") }) {
-            Text(text = "To Main Screen")
-        }
-        Button(onClick = { navController.navigate("addHelp") }) {
-            Text(text = "To Add New Help Screen")
-        }
-    }
-}
-*/

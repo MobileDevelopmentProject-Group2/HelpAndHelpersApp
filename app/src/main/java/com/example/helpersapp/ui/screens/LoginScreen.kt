@@ -65,7 +65,6 @@ import com.google.firebase.auth.auth
 @Composable
 fun LoginScreen(
     navController: NavController,
-    //usersViewModel: ViewModel,
     loginViewModel: LoginViewModel
 ) {
     val localFocusManager = LocalFocusManager.current
