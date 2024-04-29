@@ -5,6 +5,9 @@ The aim of this project was to create a modern Android application using Jetpack
 CareConnect is a support application that helps users find tutor or nanny assistance. Users can also register as a nanny or a tutor (both ways), and post photos and certifications.
 The app allows users to post requests for help and respond to other users needs.
 
+## Demonstration
+https://www.youtube.com/watch?v=0TR2UxRL_WM
+
 ## Services
 - **User Registration and Login**: All user will access the main page to seek helper or find clients, all need to register and log in. It secure user authentication and profile management.
 - **Post and Respond to Help Requests**: Users can post details about the help they need and also respond to others' posts.
